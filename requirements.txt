@@ -1,0 +1,12 @@
+# Dependências fixadas para reprodução exata do ambiente
+numpy==1.26.4
+scipy==1.17.1
+pandas==3.0.6
+matplotlib==3.11.2
+seaborn==0.13.2
+ruptures==1.1.10
+pyyaml==6.0.3
+tqdm==4.70.1
+pytest==9.1.1
+ipykernel==7.4.0
+
