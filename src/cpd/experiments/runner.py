@@ -82,15 +82,15 @@ def compute_effective_snr(magnitude_val: float, noise_series: np.ndarray) -> tup
 
 def compute_hazard_levels(
     values: np.ndarray,
+    ground_truth_signal: np.ndarray,
     ground_truth_cps: list[int],
     detected_cps: list[int],
     margin: int = 15,
 ) -> list[dict[str, Any]]:
-    """Calcula o Hazard Level = log(media_antes / media_depois) para detecções casadas."""
+    """Calcula o Hazard Level estimado = log(media_antes / media_depois) e compara com o valor verdadeiro."""
     n = len(values)
     hazard_records = []
     for d in detected_cps:
-        # Segmentos locais adjacentes
         left = max(0, d - margin)
         right = min(n, d + margin)
         slice_before = values[left:d]
@@ -98,14 +98,28 @@ def compute_hazard_levels(
         if len(slice_before) > 0 and len(slice_after) > 0:
             mean_b = float(np.mean(slice_before))
             mean_a = float(np.mean(slice_after))
-            # Evita divisão por zero ou log de número não positivo
-            if mean_b > 0 and mean_a > 0:
-                h_est = float(np.log(mean_b / mean_a))
-            else:
-                h_est = float("nan")
+            h_est = float(np.log(mean_b / mean_a)) if (mean_b > 0 and mean_a > 0) else float("nan")
         else:
             h_est = float("nan")
-        hazard_records.append({"detected_cp": d, "hazard_level_est": h_est})
+
+        # Valor verdadeiro conhecido do gerador (ground_truth_signal sem ruído)
+        idx_prev = max(0, d - 1)
+        idx_next = min(n - 1, d)
+        true_level_before = float(ground_truth_signal[idx_prev])
+        true_level_after = float(ground_truth_signal[idx_next])
+        if true_level_before > 0 and true_level_after > 0:
+            h_true = float(np.log(true_level_before / true_level_after))
+        else:
+            h_true = float("nan")
+
+        err = float(abs(h_est - h_true)) if (not np.isnan(h_est) and not np.isnan(h_true)) else float("nan")
+
+        hazard_records.append({
+            "detected_cp": d,
+            "hazard_level_est": h_est,
+            "hazard_level_true": h_true,
+            "hazard_level_abs_err": err,
+        })
     return hazard_records
 
 
@@ -257,6 +271,7 @@ def execute_single_cell(
     n = scenario_cfg["n"]
     perfil = scenario_cfg["perfil_ruido"]
     detector_name = detector_cfg["nome"]
+    cls_name = detector_cfg["classe"]
 
     series_obj = generate_scenario_series(scenario_cfg, seed_idx)
     stable_seed = derive_stable_seed(cenario_id, seed_idx)
@@ -286,15 +301,20 @@ def execute_single_cell(
         "snr_efetiva_mad": effective_snr,
     }
 
+    # Para o CUSUM, utiliza estimated_start_points para estimar o Hazard Level
+    target_cps_for_hazard = res.change_points
+    if cls_name == "RobustCUSUMDetector" and "estimated_start_points" in res.metadata:
+        target_cps_for_hazard = res.metadata["estimated_start_points"]
+
     hazard_records = compute_hazard_levels(
         values=series_obj.values,
+        ground_truth_signal=series_obj.ground_truth_signal,
         ground_truth_cps=series_obj.change_points,
-        detected_cps=res.change_points,
+        detected_cps=target_cps_for_hazard,
     )
 
     scores_list = res.scores.tolist() if res.scores is not None else []
-    if not scores_list and "p_values" in res.metadata:
-        scores_list = [float(p) for p in res.metadata["p_values"]]
+    parent_cps_list = res.metadata.get("parent_change_points", [])
 
     return {
         "cenario_id": cenario_id,
@@ -309,6 +329,7 @@ def execute_single_cell(
         "versao_codigo": git_hash,
         "ground_truth": series_obj.change_points,
         "indices_detectados": res.change_points,
+        "pai_indices_detectados": parent_cps_list,
         "scores_detectados": scores_list,
         "hazard_levels_est": json.dumps(hazard_records),
         "tempo_cpu_ms": float(elapsed_ms),
@@ -321,3 +342,4 @@ def save_partition_atomic(df: pd.DataFrame, out_path: Path) -> None:
     tmp_path = out_path.with_suffix(f".tmp_{os.getpid()}_{time.time_ns()}.parquet")
     df.to_parquet(tmp_path, index=False)
     tmp_path.rename(out_path)
+

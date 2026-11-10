@@ -103,29 +103,52 @@ class EDivisiveDetector(BaseDetector):
         return stats
 
     def _calculate_t_stats_medians(self, dist_matrix: np.ndarray) -> np.ndarray:
-        """Calcula a divergência baseada em medianas (Twitter EDM)."""
+        """Calcula a divergência baseada em medianas (Twitter EDM / BreakoutDetection).
+
+        Para n_total moderado utiliza cálculo exato; para n_total grande subamostra candidatos.
+        """
         n_total = len(dist_matrix)
         stats = np.zeros(n_total, dtype=np.float64)
 
         if n_total < 2 * self.min_size:
             return stats
 
-        for tau in range(self.min_size, n_total - self.min_size + 1):
+        # Em n grande, subamostragem do passo temporal
+        step = 1 if n_total <= 150 else (2 if n_total <= 300 else 5)
+        taus = list(range(self.min_size, n_total - self.min_size + 1, step))
+        if taus[-1] != (n_total - self.min_size):
+            taus.append(n_total - self.min_size)
+
+        for tau in taus:
             n = tau
             m = n_total - tau
 
-            # Sub-blocos
             within_x = dist_matrix[:tau, :tau]
             within_y = dist_matrix[tau:, tau:]
             between_xy = dist_matrix[:tau, tau:]
 
-            # Triangular estrita para pares distintos
+            # Triangular superior
             i_x, j_x = np.triu_indices(n, k=1)
             i_y, j_y = np.triu_indices(m, k=1)
 
-            m_xx = float(np.median(within_x[i_x, j_x])) if len(i_x) > 0 else 0.0
-            m_yy = float(np.median(within_y[i_y, j_y])) if len(i_y) > 0 else 0.0
-            m_xy = float(np.median(between_xy)) if between_xy.size > 0 else 0.0
+            # Subamostragem de pares em blocos massivos para manter O(1) por partição
+            if len(i_x) > 500:
+                idx_sub_x = np.linspace(0, len(i_x) - 1, 300, dtype=int)
+                m_xx = float(np.median(within_x[i_x[idx_sub_x], j_x[idx_sub_x]]))
+            else:
+                m_xx = float(np.median(within_x[i_x, j_x])) if len(i_x) > 0 else 0.0
+
+            if len(i_y) > 500:
+                idx_sub_y = np.linspace(0, len(i_y) - 1, 300, dtype=int)
+                m_yy = float(np.median(within_y[i_y[idx_sub_y], j_y[idx_sub_y]]))
+            else:
+                m_yy = float(np.median(within_y[i_y, j_y])) if len(i_y) > 0 else 0.0
+
+            if between_xy.size > 1000:
+                idx_sub_xy = np.linspace(0, between_xy.size - 1, 500, dtype=int)
+                m_xy = float(np.median(between_xy.ravel()[idx_sub_xy]))
+            else:
+                m_xy = float(np.median(between_xy)) if between_xy.size > 0 else 0.0
 
             e_stat = 2.0 * m_xy - m_xx - m_yy
             stats[tau] = max(0.0, ((n * m) / (n + m)) * e_stat)
@@ -204,8 +227,8 @@ class EDivisiveDetector(BaseDetector):
         change_points: list[int],
         memo: Dict[Tuple[int, int], Tuple[int, float]],
         rng: np.random.Generator,
-    ) -> Tuple[int, float] | None:
-        """Localiza a próxima partição divisiva retornando (cp, p_value) se p_value <= alpha."""
+    ) -> Tuple[int, float, Tuple[int, int]] | None:
+        """Localiza a próxima partição divisiva retornando (cp, p_value, bounds_pai) se p_value <= alpha."""
         n_total = len(dist_matrix)
         windows = [0] + sorted(change_points) + [n_total]
         candidates: List[Tuple[int, float, Tuple[int, int]]] = []
@@ -234,7 +257,7 @@ class EDivisiveDetector(BaseDetector):
         best_cp, best_score, target_bounds = best_candidate
 
         if self.permutations == 0:
-            return best_cp, 0.0
+            return best_cp, 0.0, target_bounds
 
         a_win, b_win = target_bounds
         window_size = b_win - a_win
@@ -254,7 +277,7 @@ class EDivisiveDetector(BaseDetector):
         p_value = (1.0 + greater_or_equal) / (1.0 + self.permutations)
 
         if p_value <= self.alpha:
-            return best_cp, p_value
+            return best_cp, p_value, target_bounds
         return None
 
     def detect(self, series: np.ndarray | list[float]) -> list[int]:
@@ -263,28 +286,32 @@ class EDivisiveDetector(BaseDetector):
         return res.change_points
 
     def detect_detailed(self, series: np.ndarray | list[float]) -> DetectionResult:
-        """Executa a detecção retornando os pontos e metadados."""
+        """Executa a detecção retornando os pontos, p-valores, histórico de divisão e metadados."""
         x = self._validate_series(series)
         rng = np.random.default_rng(self.seed)
 
         dist_matrix = self.compute_distance_matrix(x)
         change_points: list[int] = []
         p_values: list[float] = []
+        parents: list[int | None] = []
+        # Mapeia fronteiras ativas para o índice do change point que a gerou
+        boundary_parent: Dict[Tuple[int, int], int | None] = {(0, len(x)): None}
         memo: Dict[Tuple[int, int], Tuple[int, float]] = {}
 
         while True:
             candidate_info = self._get_next_significant_change_point_detailed(dist_matrix, change_points, memo, rng)
             if candidate_info is None:
                 break
-            cp, p_val = candidate_info
+            cp, p_val, target_bounds = candidate_info
             change_points.append(cp)
             p_values.append(p_val)
+            parent_cp = boundary_parent.get(target_bounds, None)
+            parents.append(parent_cp)
 
-        # Ordenar preservando o pareamento com o p-valor
-        if change_points:
-            sorted_pairs = sorted(zip(change_points, p_values), key=lambda x: x[0])
-            change_points = [p[0] for p in sorted_pairs]
-            p_values = [p[1] for p in sorted_pairs]
+            # Subdivide o segmento pai em duas novas regiões filhas associadas a este cp
+            a_win, b_win = target_bounds
+            boundary_parent[(a_win, cp)] = cp
+            boundary_parent[(cp, b_win)] = cp
 
         metadata = {
             "alpha": self.alpha,
@@ -293,10 +320,16 @@ class EDivisiveDetector(BaseDetector):
             "metric": self.metric,
             "num_detected": len(change_points),
             "p_values": p_values,
+            "parent_change_points": parents,
+            "division_history": [
+                {"change_point": cp, "p_value": p, "parent": par}
+                for cp, p, par in zip(change_points, p_values, parents)
+            ],
         }
 
+        # Retorna ordenado cronologicamente preservando a lista de pares
         return DetectionResult(
-            change_points=change_points,
+            change_points=sorted(change_points),
             scores=np.asarray(p_values, dtype=np.float64) if p_values else np.array([]),
             metadata=metadata,
         )
@@ -339,3 +372,30 @@ class EDivisiveMediansDetector(EDivisiveDetector):
             metric="medians",
             seed=seed,
         )
+
+
+def filter_edivisive_by_alpha(
+    division_history: list[dict[str, Any]],
+    target_alpha: float,
+) -> list[int]:
+    """Filtra a árvore de divisões do E-Divisive para um alpha mais estrito.
+
+    Uma divisão só é aceita se ela e TODOS os seus ancestrais na recursão tiverem
+    p_value <= target_alpha.
+    """
+    accepted_cps: set[int] = set()
+    result_cps: list[int] = []
+
+    for entry in division_history:
+        cp = entry["change_point"]
+        p_val = entry["p_value"]
+        parent = entry["parent"]
+
+        # Se tiver pai, o pai obrigatoriamente precisa ter sido aceito
+        parent_valid = (parent is None) or (parent in accepted_cps)
+
+        if parent_valid and (p_val <= target_alpha):
+            accepted_cps.add(cp)
+            result_cps.append(cp)
+
+    return sorted(result_cps)

@@ -67,3 +67,4 @@ for (i in 1:nrow(manifest)) {
 out_json <- file.path(data_dir, "r_ecp_validation_results.json")
 write_json(results, out_json, pretty = TRUE)
 cat(sprintf("Validação concluída! Resultados salvos em: %s\n", out_json))
+

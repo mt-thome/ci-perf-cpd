@@ -86,6 +86,8 @@ class SyntheticSeriesConfig:
         """Valida os parâmetros da configuração."""
         if self.n <= 0:
             raise ValueError(f"O tamanho da série n deve ser positivo, recebido: {self.n}")
+        if self.base_level <= 0.0:
+            raise ValueError(f"base_level deve ser estritamente positivo (latência/tempo de CI > 0), recebido: {self.base_level}")
         if self.noise_scale < 0:
             raise ValueError(f"noise_scale deve ser não-negativo, recebido: {self.noise_scale}")
         if isinstance(self.noise_type, str):

@@ -7,6 +7,7 @@ from cpd.detectors.edivisive import (
     EDivisiveDetector,
     EDivisiveMeansDetector,
     EDivisiveMediansDetector,
+    filter_edivisive_by_alpha,
 )
 
 __all__ = [
@@ -16,5 +17,6 @@ __all__ = [
     "EDivisiveDetector",
     "EDivisiveMeansDetector",
     "EDivisiveMediansDetector",
+    "filter_edivisive_by_alpha",
     "RupturesDetector",
 ]

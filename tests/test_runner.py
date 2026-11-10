@@ -50,9 +50,18 @@ def test_effective_snr_calculation() -> None:
 
 
 def test_hazard_level_estimation() -> None:
-    """Valida a estimativa do Hazard Level = log(media_antes/media_depois)."""
+    """Valida a estimativa do Hazard Level = log(media_antes/media_depois) com confronto ground truth."""
     # Degrau de 100ms para 50ms (dobro de velocidade -> log(100/50) = log(2) ~ 0.693)
-    series = np.concatenate([np.full(50, 100.0), np.full(50, 50.0)])
-    hazards = compute_hazard_levels(series, ground_truth_cps=[50], detected_cps=[50])
+    values = np.concatenate([np.full(50, 100.0), np.full(50, 50.0)])
+    gt_signal = np.concatenate([np.full(50, 100.0), np.full(50, 50.0)])
+    hazards = compute_hazard_levels(
+        values=values,
+        ground_truth_signal=gt_signal,
+        ground_truth_cps=[50],
+        detected_cps=[50],
+    )
     assert len(hazards) == 1
     assert np.isclose(hazards[0]["hazard_level_est"], np.log(2.0), atol=1e-3)
+    assert np.isclose(hazards[0]["hazard_level_true"], np.log(2.0), atol=1e-3)
+    assert np.isclose(hazards[0]["hazard_level_abs_err"], 0.0, atol=1e-3)
+

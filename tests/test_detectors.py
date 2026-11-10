@@ -7,7 +7,12 @@ import pytest
 
 from cpd.detectors.baseline import RupturesDetector
 from cpd.detectors.cusum import RobustCUSUMDetector
-from cpd.detectors.edivisive import EDivisiveDetector
+from cpd.detectors.edivisive import (
+    EDivisiveDetector,
+    EDivisiveMeansDetector,
+    EDivisiveMediansDetector,
+    filter_edivisive_by_alpha,
+)
 from cpd.generators.synthetic import NoiseType, generate_synthetic_series
 
 
@@ -135,3 +140,19 @@ class TestDetectorsRobustnessAndCalibration:
             min_size=20,
         )
         assert calibrated_pen > 0
+
+    def test_edivisive_post_processing_alpha_equivalence(self) -> None:
+        """Garante que filtrar o histórico da árvore com alpha estrito é idêntico à execução direta."""
+        from cpd.detectors import filter_edivisive_by_alpha
+        series = generate_synthetic_series(n=300, change_points=[100, 200], magnitudes_std=[3.0, -3.0], seed=42).values
+
+        # Execução direta alpha=0.05
+        det_direct = EDivisiveMeansDetector(alpha=0.05, permutations=50, min_size=25, seed=123)
+        direct_cps = det_direct.detect(series)
+
+        # Execução permissiva alpha=0.20
+        det_perm = EDivisiveMeansDetector(alpha=0.20, permutations=50, min_size=25, seed=123)
+        perm_res = det_perm.detect_detailed(series)
+        filtered_cps = filter_edivisive_by_alpha(perm_res.metadata["division_history"], target_alpha=0.05)
+
+        assert direct_cps == filtered_cps

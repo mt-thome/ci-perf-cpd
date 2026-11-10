@@ -82,3 +82,4 @@ with open(OUT_DIR / "manifest_series.json", "w") as f:
     json.dump(manifest, f, indent=2)
 
 print("20 séries geradas e salvas em:", OUT_DIR)
+

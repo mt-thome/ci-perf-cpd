@@ -45,6 +45,7 @@ grid:
   repeticoes_piloto: 3       # R=3 sementes no estudo piloto prévio
 
 # 2. Configurações dos Detectores no Grid
+# Padronização de Custo: PELT e Binseg usam modelo L2, com variante PELT_L1 para robustez
 detectores:
   # CUSUM Robusto (Tabular bicaudal com janela inicial w=30 e período de guarda g=15)
   - nome: "CUSUM_gauss"
@@ -57,7 +58,7 @@ detectores:
     regime_calibracao: "calibrado_perfil"
     params: { k_slack: 0.5, init_window: 30, guard_window: 15 }
 
-  # PELT (Pruned Exact Linear Time via ruptures)
+  # PELT L2 (Pruned Exact Linear Time via ruptures - Modelo L2 Gaussiano)
   - nome: "PELT_L2_gauss"
     classe: "RupturesDetector"
     algoritmo: "pelt"
@@ -72,49 +73,58 @@ detectores:
     regime_calibracao: "calibrado_perfil"
     params: { min_size: 25 }
 
-  # Binary Segmentation (Binseg via ruptures)
-  - nome: "Binseg_L1_gauss"
+  # PELT L1 (Variante de Robustez a Outliers/Mediana via ruptures)
+  - nome: "PELT_L1_gauss"
     classe: "RupturesDetector"
-    algoritmo: "binseg"
+    algoritmo: "pelt"
     cost_model: "l1"
     regime_calibracao: "calibrado_gaussiano"
     params: { min_size: 25 }
 
-  - nome: "Binseg_L1_perfil"
+  - nome: "PELT_L1_perfil"
     classe: "RupturesDetector"
-    algoritmo: "binseg"
+    algoritmo: "pelt"
     cost_model: "l1"
     regime_calibracao: "calibrado_perfil"
     params: { min_size: 25 }
 
-  # E-Divisive with Means (Matteson & James 2014; Daly et al. 2020)
-  - nome: "EDiv_Means_padrao"
-    classe: "EDivisiveMeansDetector"
-    regime_calibracao: "padrao_alpha_0.05"
-    params: { alpha: 0.05, permutations: 100, min_size: 25 }
+  # Binary Segmentation (Binseg via ruptures - Modelo L2 comparável ao PELT_L2)
+  - nome: "Binseg_L2_gauss"
+    classe: "RupturesDetector"
+    algoritmo: "binseg"
+    cost_model: "l2"
+    regime_calibracao: "calibrado_gaussiano"
+    params: { min_size: 25 }
 
-  - nome: "EDiv_Means_calibrado"
-    classe: "EDivisiveMeansDetector"
+  - nome: "Binseg_L2_perfil"
+    classe: "RupturesDetector"
+    algoritmo: "binseg"
+    cost_model: "l2"
     regime_calibracao: "calibrado_perfil"
-    params: { permutations: 100, min_size: 25 }
+    params: { min_size: 25 }
 
-  # E-Divisive with Medians (James, Kejariwal & Matteson 2014, Twitter)
-  - nome: "EDiv_Medians_padrao"
+  # E-Div-Means (Matteson & James 2014; Daly et al. 2020)
+  # Executado UMA vez por série com alpha permissivo; regimes padrao e calibrado derivados em pós-processamento
+  - nome: "EDiv_Means_base"
+    classe: "EDivisiveMeansDetector"
+    regime_calibracao: "permissivo_posprocessamento"
+    params: { alpha: 0.20, permutations: 100, min_size: 25 }
+
+  # E-Div-Medians (James, Kejariwal & Matteson 2014 / 2016, Twitter)
+  # Executado UMA vez por série com alpha permissivo; regimes padrao e calibrado derivados em pós-processamento
+  - nome: "EDiv_Medians_base"
     classe: "EDivisiveMediansDetector"
-    regime_calibracao: "padrao_alpha_0.05"
-    params: { alpha: 0.05, permutations: 100, min_size: 25 }
+    regime_calibracao: "permissivo_posprocessamento"
+    params: { alpha: 0.20, permutations: 100, min_size: 25 }
 
-  - nome: "EDiv_Medians_calibrado"
-    classe: "EDivisiveMediansDetector"
-    regime_calibracao: "calibrado_perfil"
-    params: { permutations: 100, min_size: 25 }
-
-# 3. Protocolo de Calibração (split='calibracao')
+# 3. Protocolo de Calibração e Validação
 calibracao:
-  num_series_por_celula: 200     # Pelo menos 200 séries estacionárias por (perfil, n)
-  alvo_far_1k: 1.0               # Alvo primário: <= 1.0 falso alarme por 1000 commits
+  num_series_calibracao: 200     # 200 séries estacionárias por (perfil, n)
+  num_series_validacao: 100      # >=100 séries estacionárias por (perfil, n) para checagem do FAR realizado
+  alvos_far_1k: [1.0, 0.2]       # Dois alvos primários para análise de sensibilidade
   alvo_far_series: 0.01          # Alvo secundário: <= 1% das séries com alarme
   faixa_sementes_calibracao: [10000, 10200]
+  faixa_sementes_validacao: [20000, 20100]
   diretorio_saida: "results/calibration"
 
 # 4. Configuração de Saída e Execução
@@ -123,3 +133,4 @@ execucao:
   manifesto_path: "results/manifest_execution.json"
   max_workers: 4                 # Paralelismo via ProcessPoolExecutor
   omp_num_threads: 1             # 1 thread por worker para evitar contenção BLAS
+
