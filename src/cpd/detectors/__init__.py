@@ -3,12 +3,18 @@
 from cpd.detectors.base import BaseDetector, DetectionResult
 from cpd.detectors.baseline import RupturesDetector
 from cpd.detectors.cusum import RobustCUSUMDetector
-from cpd.detectors.edivisive import EDivisiveDetector
+from cpd.detectors.edivisive import (
+    EDivisiveDetector,
+    EDivisiveMeansDetector,
+    EDivisiveMediansDetector,
+)
 
 __all__ = [
     "BaseDetector",
     "DetectionResult",
     "RobustCUSUMDetector",
     "EDivisiveDetector",
+    "EDivisiveMeansDetector",
+    "EDivisiveMediansDetector",
     "RupturesDetector",
 ]

@@ -1,0 +1,409 @@
+[
+  {
+    "series_id": 1,
+    "filename": "series_01_n100_gaussian.csv",
+    "n": 100,
+    "noise_type": "gaussian",
+    "ground_truth_cps": [
+      50
+    ],
+    "magnitude_std": 3.0,
+    "seed": 101,
+    "py_ediv_means_cps": [
+      50
+    ],
+    "py_p_values": [
+      0.01
+    ]
+  },
+  {
+    "series_id": 2,
+    "filename": "series_02_n100_gaussian.csv",
+    "n": 100,
+    "noise_type": "gaussian",
+    "ground_truth_cps": [
+      40
+    ],
+    "magnitude_std": 2.0,
+    "seed": 102,
+    "py_ediv_means_cps": [
+      40
+    ],
+    "py_p_values": [
+      0.01
+    ]
+  },
+  {
+    "series_id": 3,
+    "filename": "series_03_n100_ar1.csv",
+    "n": 100,
+    "noise_type": "ar1",
+    "ground_truth_cps": [
+      50
+    ],
+    "magnitude_std": 3.0,
+    "seed": 103,
+    "py_ediv_means_cps": [
+      25,
+      50
+    ],
+    "py_p_values": [
+      0.01,
+      0.01
+    ]
+  },
+  {
+    "series_id": 4,
+    "filename": "series_04_n100_student_t.csv",
+    "n": 100,
+    "noise_type": "student_t",
+    "ground_truth_cps": [
+      45
+    ],
+    "magnitude_std": 3.0,
+    "seed": 104,
+    "py_ediv_means_cps": [
+      45
+    ],
+    "py_p_values": [
+      0.01
+    ]
+  },
+  {
+    "series_id": 5,
+    "filename": "series_05_n100_outliers.csv",
+    "n": 100,
+    "noise_type": "outliers",
+    "ground_truth_cps": [
+      50
+    ],
+    "magnitude_std": 4.0,
+    "seed": 105,
+    "py_ediv_means_cps": [
+      50
+    ],
+    "py_p_values": [
+      0.01
+    ]
+  },
+  {
+    "series_id": 6,
+    "filename": "series_06_n200_gaussian.csv",
+    "n": 200,
+    "noise_type": "gaussian",
+    "ground_truth_cps": [
+      70,
+      140
+    ],
+    "magnitude_std": 2.5,
+    "seed": 106,
+    "py_ediv_means_cps": [
+      71,
+      140
+    ],
+    "py_p_values": [
+      0.01,
+      0.01
+    ]
+  },
+  {
+    "series_id": 7,
+    "filename": "series_07_n200_gaussian.csv",
+    "n": 200,
+    "noise_type": "gaussian",
+    "ground_truth_cps": [
+      80,
+      150
+    ],
+    "magnitude_std": 3.0,
+    "seed": 107,
+    "py_ediv_means_cps": [
+      80,
+      150
+    ],
+    "py_p_values": [
+      0.01,
+      0.01
+    ]
+  },
+  {
+    "series_id": 8,
+    "filename": "series_08_n200_ar1.csv",
+    "n": 200,
+    "noise_type": "ar1",
+    "ground_truth_cps": [
+      80,
+      130
+    ],
+    "magnitude_std": 2.5,
+    "seed": 108,
+    "py_ediv_means_cps": [
+      30,
+      80,
+      105,
+      130
+    ],
+    "py_p_values": [
+      0.04,
+      0.01,
+      0.04,
+      0.01
+    ]
+  },
+  {
+    "series_id": 9,
+    "filename": "series_09_n200_student_t.csv",
+    "n": 200,
+    "noise_type": "student_t",
+    "ground_truth_cps": [
+      75,
+      145
+    ],
+    "magnitude_std": 3.0,
+    "seed": 109,
+    "py_ediv_means_cps": [
+      75,
+      145
+    ],
+    "py_p_values": [
+      0.01,
+      0.01
+    ]
+  },
+  {
+    "series_id": 10,
+    "filename": "series_10_n200_bimodal.csv",
+    "n": 200,
+    "noise_type": "bimodal",
+    "ground_truth_cps": [
+      70,
+      130
+    ],
+    "magnitude_std": 3.5,
+    "seed": 110,
+    "py_ediv_means_cps": [
+      70,
+      130
+    ],
+    "py_p_values": [
+      0.01,
+      0.01
+    ]
+  },
+  {
+    "series_id": 11,
+    "filename": "series_11_n300_gaussian.csv",
+    "n": 300,
+    "noise_type": "gaussian",
+    "ground_truth_cps": [
+      100,
+      200
+    ],
+    "magnitude_std": 2.0,
+    "seed": 111,
+    "py_ediv_means_cps": [
+      100,
+      201,
+      247
+    ],
+    "py_p_values": [
+      0.01,
+      0.01,
+      0.01
+    ]
+  },
+  {
+    "series_id": 12,
+    "filename": "series_12_n300_gaussian.csv",
+    "n": 300,
+    "noise_type": "gaussian",
+    "ground_truth_cps": [
+      90,
+      210
+    ],
+    "magnitude_std": 3.0,
+    "seed": 112,
+    "py_ediv_means_cps": [
+      90,
+      210
+    ],
+    "py_p_values": [
+      0.01,
+      0.01
+    ]
+  },
+  {
+    "series_id": 13,
+    "filename": "series_13_n300_ar1.csv",
+    "n": 300,
+    "noise_type": "ar1",
+    "ground_truth_cps": [
+      100,
+      200
+    ],
+    "magnitude_std": 3.0,
+    "seed": 113,
+    "py_ediv_means_cps": [
+      100,
+      129,
+      156,
+      189,
+      217,
+      252
+    ],
+    "py_p_values": [
+      0.01,
+      0.03,
+      0.02,
+      0.01,
+      0.01,
+      0.03
+    ]
+  },
+  {
+    "series_id": 14,
+    "filename": "series_14_n300_student_t.csv",
+    "n": 300,
+    "noise_type": "student_t",
+    "ground_truth_cps": [
+      100,
+      190
+    ],
+    "magnitude_std": 3.0,
+    "seed": 114,
+    "py_ediv_means_cps": [
+      100,
+      190
+    ],
+    "py_p_values": [
+      0.01,
+      0.01
+    ]
+  },
+  {
+    "series_id": 15,
+    "filename": "series_15_n300_outliers.csv",
+    "n": 300,
+    "noise_type": "outliers",
+    "ground_truth_cps": [
+      100,
+      200
+    ],
+    "magnitude_std": 4.0,
+    "seed": 115,
+    "py_ediv_means_cps": [
+      100,
+      200
+    ],
+    "py_p_values": [
+      0.01,
+      0.01
+    ]
+  },
+  {
+    "series_id": 16,
+    "filename": "series_16_n500_gaussian.csv",
+    "n": 500,
+    "noise_type": "gaussian",
+    "ground_truth_cps": [
+      150,
+      320
+    ],
+    "magnitude_std": 2.0,
+    "seed": 116,
+    "py_ediv_means_cps": [
+      150,
+      318
+    ],
+    "py_p_values": [
+      0.01,
+      0.01
+    ]
+  },
+  {
+    "series_id": 17,
+    "filename": "series_17_n500_ar1.csv",
+    "n": 500,
+    "noise_type": "ar1",
+    "ground_truth_cps": [
+      160,
+      330
+    ],
+    "magnitude_std": 3.0,
+    "seed": 117,
+    "py_ediv_means_cps": [
+      103,
+      134,
+      160,
+      294,
+      330
+    ],
+    "py_p_values": [
+      0.05,
+      0.01,
+      0.01,
+      0.01,
+      0.01
+    ]
+  },
+  {
+    "series_id": 18,
+    "filename": "series_18_n500_student_t.csv",
+    "n": 500,
+    "noise_type": "student_t",
+    "ground_truth_cps": [
+      150,
+      300
+    ],
+    "magnitude_std": 3.0,
+    "seed": 118,
+    "py_ediv_means_cps": [
+      150,
+      300
+    ],
+    "py_p_values": [
+      0.01,
+      0.01
+    ]
+  },
+  {
+    "series_id": 19,
+    "filename": "series_19_n500_outliers.csv",
+    "n": 500,
+    "noise_type": "outliers",
+    "ground_truth_cps": [
+      170,
+      340
+    ],
+    "magnitude_std": 4.0,
+    "seed": 119,
+    "py_ediv_means_cps": [
+      170,
+      340
+    ],
+    "py_p_values": [
+      0.01,
+      0.01
+    ]
+  },
+  {
+    "series_id": 20,
+    "filename": "series_20_n500_bimodal.csv",
+    "n": 500,
+    "noise_type": "bimodal",
+    "ground_truth_cps": [
+      150,
+      350
+    ],
+    "magnitude_std": 3.0,
+    "seed": 120,
+    "py_ediv_means_cps": [
+      151,
+      348
+    ],
+    "py_p_values": [
+      0.01,
+      0.01
+    ]
+  }
+]

@@ -1,0 +1,125 @@
+# ==============================================================================
+# Configuração do Grid de Experimentos Fatorial (Fase 4)
+# Detecção de Regressões de Desempenho em Pipelines de Integração Contínua (CI)
+# ==============================================================================
+
+projeto:
+  nome: "ci-perf-cpd"
+  versao: "0.1.0"
+  descricao: "Grid fatorial completo para benchmark empírico de algoritmos de CPD em CI"
+
+# 1. Dimensões do Grid Fatorial
+grid:
+  tamanhos_n:
+    - 100
+    - 500
+    - 1000
+
+  perfis_ruido:
+    - tipo: "gaussian"
+      params: {}
+    - tipo: "ar1"
+      params: { ar1_phi: 0.7 }
+    - tipo: "student_t"
+      params: { student_t_df: 3.0 }
+    - tipo: "outliers"
+      params: { outlier_prob: 0.02, outlier_scale_multiplier: 5.0 }
+    - tipo: "bimodal"
+      params: { bimodal_weight: 0.3, bimodal_mean_shift_std: 3.0 }
+
+  magnitudes_sigma:
+    - 0.5
+    - 1.0
+    - 2.0
+    - 5.0
+
+  # Regra de change points:
+  # n=100 suporta apenas k=1 (k=2 é descartado para n=100 devido às margens de estabilidade)
+  # n in {500, 1000} suportam k in {1, 2}
+  # Séries estacionárias k=0 presentes para todos os n e perfis
+  num_change_points:
+    n_100: [0, 1]
+    n_outros: [0, 1, 2]
+
+  repeticoes_avaliacao: 50   # R=50 sementes pareadas na avaliação final
+  repeticoes_piloto: 3       # R=3 sementes no estudo piloto prévio
+
+# 2. Configurações dos Detectores no Grid
+detectores:
+  # CUSUM Robusto (Tabular bicaudal com janela inicial w=30 e período de guarda g=15)
+  - nome: "CUSUM_gauss"
+    classe: "RobustCUSUMDetector"
+    regime_calibracao: "calibrado_gaussiano"
+    params: { k_slack: 0.5, init_window: 30, guard_window: 15 }
+
+  - nome: "CUSUM_perfil"
+    classe: "RobustCUSUMDetector"
+    regime_calibracao: "calibrado_perfil"
+    params: { k_slack: 0.5, init_window: 30, guard_window: 15 }
+
+  # PELT (Pruned Exact Linear Time via ruptures)
+  - nome: "PELT_L2_gauss"
+    classe: "RupturesDetector"
+    algoritmo: "pelt"
+    cost_model: "l2"
+    regime_calibracao: "calibrado_gaussiano"
+    params: { min_size: 25 }
+
+  - nome: "PELT_L2_perfil"
+    classe: "RupturesDetector"
+    algoritmo: "pelt"
+    cost_model: "l2"
+    regime_calibracao: "calibrado_perfil"
+    params: { min_size: 25 }
+
+  # Binary Segmentation (Binseg via ruptures)
+  - nome: "Binseg_L1_gauss"
+    classe: "RupturesDetector"
+    algoritmo: "binseg"
+    cost_model: "l1"
+    regime_calibracao: "calibrado_gaussiano"
+    params: { min_size: 25 }
+
+  - nome: "Binseg_L1_perfil"
+    classe: "RupturesDetector"
+    algoritmo: "binseg"
+    cost_model: "l1"
+    regime_calibracao: "calibrado_perfil"
+    params: { min_size: 25 }
+
+  # E-Divisive with Means (Matteson & James 2014; Daly et al. 2020)
+  - nome: "EDiv_Means_padrao"
+    classe: "EDivisiveMeansDetector"
+    regime_calibracao: "padrao_alpha_0.05"
+    params: { alpha: 0.05, permutations: 100, min_size: 25 }
+
+  - nome: "EDiv_Means_calibrado"
+    classe: "EDivisiveMeansDetector"
+    regime_calibracao: "calibrado_perfil"
+    params: { permutations: 100, min_size: 25 }
+
+  # E-Divisive with Medians (James, Kejariwal & Matteson 2014, Twitter)
+  - nome: "EDiv_Medians_padrao"
+    classe: "EDivisiveMediansDetector"
+    regime_calibracao: "padrao_alpha_0.05"
+    params: { alpha: 0.05, permutations: 100, min_size: 25 }
+
+  - nome: "EDiv_Medians_calibrado"
+    classe: "EDivisiveMediansDetector"
+    regime_calibracao: "calibrado_perfil"
+    params: { permutations: 100, min_size: 25 }
+
+# 3. Protocolo de Calibração (split='calibracao')
+calibracao:
+  num_series_por_celula: 200     # Pelo menos 200 séries estacionárias por (perfil, n)
+  alvo_far_1k: 1.0               # Alvo primário: <= 1.0 falso alarme por 1000 commits
+  alvo_far_series: 0.01          # Alvo secundário: <= 1% das séries com alarme
+  faixa_sementes_calibracao: [10000, 10200]
+  diretorio_saida: "results/calibration"
+
+# 4. Configuração de Saída e Execução
+execucao:
+  diretorio_resultados: "results/raw_detections"
+  manifesto_path: "results/manifest_execution.json"
+  max_workers: 4                 # Paralelismo via ProcessPoolExecutor
+  omp_num_threads: 1             # 1 thread por worker para evitar contenção BLAS

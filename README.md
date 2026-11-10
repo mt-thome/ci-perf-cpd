@@ -15,10 +15,11 @@ Este projeto compara empiricamente algoritmos de detecção de pontos de mudanç
 - **Robustez contra perfis de ruído**: Gaussiano, Autocorrelacionado AR(1), Caudas Pesadas (t-Student), Outliers esporádicos e Bimodalidade (heterogeneidade de runners).
 
 ### Referências Teóricas Centrais
-1. **Daly et al. (ICPE 2020)**: *"The Use of Change Point Detection to Identify Software Performance Regressions in a Continuous Integration System"*, arXiv:2003.00584. Introduz o algoritmo *E-Divisive with Medians* (EDM) em larga escala na MongoDB.
-2. **Apache Otava (2025)**: *"8 Years of Optimizing Apache Otava"*, arXiv:2505.06758. Evolução algorítmica de detecção de pontos de mudança de complexidade $O(n^3)$ para tempo amortizado constante por nova observação em streaming.
-3. **Matteson & James (2014)**: *"A Nonparametric Approach to Change Point Detection with Manifold Applications"*, JASA. Base estatística do método E-Divisive.
-4. **Truong et al. (2020)**: *"Selective review of offline change point detection methods"*, Signal Processing (biblioteca `ruptures`).
+1. **Daly et al. (ICPE 2020)**: *"The Use of Change Point Detection to Identify Software Performance Regressions in a Continuous Integration System"*, arXiv:2003.00584. Introduz o uso do algoritmo *E-Divisive with Means* (Matteson & James, 2014) em larga escala na MongoDB.
+2. **James, Kejariwal & Matteson (arXiv 2014, IEEE Big Data 2016)**: *"Leveraging Cloud Data to Mitigate User Experience from 'Breaking Bad'"*, arXiv:1411.7955. Introduz a variante com medianas *E-Divisive with Medians* (EDM) no Twitter `BreakoutDetection`.
+3. **Apache Otava (2025)**: *"8 Years of Optimizing Apache Otava"*, arXiv:2505.06758. Evolução algorítmica de detecção de pontos de mudança de complexidade $O(n^3)$ para tempo amortizado constante por nova observação em streaming.
+4. **Matteson & James (2014)**: *"A Nonparametric Approach to Change Point Detection with Manifold Applications"*, JASA. Base estatística do método E-Divisive with Means.
+5. **Truong et al. (2020)**: *"Selective review of offline change point detection methods"*, Signal Processing (biblioteca `ruptures`).
 
 ---
 

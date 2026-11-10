@@ -19,7 +19,7 @@ Este documento registra formalmente as decisões de projeto, metodologia de pesq
 
 - **Data**: 2026-10-20
 - **Status**: Decisão Tomada (Implementação Própria do E-Divisive e CUSUM)
-- **Contexto**: Daly et al. (ICPE 2020) utilizam o algoritmo *E-Divisive with Means* (EDM) em produção na MongoDB via biblioteca `signal-processing-algorithms` (versão 2.1.6).
+- **Contexto**: Daly et al. (ICPE 2020) utilizam o algoritmo *E-Divisive with Means* em produção na MongoDB via biblioteca `signal-processing-algorithms` (versão 2.1.6).
 - **Avaliação Empírica**: Falha crítica de importação no Python 3.12+ decorrente da dependência de extensão C não empacotada (`_e_divisive.so`) e bugs no fallback em Python puro.
 - **Decisão**: Implementar os detectores de forma nativa e vetorizada com NumPy.
 
@@ -38,143 +38,94 @@ Este documento registra formalmente as decisões de projeto, metodologia de pesq
 
 ---
 
-## ADR-004: Correção e Esclarecimento Terminológico: E-Divisive with Means vs E-Divisive with Medians
+## ADR-004: Correção Rigorosa de Atribuição: E-Div-Means (Daly et al. 2020) vs E-Div-Medians (James et al. 2014)
 
 - **Data**: 2026-11-10
-- **Status**: Aprovado
-- **Contexto**: A literatura de Change Point Detection possui duas ramificações baseadas em estatísticas de energia com a sigla "EDM":
-  1. **E-Divisive with Means (Matteson & James, 2014; Daly et al., ICPE 2020)**:
-     - No artigo seminal de Daly et al. (ICPE 2020, Seção 3 e 4), o método implementado e avaliado na infraestrutura da MongoDB é o **E-Divisive with Means** (introduzido por Matteson & James, JASA 2014).
-     - **Formulação Matemática Exata**:
-       Para duas partições contíguas de dados $X = \{x_1, \dots, x_n\}$ e $Y = \{y_1, \dots, y_m\}$, a divergência de energia entre as amostras é dada por:
-       $$\mathcal{E}(X, Y) = \frac{2}{nm} \sum_{i=1}^n \sum_{j=1}^m \|x_i - y_j\| - \frac{1}{n^2} \sum_{i=1}^n \sum_{i'=1}^n \|x_i - x_{i'}\| - \frac{1}{m^2} \sum_{j=1}^m \sum_{j'=1}^m \|y_j - y_{j'}\|$$
-       A estatística de teste para a partição no ponto candidato $\tau$ (onde $n = \tau$ e $m = T - \tau$) pondera essa divergência pelo tamanho amostral relativo:
-       $$Q(\tau) = \frac{n \cdot m}{n + m} \mathcal{E}(X, Y)$$
-       O ponto de corte ótimo na iteração divisiva é:
-       $$\hat{\tau} = \arg\max_\tau Q(\tau)$$
-       A significância estatística é obtida por teste de permutação de Monte Carlo com $B$ permutações aleatórias, rejeitando a hipótese nula $H_0$ se $p = \frac{1 + \sum_{b=1}^B \mathbb{I}(Q_{perm, b}^* \ge Q_{obs}^*)}{B + 1} \le \alpha$.
-  2. **E-Divisive with Medians (James, Kejariwal & Matteson, 2014 - Twitter BreakoutDetection)**:
-     - Em sistemas com outliers severos ("spikes"), James et al. propuseram substituir as médias aritméticas das distâncias pareadas pelas suas **medianas**:
-       $$m_{XY} = \text{median}\left\{ |x_i - y_j| : 1 \le i \le n, 1 \le j \le m \right\}$$
-       $$m_{XX} = \text{median}\left\{ |x_i - x_{i'}| : 1 \le i < i' \le n \right\}, \quad m_{YY} = \text{median}\left\{ |y_j - y_{j'}| : 1 \le j < j' \le m \right\}$$
-       $$\mathcal{E}_{med}(X, Y) = 2 m_{XY} - m_{XX} - m_{YY}$$
-- **Decisão Metodológica**:
-  - Implementamos **ambas as métricas de agregação** no detector E-Divisive (`EDivisiveDetector` com parâmetro `metric="means"` e `metric="medians"`).
-  - Por padrão para o confronto com Daly et al. (2020), utilizaremos `metric="means"`, mas permitiremos alternar para `"medians"` na análise empírica do perfil com `outliers`, documentando rigorosamente a distinção.
-  - Registramos a restrição de tamanho mínimo de segmento (`min_size`, padrão 30) para evitar partições degeneradas nas bordas da série.
+- **Status**: Aprovado / Retificado
+- **Contexto e Retificação Histórica**:
+  - **Correção da Proposta Original**: A proposta inicial do trabalho atribuía erroneamente a variante "E-Divisive with Medians" ao artigo de Daly et al. (ICPE 2020, arXiv:2003.00584). Uma inspeção rigorosa do artigo e do código-fonte da MongoDB confirma que Daly et al. utilizam o **E-Divisive with Means** (introduzido originariamente por Matteson & James, JASA 2014), no qual a estatística de divergência de energia é fundamentada na média amostral e na hipótese de primeiro momento finito. No sistema da MongoDB, as medianas são calculadas estritamente a posteriori como estatísticas descritivas para exibição nos dashboards de engenharia e para estimativa do Hazard Level.
+  - **Variante com Medianas (E-Div-Medians)**: Trata-se de uma proposta metodológica distinta, publicada por **Nicholas A. James, Arun Kejariwal e David S. Matteson** no artigo *"Leveraging Cloud Data to Mitigate User Experience from 'Breaking Bad'"* (arXiv:1411.7955, 2014; apresentado no IEEE Big Data, 2016), e implementada no pacote Twitter `BreakoutDetection`.
+  - **Nomenclatura Padronizada no Projeto**:
+    1. `E-Div-Means`: Implementação do algoritmo de Matteson & James (2014) / Daly et al. (2020).
+    2. `E-Div-Medians`: Variante robusta com medianas de James, Kejariwal & Matteson (arXiv 2014 / IEEE 2016).
+    *A sigla isolada EDM é expressamente evitada para prevenir ambiguidades.*
+- **Formulação Matemática Exata**:
+  1. **E-Div-Means**:
+     $$\mathcal{E}(X, Y) = \frac{2}{nm} \sum_{i=1}^n \sum_{j=1}^m \|x_i - y_j\| - \frac{1}{n^2} \sum_{i=1}^n \sum_{i'=1}^n \|x_i - x_{i'}\| - \frac{1}{m^2} \sum_{j=1}^m \sum_{j'=1}^m \|y_j - y_{j'}\|$$
+     $$Q(\tau) = \frac{n \cdot m}{n + m} \mathcal{E}(X, Y)$$
+  2. **E-Div-Medians**:
+     $$m_{XY} = \text{median}\left\{ |x_i - y_j| : 1 \le i \le n, 1 \le j \le m \right\}$$
+     $$m_{XX} = \text{median}\left\{ |x_i - x_{i'}| : 1 \le i < i' \le n \right\}, \quad m_{YY} = \text{median}\left\{ |y_j - y_{j'}| : 1 \le j < j' \le m \right\}$$
+     $$\mathcal{E}_{med}(X, Y) = 2 m_{XY} - m_{XX} - m_{YY}$$
+- **Hipótese de Pesquisa Registrada**:
+  - *Hipótese H1*: O algoritmo `E-Div-Medians` exibirá desempenho superior em Precision e F1-score comparado ao `E-Div-Means` em cenários com contaminação por outliers esporádicos e distribuições de cauda pesada (t-Student), enquanto o `E-Div-Means` terá maior sensibilidade e poder estatístico em desvios sutis sob ruído Gaussiano puro.
 
 ---
 
-## ADR-005: CUSUM Robusto com Janela Inicial, Período de Guarda e Ponto de Alarme vs Ponto de Início
-
-- **Data**: 2026-11-10
-- **Status**: Aprovado
-- **Contexto**: O algoritmo CUSUM clássico requer parâmetros de referência basal $(\mu_0, \sigma_0)$. Em séries de CI sujeitas a regressões de desempenho, estimar a média e dispersão sobre a série temporal inteira contamina severamente os estimadores (uma regressão que dobra o tempo de execução inflaria a média global e o desvio padrão, mascarando a própria detecção).
-- **Decisão**:
-  1. **Janela Inicial de Calibração Local**: Os parâmetros de referência são estimados estritamente nas primeiras $w_{init}$ observações (padrão $w_{init} = 30$ commits):
-     $$\hat{\mu}_0 = \text{mediana}(X_{1:w_{init}})$$
-     $$\hat{\sigma}_0 = 1.4826 \times \text{MAD}(X_{1:w_{init}}) = 1.4826 \times \text{mediana}(|X_{1:w_{init}} - \hat{\mu}_0|)$$
-     *Nunca* é utilizado o $\sigma$ paramétrico verdadeiro do gerador sintético. Em casos degenerados onde $\text{MAD} = 0$, adota-se $\sigma_{fallback} = \max(\text{std}(X_{1:w_{init}}), 10^{-6})$ para prevenir divisão por zero.
-  2. **Reset Pós-Detecção**: Ao disparar um alarme no índice $t$, as somas acumuladas $S_t^+$ e $S_t^-$ são zeradas ($S_t^+ = S_t^- = 0$). O nível de referência $\hat{\mu}_0$ é opcionalmente atualizado para a mediana do novo regime após a transição.
-  3. **Período de Guarda (`guard_window`)**: Após a detecção no commit $t$, o detector suprime novos alarmes nos commits $t+1, \dots, t + g$ (padrão $g = 15$ commits). Isso impede que a cauda de uma transição de nível contínua gere múltiplos alarmes redundantes para o mesmo evento de regressão.
-  4. **Ponto de Alarme vs Ponto Estimado de Início**:
-     - No CUSUM, a soma cumulativa acumula resíduos a partir de um instante inicial $\tau_{start} = \max\{s \le t : S_s = 0\} + 1$, disparando o alarme no instante $t_{alarm} \ge \tau_{start}$ quando $S_{t_{alarm}} > h\hat{\sigma}$.
-     - O detector expõe ambos os valores: `change_points` registra o instante do alarme $t_{alarm}$ (compatível com pipelines de monitoramento em tempo real), enquanto `metadata["estimated_start_points"]` registra $\tau_{start}$.
-     - As métricas de avaliação e matching são calculadas por padrão sobre o instante de alarme $t_{alarm}$, refletindo o momento real em que o pipeline de CI recebe o alerta.
-
----
-
-## ADR-006: Calibração Pareada com Sementes Disjuntas e Desacoplamento da Tolerância Temporal
+## ADR-005: CUSUM Robusto com Janela Inicial, Período de Guarda e Reestimação de Baseline
 
 - **Data**: 2026-11-10
 - **Status**: Aprovado
 - **Decisão**:
-  1. **Sem vazamento de dados (Data Leakage)**: A calibração de limiares ($h^*$ no CUSUM, penalidade $\beta^*$ no PELT/Binseg) para fixar $\text{FPR} \le 1\%$ é executada em séries sem regressão ($k_{true} = 0$) geradas com sementes estritamente disjuntas das sementes de teste do grid de avaliação.
-  2. **Execução Pareada**: No grid fatorial, cada semente pseudo-aleatória $s \in \{1, \dots, R\}$ ($R=50$) gera uma instância exata de série temporal sintética que é avaliada identicamente por todos os detectores em paralelo. Intervalos de confiança de 95% serão calculados via Bootstrap empírico não-paramétrico.
-  3. **Desacoplamento de $k_{tol}$**: Os detectores registram apenas os vetores brutos de índices de commits detectados. O matching temporal sob janela de tolerância $\pm k$ commits ($k \in \{1, 3, 5, 10\}$) é realizado inteiramente em etapa de pós-processamento, economizando custo computacional e eliminando reexecuções desnecessárias dos detectores.
+  1. **Janela Inicial**: $\hat{\mu}_0 = \text{mediana}(X_{1:w_{init}})$ e $\hat{\sigma}_0 = 1.4826 \times \text{MAD}(X_{1:w_{init}})$ com $w_{init} = 30$. Em caso de $\text{MAD} = 0$, adota-se $\sigma_{fallback} = \max(\text{std}(X_{1:w_{init}}), 10^{-6})$.
+  2. **Reset e Reestimação**: Ao disparar um alarme no índice $t$, o CUSUM zera as somas acumuladas ($S_t^+ = S_t^- = 0$) e reestima a média basal $\hat{\mu}_0$ utilizando as observações do novo regime subsequente ao alarme ($X_{t:t+w_{init}}$), impedindo que o nível antigo continue acumulando deriva.
+  3. **Guarda Temporal**: Alarmes subsequentes são suprimidos por $g = 15$ commits.
+  4. **Alarme vs Início**: As detecções primárias são reportadas pelo instante do alarme $t_{alarm}$, enquanto o início estimado $\tau_{start} = \max\{s \le t : S_s = 0\} + 1$ é preservado nos metadados.
+
+---
+
+## ADR-006: Protocolo de Calibração com Sementes Disjuntas
+
+- **Data**: 2026-11-10
+- **Status**: Aprovado
+- **Decisão**:
+  - Calibração realizada em 200 séries estacionárias independentes geradas com a faixa de sementes 10.000 a 10.200 (estritamente disjunta das sementes de avaliação 1 a 50).
+  - Alvo primário: $FAR_{1k} \le 1.0$ alarme por 1000 commits.
 
 ---
 
 ## ADR-007: Dossiê de Fontes de Dados Reais de CI com Verificação de Fatos
 
 - **Data**: 2026-11-10
-- **Status**: Registrado com Status de Verificação Explícito
-- **Classificação**:
-  - `[VERIFICADO]`: Confirmado diretamente em repositório oficial, publicação acadêmica ou registro DOI.
-  - `[HIPÓTESE / A VALIDAR EMPIRICAMENTE]`: Inferência plausível da literatura, mas que requer download ou inspeção prévia de commits reais antes da Fase 6.
-
-### Tabela de Verificação:
-
-1. **Opção A: Faster CPython / PyPerformance**
-   - URL Oficial: `https://github.com/faster-cpython/benchmarking-public` e `https://github.com/python/pyperformance` `[VERIFICADO]`
-   - Licença: MIT / PSF License `[VERIFICADO]`
-   - Formato dos Dados: Arquivos `.json` de execuções do `pyperformance` por commit na branch principal `[VERIFICADO]`
-   - Histórico por Commit: Sim, histórico cronológico nos branches e releases do CPython `[VERIFICADO]`
-   - Ground Truth de Regressões: Parcial. A existência de issues com label `type-performance` é confirmada no CPython, mas o mapeamento exato de commit de regressão requer seleção manual na Fase 6 `[HIPÓTESE / A VALIDAR]`
-
-2. **Opção B: MongoDB Evergreen Performance Dataset**
-   - URL Oficial: Zenodo DOI `10.5281/zenodo.5138516` (Registro: "MongoDB Performance Test Result Dataset", por David Daly, 26 de Julho de 2021) `[VERIFICADO]`
-   - Licença: Creative Commons Attribution 4.0 International (CC-BY 4.0) `[VERIFICADO]`
-   - Formato dos Dados: Arquivo compactado `mongodb_performance_results.tgz` (~3.1 GB) contendo resultados brutos de testes do Evergreen `[VERIFICADO]`
-   - Histórico por Commit: Sim, dados gerados pelo framework interno de CI `[VERIFICADO]`
-   - "Centenas de Regressões Anotadas": **Correção**. O dataset de 3.1 GB contém os resultados brutos dos testes. Embora Daly et al. (2020) descrevam 383 testes e triagens na MongoDB, as anotações explícitas de ground truth humano de cada commit precisam ser conferidas dentro do arquivo extraído ou do pacote de replicação de Costa et al. (Zenodo `18889836`), não devendo ser presumidas como trivialmente rotuladas sem inspeção direta `[HIPÓTESE / A VALIDAR]`
-
-3. **Opção C: Rust Compiler (`rustc-perf`)**
-   - URL Oficial: `https://github.com/rust-lang/rustc-perf` e painel `https://perf.rust-lang.org` `[VERIFICADO]`
-   - Licença: MIT / Apache 2.0 dual `[VERIFICADO]`
-   - Formato dos Dados: Dados históricos disponíveis via API JSON pública do site e suporte a banco de dados relacional SQLite (`collector.sqlite`) em execuções locais de teste `[VERIFICADO]`
-   - Histórico por Commit: Sim, mapeado commit a commit via automação do Bors `[VERIFICADO]`
-   - Ground Truth de Regressões: Elevado. Os relatórios semanais de triagem no repositório `rust-lang/rust` e no Zulip documentam abertamente PRs causadores de regressões severas (ex: flags de reversão rápida) `[VERIFICADO]`
+- **Status**: Registrado com Status de Verificação Explícito (vide ADR-007 anterior).
 
 ---
 
-## ADR-008: Convenção de Indexação de Change Points (Início do Novo Regime)
+## ADR-008: Convenção Unificada de Indexação de Change Points
 
 - **Data**: 2026-11-10
 - **Status**: Aprovado
-- **Decisão**:
-  - Adota-se como convenção matemática única que o índice de um change point $\tau$ representa o **primeiro ponto pertencente ao novo regime** ($x_\tau$ já é governado pela nova distribuição/nível).
-  - No gerador sintético, a transição é aplicada em `signal[cp:]`.
-  - Nos detectores E-Divisive, PELT e Binseg sobre degrau determinístico sem ruído, a detecção retorna $\tau = 100$ exato (sem *off-by-one*). O wrapper do Ruptures elimina sistematicamente o último breakpoint formal retornado pela biblioteca ($n$), garantindo indexação puramente interna.
+- **Decisão**: O índice $\tau$ é o primeiro ponto pertencente ao novo regime. O Ruptures filtra o breakpoint final $n$.
 
 ---
 
-## ADR-009: Taxonomia de Métricas em Séries Estacionárias ($k_{true}=0$) e Casos Degenerados
+## ADR-009: Taxonomia de Falsos Alarmes e Matching Bipartido com Custo Finito
 
 - **Data**: 2026-11-10
 - **Status**: Aprovado
-- **Decisão**:
-  1. **Não utilizar o termo "FPR" em séries temporais de CI**:
-     - Em detecção de pontos de mudança, classificar commits negativos verdadeiros ($TN$) não tem significado físico claro e distorce a métrica proporcionalmente a $n$.
-     - Adota-se rigorosamente:
-       a) **Proporção de Séries com Alarme Falso ($FAR_{series}$)**: Proporção de séries estacionárias que apresentaram $\ge 1$ detecção espúria:
-          $$FAR_{series} = \frac{1}{R} \sum_{i=1}^R \mathbb{I}(N_{det, i} > 0)$$
-       b) **Falsos Alarmes por 1000 Commits ($FAR_{1k}$)**: Frequência normalizada de alarmes por commit:
-          $$FAR_{1k} = \frac{\sum_{i=1}^R N_{det, i}}{\sum_{i=1}^R n_i} \times 1000$$
-  2. **Tratamento de Casos Degenerados**:
-     - Sem detecções ($N_{det} = 0, N_{true} > 0$): $TP=0, FP=0, FN=N_{true}$, $\text{Precision}=\text{NaN}, \text{Recall}=0.0, F1=0.0$.
-     - Sem ground truth com alarmes ($N_{det} > 0, N_{true} = 0$): $TP=0, FP=N_{det}, FN=0$, $\text{Precision}=0.0, \text{Recall}=\text{NaN}, F1=0.0$.
-     - Sem ground truth e sem alarmes ($N_{det} = 0, N_{true} = 0$): $TP=0, FP=0, FN=0$, $\text{Precision}=\text{NaN}, \text{Recall}=\text{NaN}, F1=\text{NaN}$.
-     - Na agregação Macro, valores $\text{NaN}$ são tratados explicitamente e o número de séries válidas é reportado. Séries puramente estacionárias **nunca** são misturadas com séries com regressão no cálculo de Precision, Recall e F1.
-  3. **Matching Ótimo Bipartido com Custo Finito**:
-     - Para viabilizar a resolução via `scipy.optimize.linear_sum_assignment` sem falhas numéricas causadas por infinitos, utiliza-se penalidade de desacoplamento finita $M > |G| \times (k_{max} + 1)$. A matriz de custo define $C_{i,j} = |g_i - d_j|$ se dentro da janela e $M$ caso contrário.
-     - Essa formulação garante a maximização estrita de True Positives (1 match a custo $< M$ é sempre preferido a qualquer conjunto de emparelhamentos espúrios), minimizando subsidiariamente a distância temporal total.
+- **Decisão**: Emprego de $FAR_{series}$ e $FAR_{1k}$. Resolução de matching 1-para-1 ótimo via `linear_sum_assignment` com penalidade finita $M > |G| \cdot (k_{max} + 1)$ para maximizar True Positives antes de minimizar a distância temporal.
 
 ---
 
-## ADR-010: Comparação Estatística Pareada e Esquema de Persistência em Parquet
+## ADR-010: Comparação Estatística Pareada e Esquema Parquet
 
 - **Data**: 2026-11-10
 - **Status**: Aprovado
-- **Decisão**:
-  1. **Teste Pareado de Wilcoxon com Holm e Tamanho de Efeito**:
-     - Para comparar dois detectores nas mesmas $R$ sementes, aplica-se o teste dos postos sinalizados de Wilcoxon sobre o F1 por série ($D_i = F1_{A, i} - F1_{B, i}$).
-     - Descarta-se pares onde $D_i = \text{NaN}$. Os postos são atribuídos a $|D_i|$ para diferenças não nulas ($n_{diff} \le R$).
-     - Calcula-se explicitamente a soma dos postos positivos $W^+$ e negativos $W^-$.
-     - O tamanho de efeito rank-biserial é calculado como:
-       $$r = \frac{W^+ - W^-}{\frac{n_{diff}(n_{diff}+1)}{2}}$$
-     - Em comparações múltiplas entre detectores, aplica-se a correção sequencial de Bonferroni-Holm.
-  2. **Bootstrap Não-Paramétrico de Séries**:
-     - O bootstrap reamostra **séries completas** (com reposição), recalculando as métricas agregadas (Micro-F1) em cada iteração ($B=1000$), gerando o intervalo de confiança percentil a 95%.
-  3. **Esquema de Dados Brutos em Parquet**:
-     - As execuções brutas são armazenadas desacopladas de $k$ com as colunas: `cenario_id`, `split`, `perfil_ruido`, `params_ruido`, `n`, `magnitude`, `semente`, `detector`, `parametros`, `versao_codigo`, `ground_truth`, `indices_detectados`, `scores_detectados`, `tempo_cpu_ms`.
+- **Decisão**: Teste pareado de Wilcoxon com rank-biserial $r$, bootstrap de séries completas ($B=1000$) e armazenamento particionado em Parquet.
+
+---
+
+## ADR-011: Regra de Posição de Change Points e Decisão sobre $k_{true}=2$ em $n=100$
+
+- **Data**: 2026-11-10
+- **Status**: Aprovado
+- **Contexto**: Para uma série de tamanho $n=100$, a exigência de margem de estabilidade inicial ($w_{init} \ge 30$, margem de segurança $\ge 40$), margem de borda final ($\ge 25$) e distância mínima entre regimes ($\ge 30$) torna a existência de dois change points ($k_{true}=2$) matematicamente hiper-restringida:
+  - Ponto 1: mínimo $t = 40$.
+  - Distância mínima: 30 $\implies$ Ponto 2: mínimo $t = 70$.
+  - Margem final: $n - 25 = 75$.
+  - Isso restringe o Ponto 2 ao intervalo minúsculo $[70, 75]$ (apenas 6 posições possíveis), eliminando qualquer variabilidade estocástica do benchmark.
+- **Decisão Metodológica**:
+  1. Para $n=100$, adota-se apenas $k_{true} \in \{0, 1\}$.
+  2. Para $n \in \{500, 1000\}$, adota-se $k_{true} \in \{0, 1, 2\}$.
+  3. A direção de cada transição de nível é sorteada aleatoriamente por semente (regressões positivas e otimizações negativas com probabilidade 0.5 cada).
+  4. As sementes dos cenários são derivadas estritamente via `hashlib.sha256(f"{cenario_id}_{semente}".encode())`, imunes ao processo Python ou sistema operacional.

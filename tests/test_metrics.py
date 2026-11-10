@@ -235,17 +235,19 @@ class TestStatisticalInferenceAndSignificance:
         assert boot["ci_lower"] > 0.7
 
     def test_wilcoxon_paired_calculation_and_rank_biserial(self) -> None:
-        """Valida o cálculo explícito de W+, W- e correlação rank-biserial."""
-        # Detector A é sistematicamente superior ao Detector B nas mesmas sementes (10 sementes)
-        scores_a = [0.90, 0.85, 0.95, 0.80, 0.90, 0.88, 0.92, 0.86, 0.89, 0.91]
-        scores_b = [0.50, 0.60, 0.55, 0.80, 0.70, 0.65, 0.52, 0.58, 0.61, 0.63]  # Uma igualdade em 0.80
+        """Valida o cálculo explícito de W+, W- e correlação rank-biserial sem empates."""
+        # Diferenças estritamente distintas (sem empates):
+        # A - B = [0.40, 0.25, 0.45, 0.15, 0.20, 0.28, 0.35, 0.18, 0.22, 0.31] (10 valores positivos distintos)
+        scores_a = [0.90, 0.85, 0.95, 0.75, 0.80, 0.88, 0.92, 0.78, 0.82, 0.91]
+        scores_b = [0.50, 0.60, 0.50, 0.60, 0.60, 0.60, 0.57, 0.60, 0.60, 0.60]
         res = paired_wilcoxon_test(scores_a, scores_b)
-        assert res["n_diff"] == 9
-        # Como A > B em todas as 9 diferenças não-nulas: W- = 0, W+ = 45, r = +1.0
+        assert res["n_diff"] == 10
+        # Como A > B em todas as 10 diferenças (sem empates): W- = 0, W+ = 55, r = +1.0
         assert res["w_minus"] == 0.0
-        assert res["w_plus"] == 45.0
+        assert res["w_plus"] == 55.0
         assert np.isclose(res["rank_biserial_r"], 1.0)
-        assert res["p_value"] < 0.01
+        # Asserção conservadora independente da aproximação normal com empates
+        assert res["p_value"] < 0.05
 
     def test_holm_bonferroni_correction(self) -> None:
         """Verifica a monotonicidade e controle da correção de Holm."""

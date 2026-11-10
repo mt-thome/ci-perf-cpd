@@ -198,6 +198,65 @@ class EDivisiveDetector(BaseDetector):
             return best_cp
         return None
 
+    def _get_next_significant_change_point_detailed(
+        self,
+        dist_matrix: np.ndarray,
+        change_points: list[int],
+        memo: Dict[Tuple[int, int], Tuple[int, float]],
+        rng: np.random.Generator,
+    ) -> Tuple[int, float] | None:
+        """Localiza a próxima partição divisiva retornando (cp, p_value) se p_value <= alpha."""
+        n_total = len(dist_matrix)
+        windows = [0] + sorted(change_points) + [n_total]
+        candidates: List[Tuple[int, float, Tuple[int, int]]] = []
+
+        for a, b in pairwise(windows):
+            if (b - a) < 2 * self.min_size:
+                continue
+
+            bounds = (a, b)
+            if bounds in memo:
+                idx, val = memo[bounds]
+            else:
+                sub_dist = dist_matrix[a:b, a:b]
+                stats = self._calculate_t_stats(sub_dist)
+                idx = int(np.argmax(stats))
+                val = float(stats[idx])
+                memo[bounds] = (idx, val)
+
+            if val > 0.0:
+                candidates.append((idx + a, val, bounds))
+
+        if not candidates:
+            return None
+
+        best_candidate = max(candidates, key=lambda x: x[1])
+        best_cp, best_score, target_bounds = best_candidate
+
+        if self.permutations == 0:
+            return best_cp, 0.0
+
+        a_win, b_win = target_bounds
+        window_size = b_win - a_win
+        sub_dist_target = dist_matrix[a_win:b_win, a_win:b_win]
+
+        greater_or_equal = 0
+        indices = np.arange(window_size)
+
+        for _ in range(self.permutations):
+            permuted_indices = rng.permutation(indices)
+            shuffled_dist = sub_dist_target[np.ix_(permuted_indices, permuted_indices)]
+            perm_stats = self._calculate_t_stats(shuffled_dist)
+            max_perm = float(np.max(perm_stats)) if len(perm_stats) > 0 else 0.0
+            if max_perm >= best_score:
+                greater_or_equal += 1
+
+        p_value = (1.0 + greater_or_equal) / (1.0 + self.permutations)
+
+        if p_value <= self.alpha:
+            return best_cp, p_value
+        return None
+
     def detect(self, series: np.ndarray | list[float]) -> list[int]:
         """Executa a partição divisiva recursiva retornando a lista de change points."""
         res = self.detect_detailed(series)
@@ -210,22 +269,73 @@ class EDivisiveDetector(BaseDetector):
 
         dist_matrix = self.compute_distance_matrix(x)
         change_points: list[int] = []
+        p_values: list[float] = []
         memo: Dict[Tuple[int, int], Tuple[int, float]] = {}
 
         while True:
-            cp = self._get_next_significant_change_point(dist_matrix, change_points, memo, rng)
-            if cp is None:
+            candidate_info = self._get_next_significant_change_point_detailed(dist_matrix, change_points, memo, rng)
+            if candidate_info is None:
                 break
+            cp, p_val = candidate_info
             change_points.append(cp)
+            p_values.append(p_val)
 
-        change_points = sorted(change_points)
+        # Ordenar preservando o pareamento com o p-valor
+        if change_points:
+            sorted_pairs = sorted(zip(change_points, p_values), key=lambda x: x[0])
+            change_points = [p[0] for p in sorted_pairs]
+            p_values = [p[1] for p in sorted_pairs]
+
         metadata = {
             "alpha": self.alpha,
             "permutations": self.permutations,
             "min_size": self.min_size,
             "metric": self.metric,
             "num_detected": len(change_points),
+            "p_values": p_values,
         }
 
-        return DetectionResult(change_points=change_points, metadata=metadata)
+        return DetectionResult(
+            change_points=change_points,
+            scores=np.asarray(p_values, dtype=np.float64) if p_values else np.array([]),
+            metadata=metadata,
+        )
 
+
+
+class EDivisiveMeansDetector(EDivisiveDetector):
+    """E-Div-Means: Algoritmo de Matteson & James (2014) utilizado por Daly et al. (ICPE 2020) na MongoDB."""
+
+    def __init__(
+        self,
+        alpha: float = 0.05,
+        permutations: int = 100,
+        min_size: int = 30,
+        seed: int | None = 42,
+    ) -> None:
+        super().__init__(
+            alpha=alpha,
+            permutations=permutations,
+            min_size=min_size,
+            metric="means",
+            seed=seed,
+        )
+
+
+class EDivisiveMediansDetector(EDivisiveDetector):
+    """E-Div-Medians: Variante robusta com medianas de James, Kejariwal & Matteson (arXiv 2014 / IEEE 2016)."""
+
+    def __init__(
+        self,
+        alpha: float = 0.05,
+        permutations: int = 100,
+        min_size: int = 30,
+        seed: int | None = 42,
+    ) -> None:
+        super().__init__(
+            alpha=alpha,
+            permutations=permutations,
+            min_size=min_size,
+            metric="medians",
+            seed=seed,
+        )
