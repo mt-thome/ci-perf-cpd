@@ -60,100 +60,106 @@ print("="*80)
 
 sizes = config["grid"]["tamanhos_n"]
 noises = [p["tipo"] for p in config["grid"]["perfis_ruido"]]
-calib_manifest = {}
-time_calib_start = time.perf_counter()
+calib_manifest_path = CALIB_DIR / "calibration_manifest.json"
 
-# Medição de tempo por algoritmo na calibração
-calib_timing = {"CUSUM": 0.0, "PELT_L2": 0.0, "PELT_L1": 0.0, "Binseg_L2": 0.0}
+if calib_manifest_path.exists():
+    print(f"Carregando manifesto de calibração existente de: {calib_manifest_path}", flush=True)
+    with open(calib_manifest_path) as f:
+        calib_manifest = json.load(f)
+    calib_time_total = 0.0
+else:
+    calib_manifest = {}
+    time_calib_start = time.perf_counter()
 
-calib_results_table = []
+    # Medição de tempo por algoritmo na calibração
+    calib_timing = {"CUSUM": 0.0, "PELT_L2": 0.0, "PELT_L1": 0.0, "Binseg_L2": 0.0}
+    calib_results_table = []
 
-for n in sizes:
-    for ntype_str in noises:
-        print(f"  [Calibração] n={n}, perfil={ntype_str}...", flush=True)
-        ntype = NoiseType(ntype_str)
-        # 1. Gerar séries de calibração estacionárias (50 séries para agilidade no piloto)
-        t_gen0 = time.perf_counter()
-        calib_series = [
-            generate_synthetic_series(n=n, num_change_points=0, noise_type=ntype, seed=s).values
-            for s in range(10000, 10050)
-        ]
-        
-        # 2. Gerar séries de validação estacionárias (50 séries para agilidade no piloto)
-        val_series = [
-            generate_synthetic_series(n=n, num_change_points=0, noise_type=ntype, seed=s).values
-            for s in range(20000, 20050)
-        ]
+    for n in sizes:
+        for ntype_str in noises:
+            print(f"  [Calibração] n={n}, perfil={ntype_str}...", flush=True)
+            ntype = NoiseType(ntype_str)
+            # 1. Gerar séries de calibração estacionárias (50 séries para agilidade no piloto)
+            calib_series = [
+                generate_synthetic_series(n=n, num_change_points=0, noise_type=ntype, seed=s).values
+                for s in range(10000, 10050)
+            ]
+            
+            # 2. Gerar séries de validação estacionárias (50 séries para agilidade no piloto)
+            val_series = [
+                generate_synthetic_series(n=n, num_change_points=0, noise_type=ntype, seed=s).values
+                for s in range(20000, 20050)
+            ]
 
-        # Calibração CUSUM (alvo FAR_1k <= 1.0)
-        t0 = time.perf_counter()
-        h_cand = [4.0, 6.0, 8.0, 10.0, 12.0, 14.0]
-        target_series_far = min(0.10, (1.0 / 1000.0) * n)
-        h_calib = RobustCUSUMDetector.calibrate_h_for_fpr(
-            calib_series[:50], target_fpr=target_series_far, h_candidates=h_cand
-        )
-        calib_timing["CUSUM"] += (time.perf_counter() - t0)
+            # Calibração CUSUM (alvo FAR_1k <= 1.0)
+            t0 = time.perf_counter()
+            h_cand = [4.0, 6.0, 8.0, 10.0, 12.0, 14.0]
+            target_series_far = min(0.10, (1.0 / 1000.0) * n)
+            h_calib = RobustCUSUMDetector.calibrate_h_for_fpr(
+                calib_series[:50], target_fpr=target_series_far, h_candidates=h_cand
+            )
+            calib_timing["CUSUM"] += (time.perf_counter() - t0)
 
-        # Calibração PELT L2
-        t0 = time.perf_counter()
-        pen_cand_l2 = [50.0, 100.0, 200.0, 400.0, 800.0]
-        pen_pelt_l2 = RupturesDetector.calibrate_penalty_for_fpr(
-            calib_series[:30], algorithm="pelt", cost_model="l2", target_fpr=target_series_far,
-            pen_candidates=pen_cand_l2, min_size=25
-        )
-        calib_timing["PELT_L2"] += (time.perf_counter() - t0)
+            # Calibração PELT L2
+            t0 = time.perf_counter()
+            pen_cand_l2 = [50.0, 100.0, 200.0, 400.0, 800.0]
+            pen_pelt_l2 = RupturesDetector.calibrate_penalty_for_fpr(
+                calib_series[:30], algorithm="pelt", cost_model="l2", target_fpr=target_series_far,
+                pen_candidates=pen_cand_l2, min_size=25
+            )
+            calib_timing["PELT_L2"] += (time.perf_counter() - t0)
 
-        # Calibração PELT L1
-        t0 = time.perf_counter()
-        pen_cand_l1 = [30.0, 50.0, 100.0, 200.0, 400.0]
-        pen_pelt_l1 = RupturesDetector.calibrate_penalty_for_fpr(
-            calib_series[:20], algorithm="pelt", cost_model="l1", target_fpr=target_series_far,
-            pen_candidates=pen_cand_l1, min_size=25
-        )
-        calib_timing["PELT_L1"] += (time.perf_counter() - t0)
+            # Calibração PELT L1
+            t0 = time.perf_counter()
+            pen_cand_l1 = [30.0, 50.0, 100.0, 200.0, 400.0]
+            pen_pelt_l1 = RupturesDetector.calibrate_penalty_for_fpr(
+                calib_series[:20], algorithm="pelt", cost_model="l1", target_fpr=target_series_far,
+                pen_candidates=pen_cand_l1, min_size=25
+            )
+            calib_timing["PELT_L1"] += (time.perf_counter() - t0)
 
-        # Calibração Binseg L2
-        t0 = time.perf_counter()
-        pen_binseg_l2 = RupturesDetector.calibrate_penalty_for_fpr(
-            calib_series[:30], algorithm="binseg", cost_model="l2", target_fpr=target_series_far,
-            pen_candidates=pen_cand_l2, min_size=25
-        )
-        calib_timing["Binseg_L2"] += (time.perf_counter() - t0)
+            # Calibração Binseg L2
+            t0 = time.perf_counter()
+            pen_binseg_l2 = RupturesDetector.calibrate_penalty_for_fpr(
+                calib_series[:30], algorithm="binseg", cost_model="l2", target_fpr=target_series_far,
+                pen_candidates=pen_cand_l2, min_size=25
+            )
+            calib_timing["Binseg_L2"] += (time.perf_counter() - t0)
 
-        # Validação do FAR realizado no conjunto de validação (100 séries)
-        val_det_cusum = [RobustCUSUMDetector(h=h_calib).detect(s) for s in val_series]
-        val_alarms_cusum = sum(len(d) for d in val_det_cusum)
-        far_1k_cusum = (val_alarms_cusum / (len(val_series) * n)) * 1000.0
+            # Validação do FAR realizado no conjunto de validação (100 séries)
+            val_det_cusum = [RobustCUSUMDetector(h=h_calib).detect(s) for s in val_series]
+            val_alarms_cusum = sum(len(d) for d in val_det_cusum)
+            far_1k_cusum = (val_alarms_cusum / (len(val_series) * n)) * 1000.0
 
-        val_det_pelt = [RupturesDetector(algorithm="pelt", cost_model="l2", pen=pen_pelt_l2).detect(s) for s in val_series]
-        val_alarms_pelt = sum(len(d) for d in val_det_pelt)
-        far_1k_pelt = (val_alarms_pelt / (len(val_series) * n)) * 1000.0
+            val_det_pelt = [RupturesDetector(algorithm="pelt", cost_model="l2", pen=pen_pelt_l2).detect(s) for s in val_series]
+            val_alarms_pelt = sum(len(d) for d in val_det_pelt)
+            far_1k_pelt = (val_alarms_pelt / (len(val_series) * n)) * 1000.0
 
-        calib_manifest.setdefault("CUSUM_perfil", {}).setdefault(ntype_str, {})[str(n)] = float(h_calib)
-        calib_manifest.setdefault("PELT_L2_perfil", {}).setdefault(ntype_str, {})[str(n)] = float(pen_pelt_l2)
-        calib_manifest.setdefault("PELT_L1_perfil", {}).setdefault(ntype_str, {})[str(n)] = float(pen_pelt_l1)
-        calib_manifest.setdefault("BINSEG_L2_perfil", {}).setdefault(ntype_str, {})[str(n)] = float(pen_binseg_l2)
+            calib_manifest.setdefault("CUSUM_perfil", {}).setdefault(ntype_str, {})[str(n)] = float(h_calib)
+            calib_manifest.setdefault("PELT_L2_perfil", {}).setdefault(ntype_str, {})[str(n)] = float(pen_pelt_l2)
+            calib_manifest.setdefault("PELT_L1_perfil", {}).setdefault(ntype_str, {})[str(n)] = float(pen_pelt_l1)
+            calib_manifest.setdefault("BINSEG_L2_perfil", {}).setdefault(ntype_str, {})[str(n)] = float(pen_binseg_l2)
 
-        if ntype_str == "gaussian":
-            calib_manifest.setdefault("CUSUM_gauss", {})[str(n)] = float(h_calib)
-            calib_manifest.setdefault("PELT_L2_gauss", {})[str(n)] = float(pen_pelt_l2)
-            calib_manifest.setdefault("PELT_L1_gauss", {})[str(n)] = float(pen_pelt_l1)
-            calib_manifest.setdefault("BINSEG_L2_gauss", {})[str(n)] = float(pen_binseg_l2)
+            if ntype_str == "gaussian":
+                calib_manifest.setdefault("CUSUM_gauss", {})[str(n)] = float(h_calib)
+                calib_manifest.setdefault("PELT_L2_gauss", {})[str(n)] = float(pen_pelt_l2)
+                calib_manifest.setdefault("PELT_L1_gauss", {})[str(n)] = float(pen_pelt_l1)
+                calib_manifest.setdefault("BINSEG_L2_gauss", {})[str(n)] = float(pen_binseg_l2)
 
-        calib_results_table.append({
-            "n": n, "perfil": ntype_str,
-            "h_cusum": h_calib, "far_1k_cusum_val": far_1k_cusum,
-            "pen_pelt_l2": pen_pelt_l2, "far_1k_pelt_val": far_1k_pelt,
-            "pen_binseg_l2": pen_binseg_l2,
-        })
+            calib_results_table.append({
+                "n": n, "perfil": ntype_str,
+                "h_cusum": h_calib, "far_1k_cusum_val": far_1k_cusum,
+                "pen_pelt_l2": pen_pelt_l2, "far_1k_pelt_val": far_1k_pelt,
+                "pen_binseg_l2": pen_binseg_l2,
+            })
 
-calib_df = pd.DataFrame(calib_results_table)
-calib_time_total = time.perf_counter() - time_calib_start
-print(f"Calibração e Validação concluídas em {calib_time_total:.1f} segundos.")
-print(calib_df.to_string(index=False))
+    calib_df = pd.DataFrame(calib_results_table)
+    calib_time_total = time.perf_counter() - time_calib_start
+    print(f"Calibração e Validação concluídas em {calib_time_total:.1f} segundos.")
+    print(calib_df.to_string(index=False))
 
-with open(CALIB_DIR / "calibration_manifest.json", "w") as f:
-    json.dump(calib_manifest, f, indent=2)
+    with open(calib_manifest_path, "w") as f:
+        json.dump(calib_manifest, f, indent=2)
 
 # ==============================================================================
 # ETAPA 2: EXECUÇÃO DO ESTUDO PILOTO (R=3 SEMENTES)

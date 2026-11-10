@@ -6,7 +6,7 @@ e formulação robusta baseada em medianas de distâncias pareadas (James et al.
 
 from __future__ import annotations
 
-from typing import Dict, List, Literal, Tuple
+from typing import Any, Dict, List, Literal, Tuple
 import numpy as np
 from more_itertools import pairwise
 
