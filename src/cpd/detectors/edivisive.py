@@ -1,0 +1,231 @@
+"""Implementação do algoritmo E-Divisive (Energy Statistics Change Point Detection).
+
+Suporta formulação clássica baseada em médias amostrais (Matteson & James, 2014; Daly et al., 2020)
+e formulação robusta baseada em medianas de distâncias pareadas (James et al., 2014).
+"""
+
+from __future__ import annotations
+
+from typing import Dict, List, Literal, Tuple
+import numpy as np
+from more_itertools import pairwise
+
+from cpd.detectors.base import BaseDetector, DetectionResult
+
+
+class EDivisiveDetector(BaseDetector):
+    """Detector não-paramétrico hierárquico E-Divisive baseado em distâncias de energia.
+
+    Parameters
+    ----------
+    alpha : float
+        Nível de significância estatística para o teste de permutação de Monte Carlo (padrão: 0.05).
+    permutations : int
+        Número de permutações aleatórias no teste de hipótese (padrão: 100).
+    min_size : int
+        Tamanho mínimo de segmento permitido entre change points sucessivos (padrão: 30).
+    metric : Literal["means", "medians"]
+        Métrica de agregação das distâncias pareadas:
+        - "means": Formulação clássica de Matteson & James (2014) usada em Daly et al. (2020).
+        - "medians": Formulação robusta a outliers de James, Kejariwal & Matteson (2014).
+    seed : int | None
+        Semente pseudo-aleatória fixa para reprodutibilidade das permutações de Monte Carlo.
+    """
+
+    def __init__(
+        self,
+        alpha: float = 0.05,
+        permutations: int = 100,
+        min_size: int = 30,
+        metric: Literal["means", "medians"] = "means",
+        seed: int | None = 42,
+    ) -> None:
+        if not (0.0 < alpha < 1.0):
+            raise ValueError(f"alpha deve estar no intervalo (0, 1), recebido: {alpha}")
+        if permutations < 0:
+            raise ValueError(f"permutations deve ser >= 0, recebido: {permutations}")
+        if min_size < 2:
+            raise ValueError(f"min_size deve ser >= 2, recebido: {min_size}")
+        if metric not in ("means", "medians"):
+            raise ValueError(f"metric deve ser 'means' ou 'medians', recebido: {metric}")
+
+        self.alpha = float(alpha)
+        self.permutations = int(permutations)
+        self.min_size = int(min_size)
+        self.metric = metric
+        self.seed = seed
+
+    @staticmethod
+    def compute_distance_matrix(x: np.ndarray) -> np.ndarray:
+        """Calcula a matriz simétrica N x N de distâncias euclidianas |x_i - x_j|."""
+        # Operação totalmente vetorizada
+        return np.abs(x[:, np.newaxis] - x)
+
+    def _calculate_t_stats_means(self, dist_matrix: np.ndarray) -> np.ndarray:
+        """Calcula a estatística de divergência Q(tau) em O(N) após matriz pré-computada."""
+        n_total = len(dist_matrix)
+        stats = np.zeros(n_total, dtype=np.float64)
+
+        if n_total < 2 * self.min_size:
+            return stats
+
+        # Acumula somas parciais
+        # xy: soma de distâncias entre X e Y
+        # x: soma de distâncias dentro de X
+        # y: soma de distâncias dentro de Y
+        xy = 0.0
+        x = 0.0
+        y = float(np.sum(np.triu(dist_matrix, k=1)))
+
+        for tau in range(n_total):
+            n = tau
+            m = n_total - tau
+
+            if n >= self.min_size and m >= self.min_size:
+                # Médias amostrais
+                x_avg = (2.0 * x) / (n * n) if n > 0 else 0.0
+                y_avg = (2.0 * y) / (m * m) if m > 0 else 0.0
+                xy_avg = xy / (n * m) if (n > 0 and m > 0) else 0.0
+
+                # E-statistic: 2*E|X - Y| - E|X - X'| - E|Y - Y'|
+                e_stat = 2.0 * xy_avg - x_avg - y_avg
+                # Multiplicador amostral: (n * m) / (n + m)
+                stats[tau] = max(0.0, ((n * m) / (n + m)) * e_stat)
+
+            # Atualização incremental de somas ao mover a fronteira tau
+            if tau < n_total:
+                col_delta = float(np.sum(dist_matrix[:tau, tau]))
+                row_delta = float(np.sum(dist_matrix[tau, tau + 1 :]))
+                xy = xy - col_delta + row_delta
+                x = x + col_delta
+                y = y - row_delta
+
+        return stats
+
+    def _calculate_t_stats_medians(self, dist_matrix: np.ndarray) -> np.ndarray:
+        """Calcula a divergência baseada em medianas (Twitter EDM)."""
+        n_total = len(dist_matrix)
+        stats = np.zeros(n_total, dtype=np.float64)
+
+        if n_total < 2 * self.min_size:
+            return stats
+
+        for tau in range(self.min_size, n_total - self.min_size + 1):
+            n = tau
+            m = n_total - tau
+
+            # Sub-blocos
+            within_x = dist_matrix[:tau, :tau]
+            within_y = dist_matrix[tau:, tau:]
+            between_xy = dist_matrix[:tau, tau:]
+
+            # Triangular estrita para pares distintos
+            i_x, j_x = np.triu_indices(n, k=1)
+            i_y, j_y = np.triu_indices(m, k=1)
+
+            m_xx = float(np.median(within_x[i_x, j_x])) if len(i_x) > 0 else 0.0
+            m_yy = float(np.median(within_y[i_y, j_y])) if len(i_y) > 0 else 0.0
+            m_xy = float(np.median(between_xy)) if between_xy.size > 0 else 0.0
+
+            e_stat = 2.0 * m_xy - m_xx - m_yy
+            stats[tau] = max(0.0, ((n * m) / (n + m)) * e_stat)
+
+        return stats
+
+    def _calculate_t_stats(self, dist_matrix: np.ndarray) -> np.ndarray:
+        if self.metric == "medians":
+            return self._calculate_t_stats_medians(dist_matrix)
+        return self._calculate_t_stats_means(dist_matrix)
+
+    def _get_next_significant_change_point(
+        self,
+        dist_matrix: np.ndarray,
+        change_points: list[int],
+        memo: Dict[Tuple[int, int], Tuple[int, float]],
+        rng: np.random.Generator,
+    ) -> int | None:
+        """Localiza a próxima partição divisiva mais significativa via teste de permutação."""
+        n_total = len(dist_matrix)
+        windows = [0] + sorted(change_points) + [n_total]
+        candidates: List[Tuple[int, float, Tuple[int, int]]] = []
+
+        for a, b in pairwise(windows):
+            if (b - a) < 2 * self.min_size:
+                continue
+
+            bounds = (a, b)
+            if bounds in memo:
+                idx, val = memo[bounds]
+            else:
+                sub_dist = dist_matrix[a:b, a:b]
+                stats = self._calculate_t_stats(sub_dist)
+                idx = int(np.argmax(stats))
+                val = float(stats[idx])
+                memo[bounds] = (idx, val)
+
+            if val > 0.0:
+                candidates.append((idx + a, val, bounds))
+
+        if not candidates:
+            return None
+
+        # Seleciona o melhor candidato global
+        best_candidate = max(candidates, key=lambda x: x[1])
+        best_cp, best_score, target_bounds = best_candidate
+
+        # Teste de significância por permutação de Monte Carlo
+        if self.permutations == 0:
+            return best_cp
+
+        a_win, b_win = target_bounds
+        window_size = b_win - a_win
+        sub_dist_target = dist_matrix[a_win:b_win, a_win:b_win]
+
+        greater_or_equal = 0
+        indices = np.arange(window_size)
+
+        for _ in range(self.permutations):
+            permuted_indices = rng.permutation(indices)
+            shuffled_dist = sub_dist_target[np.ix_(permuted_indices, permuted_indices)]
+            perm_stats = self._calculate_t_stats(shuffled_dist)
+            max_perm = float(np.max(perm_stats)) if len(perm_stats) > 0 else 0.0
+            if max_perm >= best_score:
+                greater_or_equal += 1
+
+        p_value = (1.0 + greater_or_equal) / (1.0 + self.permutations)
+
+        if p_value <= self.alpha:
+            return best_cp
+        return None
+
+    def detect(self, series: np.ndarray | list[float]) -> list[int]:
+        """Executa a partição divisiva recursiva retornando a lista de change points."""
+        res = self.detect_detailed(series)
+        return res.change_points
+
+    def detect_detailed(self, series: np.ndarray | list[float]) -> DetectionResult:
+        """Executa a detecção retornando os pontos e metadados."""
+        x = self._validate_series(series)
+        rng = np.random.default_rng(self.seed)
+
+        dist_matrix = self.compute_distance_matrix(x)
+        change_points: list[int] = []
+        memo: Dict[Tuple[int, int], Tuple[int, float]] = {}
+
+        while True:
+            cp = self._get_next_significant_change_point(dist_matrix, change_points, memo, rng)
+            if cp is None:
+                break
+            change_points.append(cp)
+
+        change_points = sorted(change_points)
+        metadata = {
+            "alpha": self.alpha,
+            "permutations": self.permutations,
+            "min_size": self.min_size,
+            "metric": self.metric,
+            "num_detected": len(change_points),
+        }
+
+        return DetectionResult(change_points=change_points, metadata=metadata)
+
