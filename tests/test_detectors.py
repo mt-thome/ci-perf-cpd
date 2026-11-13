@@ -156,3 +156,68 @@ class TestDetectorsRobustnessAndCalibration:
         filtered_cps = filter_edivisive_by_alpha(perm_res.metadata["division_history"], target_alpha=0.05)
 
         assert direct_cps == filtered_cps
+
+    def test_edivisive_medians_exact_parameter(self) -> None:
+        """Verifica que exact_medians=True executa o cálculo exato sem subamostragem."""
+        series = generate_synthetic_series(n=180, change_points=[90], magnitudes_std=3.0, seed=42).values
+        det_exact = EDivisiveMediansDetector(
+            alpha=0.05, permutations=20, min_size=25, seed=42, exact_medians=True
+        )
+        res_exact = det_exact.detect_detailed(series)
+        assert res_exact.metadata["exact_medians"] is True
+        assert len(res_exact.change_points) == 1
+        assert abs(res_exact.change_points[0] - 90) <= 3
+
+        det_approx = EDivisiveMediansDetector(
+            alpha=0.05, permutations=20, min_size=25, seed=42, exact_medians=False
+        )
+        res_approx = det_approx.detect_detailed(series)
+        assert res_approx.metadata["exact_medians"] is False
+        assert len(res_approx.change_points) == 1
+        assert abs(res_approx.change_points[0] - 90) <= 5
+
+    @pytest.mark.parametrize("n,cp,noise_type", [
+        (60, 30, NoiseType.GAUSSIAN),
+        (90, 45, NoiseType.OUTLIERS),
+        (100, 50, NoiseType.STUDENT_T),
+    ])
+    def test_edivisive_medians_numba_bit_matches_naive_exact(
+        self, n: int, cp: int, noise_type: NoiseType
+    ) -> None:
+        """Compara BIT (Numba) vs ingênua exata: estatística por passada e p-valores com mesma semente."""
+        series = generate_synthetic_series(
+            n=n, change_points=[cp], magnitudes_std=2.5, noise_type=noise_type, seed=77
+        ).values
+        if noise_type == NoiseType.OUTLIERS:
+            series = series.copy()
+            series[15] += 80.0
+            series[n - 10] -= 60.0
+
+        det_bit = EDivisiveMediansDetector(
+            alpha=0.20, permutations=30, min_size=15, seed=123, exact_medians=True
+        )
+        dm = det_bit.compute_distance_matrix(series)
+
+        # 1. Estatística Q(tau) por passada
+        q_bit = det_bit._calculate_t_stats_medians(dm)
+        q_naive = det_bit._calculate_t_stats_medians_exact_naive(dm)
+        np.testing.assert_allclose(q_bit, q_naive, rtol=1e-12, atol=1e-12)
+
+        # 2. P-valores e change points completos com a mesma semente
+        res_bit = det_bit.detect_detailed(series)
+
+        # Simula detect_detailed usando apenas a referência ingênua exata
+        orig_method = det_bit._calculate_t_stats_medians
+        try:
+            det_bit._calculate_t_stats_medians = det_bit._calculate_t_stats_medians_exact_naive
+            det_bit.exact_medians = False  # força o ramo genérico chamando _calculate_t_stats
+            # Para não cair na aproximação, sobrescreve _calculate_t_stats diretamente
+            det_bit._calculate_t_stats = det_bit._calculate_t_stats_medians_exact_naive
+            res_naive = det_bit.detect_detailed(series)
+        finally:
+            det_bit._calculate_t_stats_medians = orig_method
+
+        assert res_bit.change_points == res_naive.change_points
+        np.testing.assert_allclose(
+            res_bit.metadata["p_values"], res_naive.metadata["p_values"], rtol=1e-12, atol=1e-12
+        )

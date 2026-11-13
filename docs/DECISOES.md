@@ -129,3 +129,27 @@ Este documento registra formalmente as decisões de projeto, metodologia de pesq
   2. Para $n \in \{500, 1000\}$, adota-se $k_{true} \in \{0, 1, 2\}$.
   3. A direção de cada transição de nível é sorteada aleatoriamente por semente (regressões positivas e otimizações negativas com probabilidade 0.5 cada).
   4. As sementes dos cenários são derivadas estritamente via `hashlib.sha256(f"{cenario_id}_{semente}".encode())`, imunes ao processo Python ou sistema operacional.
+
+
+---
+
+## ADR-012: Rejeição da Aproximação por Subamostragem e Adoção do `E-Div-Medians` Exato via Numba (Árvore de Fenwick)
+
+- **Data**: 2026-11-13
+- **Status**: Aprovado / Implementado (Detector Oficial)
+- **Contexto**: No commit `607088a`, o método `_calculate_t_stats_medians` de `EDivisiveDetector` / `EDivisiveMediansDetector` (`src/cpd/detectors/edivisive.py`) havia sido alterado para acelerar o cálculo de medianas em séries médias e longas por meio de uma **aproximação por subamostragem determinística** em dois níveis:
+  1. **Subamostragem da grade temporal (`tau`)**: `step = 1` para $n \le 150$, `step = 2` para $150 < n \le 300$, e `step = 5` para $n > 300$ (além do ponto final $n - \text{min\_size}$). Candidatos intermediários recebiam $Q(\tau) = 0$.
+  2. **Subamostragem determinística de pares (`np.linspace`)**: 300 pares intra-segmento (quando $>500$) e 500 pares inter-segmentos (quando $>1000$).
+- **Justificativa Histórica — Tabela de Erros da Aproximação (passo único de $Q(\tau)$, `min_size=25`, `seed=42`)**:
+  - `n100_gauss_cp50`: `cp_ex=50`, `cp_ap=50` (erro = 0 commits), erro relativo em $\max Q(\tau)$ = **0.20%**, speedup **1.0x** (`9.8 ms` vs `9.8 ms`).
+  - `n300_gauss_cp150`: `cp_ex=150`, `cp_ap=155` (erro = 5 commits), erro relativo em $\max Q(\tau)$ = **9.26%**, speedup **4.8x** (`178.0 ms` vs `36.9 ms`).
+  - `n500_outliers_cp250`: `cp_ex=247`, `cp_ap=240` (erro = 7 commits), erro relativo em $\max Q(\tau)$ = **2.04%**, speedup **19.9x** (`883.3 ms` vs `44.4 ms`).
+  - `n500_student_t_cp250`: `cp_ex=250`, `cp_ap=270` (erro = 20 commits), erro relativo em $\max Q(\tau)$ = **3.25%**, speedup **19.9x** (`822.0 ms` vs `41.3 ms`).
+  - `n1000_gauss_cp500`: `cp_ex=500`, `cp_ap=510` (erro = 10 commits), erro relativo em $\max Q(\tau)$ = **3.65%**, speedup **23.6x** (`7555.6 ms` vs `320.0 ms`).
+- **Impacto na Hipótese H1**:
+  - Como as tolerâncias de avaliação em `src/cpd/evaluation/metrics.py` são $k \in \{1, 3, 5, 10\}$ commits, o deslocamento de localização induzido pela subamostragem (ex.: 7 commits em `outliers` e 20 commits em `student_t` para $n=500$) comprometia diretamente Precision, Recall e F1-score nos perfis exatos onde H1 prevê superioridade do `E-Div-Medians` sobre o `E-Div-Means`.
+- **Decisão**:
+  - Adotar como **detector oficial** a implementação **100% exata** em $O(N^2 \log N)$ baseada em compressão de ranks e Árvore de Fenwick (BIT) compilada via `numba.njit(cache=True)` (`exact_medians: bool = True` por padrão).
+  - Em testes unitários (`n=60, 90, 100`, incluindo `outliers` e `student_t`), a versão Numba BIT coincide bit-a-bit (`atol=1e-12`) com a referência ingênua exata tanto em $Q(\tau)$ quanto nos p-valores e change points das permutações.
+  - Em benchmark limpo com $B=100, \alpha=0.20$, a versão exata Numba é **5,4× a 43× mais rápida** que a antiga aproximação (`31,4 ms` em `n=100`, `1,63 s` em `n=500`, `8,74 s` em `n=1000`), viabilizando o experimento completo sem aproximações.
+  - Manter `exact_medians=False` apenas como opção legada/comparativa **não utilizada nos resultados principais**, registrando `"exact_medians"` nos metadados de `DetectionResult`.

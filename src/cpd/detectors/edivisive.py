@@ -9,8 +9,120 @@ from __future__ import annotations
 from typing import Any, Dict, List, Literal, Tuple
 import numpy as np
 from more_itertools import pairwise
+from numba import njit
 
 from cpd.detectors.base import BaseDetector, DetectionResult
+
+
+@njit(cache=True)
+def _bit_add(bit: np.ndarray, idx: int, delta: int, k_max: int) -> None:
+    while idx <= k_max:
+        bit[idx] += delta
+        idx += idx & (-idx)
+
+
+@njit(cache=True)
+def _bit_kth(bit: np.ndarray, k_zero_based: int, k_max: int, max_pow2: int) -> int:
+    pos = 0
+    acc = 0
+    step = max_pow2
+    target = k_zero_based + 1
+    while step > 0:
+        nxt = pos + step
+        if nxt <= k_max and acc + bit[nxt] < target:
+            acc += bit[nxt]
+            pos = nxt
+        step >>= 1
+    return pos + 1
+
+
+@njit(cache=True)
+def _bit_median(
+    bit: np.ndarray,
+    count: int,
+    unique_vals: np.ndarray,
+    k_max: int,
+    max_pow2: int,
+) -> float:
+    if count <= 0:
+        return 0.0
+    if count & 1:
+        r = _bit_kth(bit, count >> 1, k_max, max_pow2)
+        return float(unique_vals[r - 1])
+    r1 = _bit_kth(bit, (count >> 1) - 1, k_max, max_pow2)
+    r2 = _bit_kth(bit, count >> 1, k_max, max_pow2)
+    return 0.5 * (float(unique_vals[r1 - 1]) + float(unique_vals[r2 - 1]))
+
+
+@njit(cache=True)
+def _t_stats_medians_bit(
+    rank_mat: np.ndarray,
+    unique_vals: np.ndarray,
+    min_size: int,
+) -> np.ndarray:
+    """Cálculo exato em O(N^2 log N) da estatística de medianas via Árvore de Fenwick."""
+    n_total = rank_mat.shape[0]
+    stats = np.zeros(n_total, dtype=np.float64)
+    if n_total < 2 * min_size:
+        return stats
+
+    k_max = len(unique_vals)
+    max_pow2 = 1
+    while (max_pow2 << 1) <= k_max:
+        max_pow2 <<= 1
+
+    bit_xx = np.zeros(k_max + 1, dtype=np.int32)
+    bit_yy = np.zeros(k_max + 1, dtype=np.int32)
+    bit_xy = np.zeros(k_max + 1, dtype=np.int32)
+
+    for i in range(n_total):
+        for j in range(i + 1, n_total):
+            _bit_add(bit_yy, rank_mat[i, j], 1, k_max)
+
+    for tau in range(n_total - min_size + 1):
+        if tau > 0:
+            t = tau - 1
+            for i in range(t):
+                r = rank_mat[i, t]
+                _bit_add(bit_xy, r, -1, k_max)
+                _bit_add(bit_xx, r, 1, k_max)
+            for j in range(t + 1, n_total):
+                r = rank_mat[t, j]
+                _bit_add(bit_yy, r, -1, k_max)
+                _bit_add(bit_xy, r, 1, k_max)
+
+        n = tau
+        m = n_total - tau
+        if n >= min_size and m >= min_size:
+            c_xx = (n * (n - 1)) // 2
+            c_yy = (m * (m - 1)) // 2
+            c_xy = n * m
+            m_xx = _bit_median(bit_xx, c_xx, unique_vals, k_max, max_pow2)
+            m_yy = _bit_median(bit_yy, c_yy, unique_vals, k_max, max_pow2)
+            m_xy = _bit_median(bit_xy, c_xy, unique_vals, k_max, max_pow2)
+            e_stat = 2.0 * m_xy - m_xx - m_yy
+            val = ((n * m) / (n + m)) * e_stat
+            if val > 0.0:
+                stats[tau] = val
+
+    return stats
+
+
+def _prepare_rank_matrix(dist_matrix: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
+    """Comprime as distâncias únicas em ranks 1-based para uso na Árvore de Fenwick."""
+    n = len(dist_matrix)
+    i_u, j_u = np.triu_indices(n, k=1)
+    unique_vals = np.unique(dist_matrix[i_u, j_u])
+    rank_mat = (np.searchsorted(unique_vals, dist_matrix) + 1).astype(np.int32)
+    return unique_vals, rank_mat
+
+
+def warmup_edivisive_jit() -> None:
+    """Aquece o compilador JIT do Numba para excluir tempo de compilação do profiling."""
+    dummy = np.linspace(0.0, 1.0, 20, dtype=np.float64)
+    dm = np.abs(dummy[:, np.newaxis] - dummy)
+    uv, rm = _prepare_rank_matrix(dm)
+    _ = _t_stats_medians_bit(rm, uv, 5)
 
 
 class EDivisiveDetector(BaseDetector):
@@ -30,6 +142,10 @@ class EDivisiveDetector(BaseDetector):
         - "medians": Formulação robusta a outliers de James, Kejariwal & Matteson (2014).
     seed : int | None
         Semente pseudo-aleatória fixa para reprodutibilidade das permutações de Monte Carlo.
+    exact_medians : bool
+        Quando `metric == "medians"`, se True executa o cálculo exato em todos os
+        candidatos `tau` e todos os pares (sem subamostragem). Se False (padrão),
+        utiliza subamostragem determinística para séries grandes (n > 150).
     """
 
     def __init__(
@@ -39,6 +155,7 @@ class EDivisiveDetector(BaseDetector):
         min_size: int = 30,
         metric: Literal["means", "medians"] = "means",
         seed: int | None = 42,
+        exact_medians: bool = True,
     ) -> None:
         if not (0.0 < alpha < 1.0):
             raise ValueError(f"alpha deve estar no intervalo (0, 1), recebido: {alpha}")
@@ -54,6 +171,7 @@ class EDivisiveDetector(BaseDetector):
         self.min_size = int(min_size)
         self.metric = metric
         self.seed = seed
+        self.exact_medians = bool(exact_medians)
 
     @staticmethod
     def compute_distance_matrix(x: np.ndarray) -> np.ndarray:
@@ -102,17 +220,42 @@ class EDivisiveDetector(BaseDetector):
 
         return stats
 
+    def _calculate_t_stats_medians_exact_naive(self, dist_matrix: np.ndarray) -> np.ndarray:
+        """Referência ingênua exata O(N^3) para validação unitária contra a Árvore de Fenwick."""
+        n_total = len(dist_matrix)
+        stats = np.zeros(n_total, dtype=np.float64)
+        if n_total < 2 * self.min_size:
+            return stats
+        for tau in range(self.min_size, n_total - self.min_size + 1):
+            n = tau
+            m = n_total - tau
+            within_x = dist_matrix[:tau, :tau]
+            within_y = dist_matrix[tau:, tau:]
+            between_xy = dist_matrix[:tau, tau:]
+            i_x, j_x = np.triu_indices(n, k=1)
+            i_y, j_y = np.triu_indices(m, k=1)
+            m_xx = float(np.median(within_x[i_x, j_x])) if len(i_x) > 0 else 0.0
+            m_yy = float(np.median(within_y[i_y, j_y])) if len(i_y) > 0 else 0.0
+            m_xy = float(np.median(between_xy)) if between_xy.size > 0 else 0.0
+            e_stat = 2.0 * m_xy - m_xx - m_yy
+            stats[tau] = max(0.0, ((n * m) / (n + m)) * e_stat)
+        return stats
+
     def _calculate_t_stats_medians(self, dist_matrix: np.ndarray) -> np.ndarray:
         """Calcula a divergência baseada em medianas (Twitter EDM / BreakoutDetection).
 
-        Para n_total moderado utiliza cálculo exato; para n_total grande subamostra candidatos.
+        Quando `self.exact_medians=True`, executa o algoritmo exato em O(N^2 log N) via
+        Árvore de Fenwick (Numba). Quando `False`, usa subamostragem determinística.
         """
         n_total = len(dist_matrix)
-        stats = np.zeros(n_total, dtype=np.float64)
-
         if n_total < 2 * self.min_size:
-            return stats
+            return np.zeros(n_total, dtype=np.float64)
 
+        if self.exact_medians:
+            unique_vals, rank_mat = _prepare_rank_matrix(dist_matrix)
+            return _t_stats_medians_bit(rank_mat, unique_vals, self.min_size)
+
+        stats = np.zeros(n_total, dtype=np.float64)
         # Em n grande, subamostragem do passo temporal
         step = 1 if n_total <= 150 else (2 if n_total <= 300 else 5)
         taus = list(range(self.min_size, n_total - self.min_size + 1, step))
@@ -207,13 +350,23 @@ class EDivisiveDetector(BaseDetector):
         greater_or_equal = 0
         indices = np.arange(window_size)
 
-        for _ in range(self.permutations):
-            permuted_indices = rng.permutation(indices)
-            shuffled_dist = sub_dist_target[np.ix_(permuted_indices, permuted_indices)]
-            perm_stats = self._calculate_t_stats(shuffled_dist)
-            max_perm = float(np.max(perm_stats)) if len(perm_stats) > 0 else 0.0
-            if max_perm >= best_score:
-                greater_or_equal += 1
+        if self.metric == "medians" and self.exact_medians:
+            unique_vals, rank_mat = _prepare_rank_matrix(sub_dist_target)
+            for _ in range(self.permutations):
+                permuted_indices = rng.permutation(indices)
+                shuffled_ranks = rank_mat[np.ix_(permuted_indices, permuted_indices)]
+                perm_stats = _t_stats_medians_bit(shuffled_ranks, unique_vals, self.min_size)
+                max_perm = float(np.max(perm_stats)) if len(perm_stats) > 0 else 0.0
+                if max_perm >= best_score:
+                    greater_or_equal += 1
+        else:
+            for _ in range(self.permutations):
+                permuted_indices = rng.permutation(indices)
+                shuffled_dist = sub_dist_target[np.ix_(permuted_indices, permuted_indices)]
+                perm_stats = self._calculate_t_stats(shuffled_dist)
+                max_perm = float(np.max(perm_stats)) if len(perm_stats) > 0 else 0.0
+                if max_perm >= best_score:
+                    greater_or_equal += 1
 
         p_value = (1.0 + greater_or_equal) / (1.0 + self.permutations)
 
@@ -266,13 +419,23 @@ class EDivisiveDetector(BaseDetector):
         greater_or_equal = 0
         indices = np.arange(window_size)
 
-        for _ in range(self.permutations):
-            permuted_indices = rng.permutation(indices)
-            shuffled_dist = sub_dist_target[np.ix_(permuted_indices, permuted_indices)]
-            perm_stats = self._calculate_t_stats(shuffled_dist)
-            max_perm = float(np.max(perm_stats)) if len(perm_stats) > 0 else 0.0
-            if max_perm >= best_score:
-                greater_or_equal += 1
+        if self.metric == "medians" and self.exact_medians:
+            unique_vals, rank_mat = _prepare_rank_matrix(sub_dist_target)
+            for _ in range(self.permutations):
+                permuted_indices = rng.permutation(indices)
+                shuffled_ranks = rank_mat[np.ix_(permuted_indices, permuted_indices)]
+                perm_stats = _t_stats_medians_bit(shuffled_ranks, unique_vals, self.min_size)
+                max_perm = float(np.max(perm_stats)) if len(perm_stats) > 0 else 0.0
+                if max_perm >= best_score:
+                    greater_or_equal += 1
+        else:
+            for _ in range(self.permutations):
+                permuted_indices = rng.permutation(indices)
+                shuffled_dist = sub_dist_target[np.ix_(permuted_indices, permuted_indices)]
+                perm_stats = self._calculate_t_stats(shuffled_dist)
+                max_perm = float(np.max(perm_stats)) if len(perm_stats) > 0 else 0.0
+                if max_perm >= best_score:
+                    greater_or_equal += 1
 
         p_value = (1.0 + greater_or_equal) / (1.0 + self.permutations)
 
@@ -318,6 +481,7 @@ class EDivisiveDetector(BaseDetector):
             "permutations": self.permutations,
             "min_size": self.min_size,
             "metric": self.metric,
+            "exact_medians": self.exact_medians if self.metric == "medians" else None,
             "num_detected": len(change_points),
             "p_values": p_values,
             "parent_change_points": parents,
@@ -364,6 +528,7 @@ class EDivisiveMediansDetector(EDivisiveDetector):
         permutations: int = 100,
         min_size: int = 30,
         seed: int | None = 42,
+        exact_medians: bool = True,
     ) -> None:
         super().__init__(
             alpha=alpha,
@@ -371,6 +536,7 @@ class EDivisiveMediansDetector(EDivisiveDetector):
             min_size=min_size,
             metric="medians",
             seed=seed,
+            exact_medians=exact_medians,
         )
 
 

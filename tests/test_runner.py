@@ -2,14 +2,17 @@
 
 from __future__ import annotations
 
+from pathlib import Path
 import numpy as np
 import pytest
 
 from cpd.experiments.runner import (
+    compute_config_hash,
     compute_effective_snr,
     compute_hazard_levels,
     derive_stable_seed,
     generate_scenario_series,
+    validate_calibration_manifest,
 )
 
 
@@ -64,4 +67,25 @@ def test_hazard_level_estimation() -> None:
     assert np.isclose(hazards[0]["hazard_level_est"], np.log(2.0), atol=1e-3)
     assert np.isclose(hazards[0]["hazard_level_true"], np.log(2.0), atol=1e-3)
     assert np.isclose(hazards[0]["hazard_level_abs_err"], 0.0, atol=1e-3)
+
+
+def test_validate_calibration_manifest_rejects_provisional_and_hash_mismatch(tmp_path: Path) -> None:
+    """Garante que o grid completo recusa calibração provisória ou com hash de config divergente."""
+    cfg_file = tmp_path / "experiments.yaml"
+    cfg_file.write_text("grid:\n  tamanhos_n: [100]\n", encoding="utf-8")
+    cfg_hash = compute_config_hash(cfg_file)
+
+    manifest_prov = {"_meta": {"provisorio": True, "config_sha256": cfg_hash}}
+    # Piloto pode aceitar provisória
+    validate_calibration_manifest(manifest_prov, cfg_file, allow_provisional=True)
+    # Grid completo deve recusar
+    with pytest.raises(ValueError, match="PROVISÓRIA"):
+        validate_calibration_manifest(manifest_prov, cfg_file, allow_provisional=False)
+
+    manifest_bad_hash = {"_meta": {"provisorio": False, "config_sha256": "deadbeef"}}
+    with pytest.raises(ValueError, match="Hash de configuração"):
+        validate_calibration_manifest(manifest_bad_hash, cfg_file, allow_provisional=False)
+
+    manifest_ok = {"_meta": {"provisorio": False, "config_sha256": cfg_hash}}
+    validate_calibration_manifest(manifest_ok, cfg_file, allow_provisional=False)
 

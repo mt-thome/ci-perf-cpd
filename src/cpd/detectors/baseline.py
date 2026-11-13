@@ -136,8 +136,10 @@ class RupturesDetector(BaseDetector):
                 m = rpt.Binseg(model=cost_model, min_size=min_size).fit(x)
             fitted_models.append((m, len(x)))
 
-        # Como penalidade maior reduz o número de detecções, iteramos de forma crescente
-        for pen_val in sorted(pen_candidates):
+        # Busca monótona decrescente: começa pela maior penalidade (mais rápida) e para ao exceder target_fpr
+        pen_desc = sorted((float(p) for p in pen_candidates), reverse=True)
+        best_pen = pen_desc[0]
+        for pen_val in pen_desc:
             false_alarms = 0
             for model, n in fitted_models:
                 raw_bkps = model.predict(pen=pen_val)
@@ -146,7 +148,8 @@ class RupturesDetector(BaseDetector):
                     false_alarms += 1
             fpr = false_alarms / num_series
             if fpr <= target_fpr:
-                best_pen = float(pen_val)
+                best_pen = pen_val
+            else:
                 break
 
         return best_pen

@@ -235,9 +235,9 @@ def instantiate_detector(
         )
 
     elif cls_name == "EDivisiveMeansDetector":
-        alpha = 0.05
+        alpha = float(base_params.get("alpha", 0.05))
         if regime == "calibrado_perfil":
-            alpha = calibration_dict.get("EDiv_Means", {}).get(perfil_ruido, {}).get(str(n), 0.05)
+            alpha = calibration_dict.get("EDiv_Means", {}).get(perfil_ruido, {}).get(str(n), alpha)
         return EDivisiveMeansDetector(
             alpha=alpha,
             permutations=base_params.get("permutations", 100),
@@ -246,14 +246,15 @@ def instantiate_detector(
         )
 
     elif cls_name == "EDivisiveMediansDetector":
-        alpha = 0.05
+        alpha = float(base_params.get("alpha", 0.05))
         if regime == "calibrado_perfil":
-            alpha = calibration_dict.get("EDiv_Medians", {}).get(perfil_ruido, {}).get(str(n), 0.05)
+            alpha = calibration_dict.get("EDiv_Medians", {}).get(perfil_ruido, {}).get(str(n), alpha)
         return EDivisiveMediansDetector(
             alpha=alpha,
             permutations=base_params.get("permutations", 100),
             min_size=base_params.get("min_size", 25),
             seed=stable_seed,
+            exact_medians=bool(base_params.get("exact_medians", True)),
         )
     else:
         raise ValueError(f"Classe de detector desconhecida: {cls_name}")
@@ -334,6 +335,126 @@ def execute_single_cell(
         "hazard_levels_est": json.dumps(hazard_records),
         "tempo_cpu_ms": float(elapsed_ms),
     }
+
+
+def _detector_cache_key(detector: BaseDetector) -> str:
+    """Chave determinística baseada na classe e parâmetros efetivos do detector."""
+    cls_name = type(detector).__name__
+    attrs = {k: v for k, v in sorted(detector.__dict__.items()) if not k.startswith("_")}
+    return f"{cls_name}:{json.dumps(attrs, sort_keys=True, default=str)}"
+
+
+def execute_series_for_detectors(
+    scenario_cfg: dict[str, Any],
+    detectors_cfg: Sequence[dict[str, Any]],
+    seed_idx: int,
+    calibration_dict: dict[str, Any],
+    git_hash: str,
+) -> list[dict[str, Any]]:
+    """Executa todos os detectores numa mesma série com cache por (série, detector, parâmetros)."""
+    cenario_id = scenario_cfg["cenario_id"]
+    n = scenario_cfg["n"]
+    perfil = scenario_cfg["perfil_ruido"]
+
+    series_obj = generate_scenario_series(scenario_cfg, seed_idx)
+    stable_seed = derive_stable_seed(cenario_id, seed_idx)
+
+    sigma_mad, effective_snr = compute_effective_snr(
+        magnitude_val=scenario_cfg["magnitude_sigma"] * series_obj.config.noise_scale,
+        noise_series=series_obj.noise,
+    )
+    params_ruido_json = json.dumps({
+        **scenario_cfg["noise_params"],
+        "sigma_nominal": series_obj.config.noise_scale,
+        "sigma_mad_empirico": sigma_mad,
+        "snr_efetiva_mad": effective_snr,
+    })
+
+    cache: dict[str, tuple[Any, float]] = {}
+    rows: list[dict[str, Any]] = []
+
+    for detector_cfg in detectors_cfg:
+        detector_name = detector_cfg["nome"]
+        cls_name = detector_cfg["classe"]
+        detector = instantiate_detector(
+            detector_cfg=detector_cfg,
+            calibration_dict=calibration_dict,
+            perfil_ruido=perfil,
+            n=n,
+            stable_seed=stable_seed,
+        )
+        cache_key = _detector_cache_key(detector)
+        if cache_key in cache:
+            res, elapsed_ms = cache[cache_key]
+        else:
+            t0 = time.perf_counter()
+            res = detector.detect_detailed(series_obj.values)
+            elapsed_ms = (time.perf_counter() - t0) * 1000.0
+            cache[cache_key] = (res, elapsed_ms)
+
+        target_cps_for_hazard = res.change_points
+        if cls_name == "RobustCUSUMDetector" and "estimated_start_points" in res.metadata:
+            target_cps_for_hazard = res.metadata["estimated_start_points"]
+
+        hazard_records = compute_hazard_levels(
+            values=series_obj.values,
+            ground_truth_signal=series_obj.ground_truth_signal,
+            ground_truth_cps=series_obj.change_points,
+            detected_cps=target_cps_for_hazard,
+        )
+        scores_list = res.scores.tolist() if res.scores is not None else []
+        parent_cps_list = res.metadata.get("parent_change_points", [])
+
+        rows.append({
+            "cenario_id": cenario_id,
+            "split": scenario_cfg.get("split", "avaliacao"),
+            "perfil_ruido": perfil,
+            "params_ruido": params_ruido_json,
+            "n": n,
+            "magnitude": float(scenario_cfg["magnitude_sigma"]),
+            "semente": int(seed_idx),
+            "detector": detector_name,
+            "parametros": json.dumps(res.metadata),
+            "versao_codigo": git_hash,
+            "ground_truth": series_obj.change_points,
+            "indices_detectados": res.change_points,
+            "pai_indices_detectados": parent_cps_list,
+            "scores_detectados": scores_list,
+            "hazard_levels_est": json.dumps(hazard_records),
+            "tempo_cpu_ms": float(elapsed_ms),
+        })
+
+    return rows
+
+
+def compute_config_hash(config_path: Path) -> str:
+    """Calcula o hash SHA-256 do arquivo de configuração experiments.yaml."""
+    return hashlib.sha256(config_path.read_bytes()).hexdigest()
+
+
+def validate_calibration_manifest(
+    calib_manifest: dict[str, Any],
+    config_path: Path,
+    allow_provisional: bool = False,
+) -> None:
+    """Valida que o manifesto de calibração não é provisório (no grid completo) e bate com o config."""
+    meta = calib_manifest.get("_meta")
+    if not isinstance(meta, dict):
+        raise ValueError("Manifesto de calibração sem metadados '_meta'; recalibre antes de executar.")
+
+    if not allow_provisional and meta.get("provisorio", True):
+        raise ValueError(
+            "Calibração PROVISÓRIA recusada para o grid completo. "
+            "Execute a calibração oficial (200 calibração / 100 validação por perfil e n)."
+        )
+
+    expected_hash = compute_config_hash(config_path)
+    actual_hash = meta.get("config_sha256")
+    if actual_hash != expected_hash:
+        raise ValueError(
+            f"Hash de configuração divergente no manifesto de calibração "
+            f"(manifesto={actual_hash}, atual={expected_hash}). Recalibre antes de executar."
+        )
 
 
 def save_partition_atomic(df: pd.DataFrame, out_path: Path) -> None:

@@ -7,6 +7,9 @@ seaborn==0.13.2
 ruptures==1.1.10
 pyyaml==6.0.3
 tqdm==4.70.1
+numba==0.68.1
+pyarrow==26.0.1
+more-itertools==11.2.1
 pytest==9.1.1
 ipykernel==7.4.0
 

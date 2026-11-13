@@ -41,6 +41,7 @@ data/processed/*
 !data/processed/.gitkeep
 results/*
 !results/.gitkeep
+logs/
 
 # IDEs
 .idea/
