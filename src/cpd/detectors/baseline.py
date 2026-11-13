@@ -131,9 +131,9 @@ class RupturesDetector(BaseDetector):
         for s in calibration_series_list:
             x = cls._validate_series(s)
             if algorithm == "pelt":
-                m = rpt.Pelt(model=cost_model, min_size=min_size).fit(x)
+                m = rpt.Pelt(model=cost_model, min_size=min_size, jump=1).fit(x)
             else:
-                m = rpt.Binseg(model=cost_model, min_size=min_size).fit(x)
+                m = rpt.Binseg(model=cost_model, min_size=min_size, jump=1).fit(x)
             fitted_models.append((m, len(x)))
 
         # Busca monótona decrescente: começa pela maior penalidade (mais rápida) e para ao exceder target_fpr

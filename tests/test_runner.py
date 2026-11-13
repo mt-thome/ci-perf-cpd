@@ -2,10 +2,12 @@
 
 from __future__ import annotations
 
+from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
 import numpy as np
 import pytest
 
+from cpd.experiments.calibration import calibrate_pair, poisson_rate_ci_95
 from cpd.experiments.runner import (
     compute_config_hash,
     compute_effective_snr,
@@ -88,4 +90,36 @@ def test_validate_calibration_manifest_rejects_provisional_and_hash_mismatch(tmp
 
     manifest_ok = {"_meta": {"provisorio": False, "config_sha256": cfg_hash}}
     validate_calibration_manifest(manifest_ok, cfg_file, allow_provisional=False)
+
+
+def test_calibration_parallel_equals_sequential_and_poisson_ci() -> None:
+    """Garante equivalência exata entre calibração sequencial e paralela por sub-lotes."""
+    ci0 = poisson_rate_ci_95(0, 1000)
+    assert ci0[0] == 0.0 and ci0[1] > 0.0
+
+    seq = calibrate_pair(
+        n=100,
+        perfil="gaussian",
+        n_calib=6,
+        n_val=4,
+        calib_seed_start=10000,
+        val_seed_start=20000,
+        targets_far_1k=[0.2, 1.0],
+        executor=None,
+        num_chunks=1,
+    )
+    with ProcessPoolExecutor(max_workers=2) as pool:
+        par = calibrate_pair(
+            n=100,
+            perfil="gaussian",
+            n_calib=6,
+            n_val=4,
+            calib_seed_start=10000,
+            val_seed_start=20000,
+            targets_far_1k=[0.2, 1.0],
+            executor=pool,
+            num_chunks=4,
+        )
+
+    assert seq["per_target"] == par["per_target"]
 

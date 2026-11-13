@@ -153,3 +153,37 @@ Este documento registra formalmente as decisões de projeto, metodologia de pesq
   - Em testes unitários (`n=60, 90, 100`, incluindo `outliers` e `student_t`), a versão Numba BIT coincide bit-a-bit (`atol=1e-12`) com a referência ingênua exata tanto em $Q(\tau)$ quanto nos p-valores e change points das permutações.
   - Em benchmark limpo com $B=100, \alpha=0.20$, a versão exata Numba é **5,4× a 43× mais rápida** que a antiga aproximação (`31,4 ms` em `n=100`, `1,63 s` em `n=500`, `8,74 s` em `n=1000`), viabilizando o experimento completo sem aproximações.
   - Manter `exact_medians=False` apenas como opção legada/comparativa **não utilizada nos resultados principais**, registrando `"exact_medians"` nos metadados de `DetectionResult`.
+
+
+---
+
+## ADR-013: Saturação Bidirecional na Calibração (`saturado_inferior` e `saturado_superior`)
+
+- **Data**: 2026-11-13
+- **Status**: Aprovado
+- **Decisão**: O manifesto de calibração registra explicitamente duas flags de saturação por `(detector, perfil, n, alvo)`:
+  1. **`saturado_inferior`**: o `FAR_1k` realizado na calibração permanece **acima** do alvo mesmo no parâmetro mais restritivo da grade (`h=20.0` no CUSUM, `pen=1600/800` no PELT/Binseg, `alpha=0.01` — mínimo alcançável com $B=100$ permutações — no `E-Div`).
+     - *Consequência para comparação a FAR igualado*: o detector opera com excesso de falsos alarmes em relação ao alvo (vantagem artificial de Recall e penalização de Precision); comparações diretas contra detectores que atingiram o alvo devem sinalizar explicitamente essa violação do teto de FAR.
+  2. **`saturado_superior`**: o `FAR_1k` realizado na calibração permanece **abaixo** do alvo mesmo no parâmetro mais permissivo da grade (`h=4.0` no CUSUM, `pen=50/30` no PELT/Binseg, `alpha=0.20` base no `E-Div`).
+     - *Consequência para comparação a FAR igualado*: o detector opera de forma mais conservadora que o orçamento de falsos alarmes permitido (menor Recall potencial em desvios sutis), não conseguindo "gastar" a cota de FAR até o alvo.
+
+---
+
+## ADR-014: Tamanhos de Calibração por `n`, Intervalos de Confiança de Poisson e Critério de Validação
+
+- **Data**: 2026-11-13
+- **Status**: Aprovado
+- **Decisão**:
+  1. **Tamanhos por `n`** (disjuntos das sementes de avaliação `1..50`):
+     - $n = 100$: **2.000** séries de calibração (`10000..11999`) e **1.000** séries de validação (`20000..20999`) por perfil (exposição de $200\text{k}$ e $100\text{k}$ commits, garantindo $\approx 40$ e $\approx 20$ alarmes esperados no alvo $FAR_{1k}=0{,}2$).
+     - $n \in \{500, 1000\}$: **200** séries de calibração (`10000..10199`) e **100** séries de validação (`20000..20099`) por perfil.
+  2. **IC de Poisson de 95%**: Todas as tabelas de FAR reportam o número observado e esperado de alarmes e o intervalo de confiança exato de Poisson de 95% (via distribuição $\chi^2$).
+  3. **Critério de Validação**: A calibração de uma célula é aceita se o **limite inferior do IC de 95% do `FAR_1k` realizado na validação não excede o alvo** ($\text{IC}_{95\%,\text{inf}} \le \text{alvo}$). Em caso de falha, registra-se `validacao_falhou: true` e **nunca** se recalibra usando o conjunto de validação.
+
+---
+
+## ADR-015: Padronização de `jump=1` no `ruptures`
+
+- **Data**: 2026-11-13
+- **Status**: Aprovado
+- **Decisão**: Todas as chamadas a `ruptures.Pelt` e `ruptures.Binseg` — tanto na calibração (`calibrate_penalty_for_fpr` e `calibration.py`) quanto na avaliação (`RupturesDetector`) — devem especificar explicitamente `jump=1` (evitando o padrão `jump=5` da biblioteca), garantindo resolução exata de localização em commits e coerência entre calibração e avaliação.
