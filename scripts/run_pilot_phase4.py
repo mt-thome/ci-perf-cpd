@@ -294,7 +294,7 @@ def verify_and_report_grid(
         failures.append(f"Linhas duplicadas encontradas: {dups}")
 
     seed_lists = df.groupby(["cenario_id", "detector"])["semente"].apply(lambda s: sorted(s.tolist()))
-    if not (seed_lists == expected_seeds).all():
+    if not seed_lists.apply(lambda s: s == expected_seeds).all():
         failures.append("Sementes não pareadas em 100% dos pares (cenario_id, detector)")
 
     if not (df["versao_codigo"] == manifest["_meta"]["git_hash"]).all():
