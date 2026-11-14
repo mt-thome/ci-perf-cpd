@@ -33,7 +33,11 @@ import yaml
 
 from cpd.detectors.edivisive import warmup_edivisive_jit
 from cpd.evaluation.metrics import evaluate_single_series
-from cpd.experiments.calibration import poisson_rate_ci_95, run_calibration_suite
+from cpd.experiments.calibration import (
+    poisson_rate_ci_95,
+    recalibrate_fast_subset_in_manifest,
+    run_calibration_suite,
+)
 from cpd.experiments.runner import (
     compute_config_hash,
     execute_series_for_detectors,
@@ -346,7 +350,7 @@ def verify_and_report_grid(
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Orquestrador Fase 4")
-    parser.add_argument("--mode", choices=["smoke", "calibrate", "pilot", "grid"], required=True)
+    parser.add_argument("--mode", choices=["smoke", "calibrate", "recalibrate-fast", "pilot", "grid"], required=True)
     parser.add_argument("--workers", type=int, default=max(1, (os.cpu_count() or 2) - 2))
     args = parser.parse_args()
 
@@ -386,6 +390,23 @@ def main() -> None:
         logger.info(summary)
         if stop:
             logger.error("CRITÉRIO DE PARADA DISPARADO na Etapa 1 (>30% células com flags no alvo 0.2).")
+            sys.exit(2)
+
+    elif args.mode == "recalibrate-fast":
+        logger = setup_logger(LOG_DIR / "calibration.log")
+        logger.info(f"=== ETAPA 1b: RECALIBRAÇÃO RÁPIDA (CUSUM + PELT_L1) | workers={args.workers} | git={git_hash} ===")
+        t0 = time.perf_counter()
+        calib_path = CALIB_DIR / "calibration_manifest.json"
+        calib_manifest = recalibrate_fast_subset_in_manifest(
+            config=config, config_path=CONFIG_PATH, manifest_path=calib_path,
+            git_hash=git_hash, max_workers=args.workers, log_fn=logger.info,
+        )
+        validate_calibration_manifest(calib_manifest, CONFIG_PATH, allow_provisional=False)
+        elapsed_s = time.perf_counter() - t0
+        stop, summary = generate_calibration_report(calib_manifest, CALIB_DIR / "calibration_report.md", elapsed_s)
+        logger.info(summary)
+        if stop:
+            logger.error("CRITÉRIO DE PARADA DISPARADO na Etapa 1b (>30% células com flags no alvo 0.2).")
             sys.exit(2)
 
     elif args.mode == "pilot":

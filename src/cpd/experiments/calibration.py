@@ -222,9 +222,9 @@ def calibrate_pair(
     calib_chunks = _chunk_list(calib_seeds, num_chunks)
     val_chunks = _chunk_list(val_seeds, num_chunks)
 
-    h_cand = [4.0, 6.0, 8.0, 10.0, 12.0, 14.0, 16.0, 20.0]  # permissivo -> restritivo
+    h_cand = [4.0, 6.0, 8.0, 10.0, 12.0, 14.0, 16.0, 20.0, 25.0, 30.0, 40.0, 50.0, 75.0, 100.0, 150.0]  # permissivo -> restritivo
     pen_cand_l2 = [50.0, 100.0, 200.0, 400.0, 800.0, 1600.0]  # permissivo -> restritivo
-    pen_cand_l1 = [30.0, 50.0, 100.0, 200.0, 400.0, 800.0]    # permissivo -> restritivo
+    pen_cand_l1 = [5.0, 10.0, 15.0, 20.0, 25.0, 30.0, 50.0, 100.0, 200.0, 400.0, 800.0]    # permissivo -> restritivo
     alpha_cand = [0.20, 0.15, 0.10, 0.05, 0.02, 0.01]         # permissivo -> restritivo
 
     # 1. EDiv + CUSUM + Binseg na calibração
@@ -460,4 +460,160 @@ def run_calibration_suite(
     tmp_path = out_manifest_path.with_suffix(f".tmp_{os.getpid()}.json")
     tmp_path.write_text(json.dumps(manifest, indent=2), encoding="utf-8")
     tmp_path.rename(out_manifest_path)
+    return manifest
+
+
+def _worker_cusum_chunk(payload: dict[str, Any]) -> list[tuple[int, dict[float, int]]]:
+    n = int(payload["n"])
+    ntype = NoiseType(payload["perfil"])
+    seeds: list[int] = payload["seeds"]
+    h_cand: list[float] = payload["h_cand"]
+    out: list[tuple[int, dict[float, int]]] = []
+    for s in seeds:
+        arr = generate_synthetic_series(n=n, num_change_points=0, noise_type=ntype, seed=s).values
+        out.append((s, {float(h): len(RobustCUSUMDetector(h=float(h)).detect(arr)) for h in h_cand}))
+    return out
+
+
+def _worker_val_cusum_pelt_l1_chunk(payload: dict[str, Any]) -> list[tuple[int, dict[str, int]]]:
+    n = int(payload["n"])
+    ntype = NoiseType(payload["perfil"])
+    seeds: list[int] = payload["seeds"]
+    params_by_target: dict[str, dict[str, float]] = payload["params_by_target"]
+    out: list[tuple[int, dict[str, int]]] = []
+    for s in seeds:
+        arr = generate_synthetic_series(n=n, num_change_points=0, noise_type=ntype, seed=s).values
+        res_s: dict[str, int] = {}
+        det_cache: dict[tuple[str, float], int] = {}
+        for tgt_key, pmap in params_by_target.items():
+            for det_key in ("CUSUM", "PELT_L1"):
+                pval = float(pmap[det_key])
+                ck = (det_key, pval)
+                if ck not in det_cache:
+                    if det_key == "CUSUM":
+                        det_cache[ck] = len(RobustCUSUMDetector(h=pval).detect(arr))
+                    else:
+                        det_cache[ck] = len(RupturesDetector("pelt", "l1", pen=pval, min_size=25, jump=1).detect(arr))
+                res_s[f"{tgt_key}:{det_key}"] = det_cache[ck]
+        out.append((s, res_s))
+    return out
+
+
+def recalibrate_fast_subset_in_manifest(
+    config: dict[str, Any],
+    config_path: Path,
+    manifest_path: Path,
+    git_hash: str,
+    max_workers: int,
+    log_fn: Callable[[str], None] | None = None,
+) -> dict[str, Any]:
+    """Recalibra apenas CUSUM e PELT_L1 com grade expandida no manifesto existente (mesmas sementes)."""
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    meta = manifest["_meta"]
+    expected_hash = compute_config_hash(config_path)
+    if meta["config_sha256"] != expected_hash:
+        raise ValueError("config_sha256 divergente do manifesto existente.")
+    if meta.get("provisorio", True):
+        raise ValueError("Manifesto existente é provisório.")
+
+    targets_far_1k = [float(x) for x in meta["alvos_far_1k"]]
+    primary_far_1k = float(meta["alvo_principal_far_1k"])
+    primary_key = f"{primary_far_1k:.1f}"
+    max_target = max(targets_far_1k)
+
+    h_cand = [4.0, 6.0, 8.0, 10.0, 12.0, 14.0, 16.0, 20.0, 25.0, 30.0, 40.0, 50.0, 75.0, 100.0, 150.0]
+    pen_cand_l1 = [5.0, 10.0, 15.0, 20.0, 25.0, 30.0, 50.0, 100.0, 200.0, 400.0, 800.0]
+
+    sizes = sorted([int(x) for x in meta["tamanhos_n"]], reverse=True)
+    noises = [p["tipo"] for p in config["grid"]["perfis_ruido"]]
+    pairs = [(n, p) for n in sizes for p in noises]
+
+    use_exec = max_workers > 1
+    ctx = ProcessPoolExecutor(max_workers=max_workers, initializer=_init_calib_worker) if use_exec else None
+    try:
+        for idx, (n, perfil) in enumerate(pairs, start=1):
+            t0 = time.perf_counter()
+            tinfo = meta["tamanhos_por_n"][str(n)]
+            n_calib = int(tinfo["num_series_calibracao"])
+            n_val = int(tinfo["num_series_validacao"])
+            c0, c1 = tinfo["faixa_sementes_calibracao"]
+            v0, v1 = tinfo["faixa_sementes_validacao"]
+            calib_seeds = list(range(int(c0), int(c1)))
+            val_seeds = list(range(int(v0), int(v1)))
+            num_chunks = max(1, max_workers * 2)
+            calib_chunks = _chunk_list(calib_seeds, num_chunks)
+            val_chunks = _chunk_list(val_seeds, num_chunks)
+
+            c_res = _run_mapped(
+                ctx, _worker_cusum_chunk,
+                [{"n": n, "perfil": perfil, "seeds": ch, "h_cand": h_cand} for ch in calib_chunks],
+            )
+            c_map = dict(sorted(c_res, key=lambda x: x[0]))
+            cusum_alarms = {h: [c_map[s][h] for s in calib_seeds] for h in h_cand}
+
+            pelt_l1_alarms: dict[float, list[int]] = {}
+            for pen in sorted(pen_cand_l1, reverse=True):
+                res_p = _run_mapped(
+                    ctx, _worker_pelt_chunk,
+                    [{"n": n, "perfil": perfil, "cost_model": "l1", "pen": pen, "seeds": ch} for ch in calib_chunks],
+                )
+                res_sorted = [cnt for _, cnt in sorted(res_p, key=lambda x: x[0])]
+                pelt_l1_alarms[pen] = res_sorted
+                if (sum(res_sorted) / (n_calib * n)) * 1000.0 > max_target:
+                    break
+            for pen in pen_cand_l1:
+                if pen not in pelt_l1_alarms:
+                    pelt_l1_alarms[pen] = [n] * n_calib
+
+            params_by_target_for_val: dict[str, dict[str, float]] = {}
+            for tgt in targets_far_1k:
+                tgt_key = f"{tgt:.1f}"
+                c_p, c_sum, c_sinf, c_ssup = _select_param_and_flags(cusum_alarms, h_cand, n, tgt)
+                pl1_p, pl1_sum, pl1_sinf, pl1_ssup = _select_param_and_flags(pelt_l1_alarms, pen_cand_l1, n, tgt)
+                params_by_target_for_val[tgt_key] = {"CUSUM": c_p, "PELT_L1": pl1_p}
+                manifest["detalhes_por_alvo"][perfil][str(n)][tgt_key]["CUSUM"] = {
+                    "param": c_p, "calib": c_sum, "saturado_inferior": c_sinf, "saturado_superior": c_ssup,
+                }
+                manifest["detalhes_por_alvo"][perfil][str(n)][tgt_key]["PELT_L1"] = {
+                    "param": pl1_p, "calib": pl1_sum, "saturado_inferior": pl1_sinf, "saturado_superior": pl1_ssup,
+                }
+
+            val_res = _run_mapped(
+                ctx, _worker_val_cusum_pelt_l1_chunk,
+                [{"n": n, "perfil": perfil, "seeds": ch, "params_by_target": params_by_target_for_val} for ch in val_chunks],
+            )
+            val_map = dict(sorted(val_res, key=lambda x: x[0]))
+
+            for tgt in targets_far_1k:
+                tgt_key = f"{tgt:.1f}"
+                for det_key in ("CUSUM", "PELT_L1"):
+                    alarms = [val_map[s][f"{tgt_key}:{det_key}"] for s in val_seeds]
+                    vs = _compute_far_summary(alarms, n, tgt)
+                    rec = manifest["detalhes_por_alvo"][perfil][str(n)][tgt_key][det_key]
+                    rec["val"] = vs
+                    rec["validacao_falhou"] = bool(vs["ci95_far_1k"][0] > tgt)
+
+            prim = manifest["detalhes_por_alvo"][perfil][str(n)][primary_key]
+            for det_key in ("CUSUM", "PELT_L1"):
+                manifest[f"{det_key}_perfil"][perfil][str(n)] = prim[det_key]["param"]
+                if perfil == "gaussian":
+                    manifest[f"{det_key}_gauss"][str(n)] = prim[det_key]["param"]
+
+            if log_fn:
+                elapsed = time.perf_counter() - t0
+                c_rec = prim["CUSUM"]
+                p_rec = prim["PELT_L1"]
+                log_fn(
+                    f"[Recalib {idx}/{len(pairs)}] n={n} perfil={perfil} tempo={elapsed:.1f}s | "
+                    f"CUSUM(p={c_rec['param']},val={c_rec['val']['far_1k']:.2f}) "
+                    f"PELT_L1(p={p_rec['param']},val={p_rec['val']['far_1k']:.2f})"
+                )
+    finally:
+        if ctx is not None:
+            ctx.shutdown(wait=True)
+
+    meta["git_hash"] = git_hash
+    tmp_path = manifest_path.with_suffix(f".tmp_{os.getpid()}.json")
+    tmp_path.write_text(json.dumps(manifest, indent=2), encoding="utf-8")
+    tmp_path.rename(manifest_path)
     return manifest

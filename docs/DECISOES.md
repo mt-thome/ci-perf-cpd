@@ -187,3 +187,15 @@ Este documento registra formalmente as decisões de projeto, metodologia de pesq
 - **Data**: 2026-11-13
 - **Status**: Aprovado
 - **Decisão**: Todas as chamadas a `ruptures.Pelt` e `ruptures.Binseg` — tanto na calibração (`calibrate_penalty_for_fpr` e `calibration.py`) quanto na avaliação (`RupturesDetector`) — devem especificar explicitamente `jump=1` (evitando o padrão `jump=5` da biblioteca), garantindo resolução exata de localização em commits e coerência entre calibração e avaliação.
+
+---
+
+## ADR-016: Expansão da Grade de Calibração de `CUSUM` e `PELT_L1`
+
+- **Data**: 2026-11-14
+- **Status**: Aprovado
+- **Contexto**: A primeira execução da calibração oficial (485 min) disparou o critério de parada automática na Etapa 1 (`29/90 = 32,2% > 30%` células com flags no alvo primário `FAR_1k <= 0,2`):
+  - **CUSUM** apresentou `saturado_inferior` em 14/15 células porque o limite superior da grade `h_cand` era `20.0`.
+  - **PELT_L1** apresentou `saturado_superior` em 9/15 células (`gaussian`, `outliers`, `student_t`) porque o limite inferior da grade `pen_cand_l1` era `30.0`.
+  - **EDiv_Means / EDiv_Medians** apresentaram `saturado_inferior` apenas em `ar1` (6/30 células), achado esperado pela quebra de permutabilidade sob autocorrelação.
+- **Decisão**: Expandir `h_cand` até `150.0` (`[4, 6, 8, 10, 12, 14, 16, 20, 25, 30, 40, 50, 75, 100, 150]`) e `pen_cand_l1` para baixo até `5.0` (`[5, 10, 15, 20, 25, 30, 50, 100, 200, 400, 800]`), mantendo intactas as sementes e as calibrações já executadas de `EDiv_Means`, `EDiv_Medians`, `PELT_L2` e `BINSEG_L2` (`--mode recalibrate-fast`).
