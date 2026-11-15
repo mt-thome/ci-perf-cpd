@@ -1,0 +1,94 @@
+categoria,detector,perfil_ruido,n,magnitude,k_true,detalhe
+sempre_vazio,Binseg_L2_perfil,ar1,100,0.5,1,0 detecções em todas as 50 séries da célula
+sempre_vazio,Binseg_L2_perfil,bimodal,100,0.5,1,0 detecções em todas as 50 séries da célula
+sempre_vazio,CUSUM_perfil,ar1,100,0.5,1,0 detecções em todas as 50 séries da célula
+sempre_vazio,PELT_L1_gauss,ar1,100,0.5,1,0 detecções em todas as 50 séries da célula
+sempre_vazio,PELT_L1_gauss,bimodal,100,0.5,1,0 detecções em todas as 50 séries da célula
+sempre_vazio,PELT_L1_gauss,bimodal,100,1.0,1,0 detecções em todas as 50 séries da célula
+sempre_vazio,PELT_L1_gauss,bimodal,100,2.0,1,0 detecções em todas as 50 séries da célula
+sempre_vazio,PELT_L1_gauss,bimodal,500,0.5,1,0 detecções em todas as 50 séries da célula
+sempre_vazio,PELT_L1_gauss,bimodal,500,0.5,2,0 detecções em todas as 50 séries da célula
+sempre_vazio,PELT_L1_gauss,bimodal,1000,0.5,1,0 detecções em todas as 50 séries da célula
+sempre_vazio,PELT_L1_gauss,gaussian,100,0.5,1,0 detecções em todas as 50 séries da célula
+sempre_vazio,PELT_L1_gauss,gaussian,100,1.0,1,0 detecções em todas as 50 séries da célula
+sempre_vazio,PELT_L1_gauss,gaussian,500,0.5,1,0 detecções em todas as 50 séries da célula
+sempre_vazio,PELT_L1_gauss,gaussian,500,0.5,2,0 detecções em todas as 50 séries da célula
+sempre_vazio,PELT_L1_gauss,gaussian,1000,0.5,1,0 detecções em todas as 50 séries da célula
+sempre_vazio,PELT_L1_gauss,outliers,100,0.5,1,0 detecções em todas as 50 séries da célula
+sempre_vazio,PELT_L1_gauss,outliers,100,1.0,1,0 detecções em todas as 50 séries da célula
+sempre_vazio,PELT_L1_gauss,outliers,500,0.5,1,0 detecções em todas as 50 séries da célula
+sempre_vazio,PELT_L1_gauss,outliers,1000,0.5,1,0 detecções em todas as 50 séries da célula
+sempre_vazio,PELT_L1_gauss,student_t,100,0.5,1,0 detecções em todas as 50 séries da célula
+sempre_vazio,PELT_L1_gauss,student_t,100,1.0,1,0 detecções em todas as 50 séries da célula
+sempre_vazio,PELT_L1_gauss,student_t,500,0.5,1,0 detecções em todas as 50 séries da célula
+sempre_vazio,PELT_L1_perfil,ar1,100,0.5,1,0 detecções em todas as 50 séries da célula
+sempre_vazio,PELT_L2_perfil,ar1,100,0.5,1,0 detecções em todas as 50 séries da célula
+sempre_vazio,PELT_L2_perfil,bimodal,100,0.5,1,0 detecções em todas as 50 séries da célula
+sempre_vazio,PELT_L2_perfil,outliers,100,0.5,1,0 detecções em todas as 50 séries da célula
+indices_invalidos_ou_duplicados,TODOS,TODOS,0,,-1,"fora_de_intervalo=0, duplicados_na_serie=0"
+divergencia_far_grid_vs_validacao,Binseg_L2_gauss,ar1,100,0.0,0,grid_far1k=3.800 vs val_far1k=0.000 (disjoint_ci=True)
+divergencia_far_grid_vs_validacao,Binseg_L2_gauss,ar1,500,0.0,0,grid_far1k=4.560 vs val_far1k=0.000 (disjoint_ci=True)
+divergencia_far_grid_vs_validacao,Binseg_L2_gauss,ar1,1000,0.0,0,grid_far1k=4.300 vs val_far1k=0.220 (disjoint_ci=True)
+divergencia_far_grid_vs_validacao,Binseg_L2_gauss,bimodal,100,0.0,0,grid_far1k=2.400 vs val_far1k=0.000 (disjoint_ci=True)
+divergencia_far_grid_vs_validacao,Binseg_L2_gauss,bimodal,500,0.0,0,grid_far1k=2.520 vs val_far1k=0.000 (disjoint_ci=True)
+divergencia_far_grid_vs_validacao,Binseg_L2_gauss,bimodal,1000,0.0,0,grid_far1k=1.560 vs val_far1k=0.220 (disjoint_ci=True)
+divergencia_far_grid_vs_validacao,Binseg_L2_gauss,gaussian,1000,0.0,0,grid_far1k=0.000 vs val_far1k=0.220 (disjoint_ci=True)
+divergencia_far_grid_vs_validacao,Binseg_L2_perfil,gaussian,1000,0.0,0,grid_far1k=0.000 vs val_far1k=0.220 (disjoint_ci=True)
+divergencia_far_grid_vs_validacao,CUSUM_gauss,ar1,100,0.0,0,grid_far1k=3.000 vs val_far1k=0.070 (disjoint_ci=True)
+divergencia_far_grid_vs_validacao,CUSUM_gauss,ar1,500,0.0,0,grid_far1k=3.120 vs val_far1k=0.200 (disjoint_ci=True)
+divergencia_far_grid_vs_validacao,CUSUM_gauss,ar1,1000,0.0,0,grid_far1k=3.920 vs val_far1k=0.240 (disjoint_ci=True)
+divergencia_far_grid_vs_validacao,CUSUM_gauss,bimodal,100,0.0,0,grid_far1k=0.600 vs val_far1k=0.070 (disjoint_ci=False)
+divergencia_far_grid_vs_validacao,CUSUM_gauss,bimodal,500,0.0,0,grid_far1k=0.680 vs val_far1k=0.200 (disjoint_ci=True)
+divergencia_far_grid_vs_validacao,CUSUM_gauss,gaussian,100,0.0,0,grid_far1k=0.600 vs val_far1k=0.070 (disjoint_ci=False)
+divergencia_far_grid_vs_validacao,CUSUM_gauss,student_t,100,0.0,0,grid_far1k=1.200 vs val_far1k=0.070 (disjoint_ci=True)
+divergencia_far_grid_vs_validacao,CUSUM_gauss,student_t,1000,0.0,0,grid_far1k=1.020 vs val_far1k=0.240 (disjoint_ci=True)
+divergencia_far_grid_vs_validacao,CUSUM_perfil,gaussian,100,0.0,0,grid_far1k=0.600 vs val_far1k=0.070 (disjoint_ci=False)
+divergencia_far_grid_vs_validacao,EDiv_Means_calibrado,ar1,100,0.0,0,grid_far1k=5.200 vs val_far1k=4.040 (disjoint_ci=False)
+divergencia_far_grid_vs_validacao,EDiv_Means_calibrado,ar1,500,0.0,0,grid_far1k=5.240 vs val_far1k=2.060 (disjoint_ci=True)
+divergencia_far_grid_vs_validacao,EDiv_Means_calibrado,ar1,1000,0.0,0,grid_far1k=4.400 vs val_far1k=1.550 (disjoint_ci=True)
+divergencia_far_grid_vs_validacao,EDiv_Means_calibrado_far1,ar1,100,0.0,0,grid_far1k=5.200 vs val_far1k=4.040 (disjoint_ci=False)
+divergencia_far_grid_vs_validacao,EDiv_Means_calibrado_far1,ar1,500,0.0,0,grid_far1k=5.240 vs val_far1k=2.060 (disjoint_ci=True)
+divergencia_far_grid_vs_validacao,EDiv_Means_calibrado_far1,ar1,1000,0.0,0,grid_far1k=4.400 vs val_far1k=1.550 (disjoint_ci=True)
+divergencia_far_grid_vs_validacao,EDiv_Medians_calibrado,ar1,100,0.0,0,grid_far1k=4.000 vs val_far1k=2.990 (disjoint_ci=False)
+divergencia_far_grid_vs_validacao,EDiv_Medians_calibrado,ar1,500,0.0,0,grid_far1k=2.520 vs val_far1k=1.080 (disjoint_ci=True)
+divergencia_far_grid_vs_validacao,EDiv_Medians_calibrado,ar1,1000,0.0,0,grid_far1k=2.200 vs val_far1k=1.070 (disjoint_ci=True)
+divergencia_far_grid_vs_validacao,EDiv_Medians_calibrado_far1,ar1,100,0.0,0,grid_far1k=4.000 vs val_far1k=2.990 (disjoint_ci=False)
+divergencia_far_grid_vs_validacao,EDiv_Medians_calibrado_far1,ar1,500,0.0,0,grid_far1k=2.520 vs val_far1k=1.080 (disjoint_ci=True)
+divergencia_far_grid_vs_validacao,EDiv_Medians_calibrado_far1,ar1,1000,0.0,0,grid_far1k=2.200 vs val_far1k=1.070 (disjoint_ci=True)
+divergencia_far_grid_vs_validacao,PELT_L2_gauss,ar1,100,0.0,0,grid_far1k=5.000 vs val_far1k=0.000 (disjoint_ci=True)
+divergencia_far_grid_vs_validacao,PELT_L2_gauss,ar1,500,0.0,0,grid_far1k=7.920 vs val_far1k=0.000 (disjoint_ci=True)
+divergencia_far_grid_vs_validacao,PELT_L2_gauss,ar1,1000,0.0,0,grid_far1k=9.200 vs val_far1k=0.000 (disjoint_ci=True)
+divergencia_far_grid_vs_validacao,PELT_L2_gauss,bimodal,100,0.0,0,grid_far1k=2.800 vs val_far1k=0.000 (disjoint_ci=True)
+divergencia_far_grid_vs_validacao,PELT_L2_gauss,bimodal,500,0.0,0,grid_far1k=4.840 vs val_far1k=0.000 (disjoint_ci=True)
+divergencia_far_grid_vs_validacao,PELT_L2_gauss,bimodal,1000,0.0,0,grid_far1k=5.700 vs val_far1k=0.000 (disjoint_ci=True)
+divergencia_far_grid_vs_validacao,PELT_L2_gauss,outliers,500,0.0,0,grid_far1k=0.320 vs val_far1k=0.000 (disjoint_ci=True)
+divergencia_far_grid_vs_validacao,PELT_L2_gauss,outliers,1000,0.0,0,grid_far1k=0.460 vs val_far1k=0.000 (disjoint_ci=True)
+divergencia_far_grid_vs_validacao,PELT_L2_gauss,student_t,1000,0.0,0,grid_far1k=0.200 vs val_far1k=0.000 (disjoint_ci=True)
+flag_calibracao_alvo_0.2,EDiv_Means,ar1,1000,0.0,0,"saturado_inferior, validacao_falhou (param=0.01, val_far1k=1.550)"
+flag_calibracao_alvo_0.2,EDiv_Medians,ar1,1000,0.0,0,"saturado_inferior, validacao_falhou (param=0.01, val_far1k=1.070)"
+flag_calibracao_alvo_0.2,EDiv_Means,ar1,500,0.0,0,"saturado_inferior, validacao_falhou (param=0.01, val_far1k=2.060)"
+flag_calibracao_alvo_0.2,EDiv_Medians,ar1,500,0.0,0,"saturado_inferior, validacao_falhou (param=0.01, val_far1k=1.080)"
+flag_calibracao_alvo_0.2,EDiv_Means,ar1,100,0.0,0,"saturado_inferior, validacao_falhou (param=0.01, val_far1k=4.040)"
+flag_calibracao_alvo_0.2,EDiv_Medians,ar1,100,0.0,0,"saturado_inferior, validacao_falhou (param=0.01, val_far1k=2.990)"
+flag_calibracao_alvo_1.0,EDiv_Means,gaussian,1000,0.0,0,"saturado_superior (param=0.2, val_far1k=0.390)"
+flag_calibracao_alvo_1.0,EDiv_Medians,gaussian,1000,0.0,0,"saturado_superior (param=0.2, val_far1k=0.350)"
+flag_calibracao_alvo_1.0,EDiv_Means,gaussian,500,0.0,0,"saturado_superior (param=0.2, val_far1k=0.500)"
+flag_calibracao_alvo_1.0,EDiv_Medians,gaussian,500,0.0,0,"saturado_superior (param=0.2, val_far1k=0.520)"
+flag_calibracao_alvo_1.0,EDiv_Means,gaussian,100,0.0,0,"validacao_falhou (param=0.1, val_far1k=1.270)"
+flag_calibracao_alvo_1.0,EDiv_Means,ar1,1000,0.0,0,"saturado_inferior, validacao_falhou (param=0.01, val_far1k=1.550)"
+flag_calibracao_alvo_1.0,EDiv_Means,ar1,500,0.0,0,"saturado_inferior, validacao_falhou (param=0.01, val_far1k=2.060)"
+flag_calibracao_alvo_1.0,EDiv_Medians,ar1,500,0.0,0,"saturado_inferior (param=0.01, val_far1k=1.080)"
+flag_calibracao_alvo_1.0,EDiv_Means,ar1,100,0.0,0,"saturado_inferior, validacao_falhou (param=0.01, val_far1k=4.040)"
+flag_calibracao_alvo_1.0,EDiv_Medians,ar1,100,0.0,0,"saturado_inferior, validacao_falhou (param=0.01, val_far1k=2.990)"
+flag_calibracao_alvo_1.0,EDiv_Means,student_t,1000,0.0,0,"saturado_superior (param=0.2, val_far1k=0.240)"
+flag_calibracao_alvo_1.0,EDiv_Medians,student_t,1000,0.0,0,"saturado_superior (param=0.2, val_far1k=0.230)"
+flag_calibracao_alvo_1.0,EDiv_Means,student_t,500,0.0,0,"saturado_superior (param=0.2, val_far1k=0.380)"
+flag_calibracao_alvo_1.0,EDiv_Medians,student_t,500,0.0,0,"saturado_superior (param=0.2, val_far1k=0.440)"
+flag_calibracao_alvo_1.0,EDiv_Means,outliers,1000,0.0,0,"saturado_superior (param=0.2, val_far1k=0.340)"
+flag_calibracao_alvo_1.0,EDiv_Medians,outliers,1000,0.0,0,"saturado_superior (param=0.2, val_far1k=0.330)"
+flag_calibracao_alvo_1.0,EDiv_Means,outliers,500,0.0,0,"saturado_superior (param=0.2, val_far1k=0.580)"
+flag_calibracao_alvo_1.0,EDiv_Medians,outliers,500,0.0,0,"saturado_superior (param=0.2, val_far1k=0.580)"
+flag_calibracao_alvo_1.0,EDiv_Means,bimodal,1000,0.0,0,"saturado_superior (param=0.2, val_far1k=0.380)"
+flag_calibracao_alvo_1.0,EDiv_Medians,bimodal,1000,0.0,0,"saturado_superior (param=0.2, val_far1k=0.300)"
+flag_calibracao_alvo_1.0,EDiv_Means,bimodal,500,0.0,0,"saturado_superior (param=0.2, val_far1k=0.680)"
+flag_calibracao_alvo_1.0,EDiv_Medians,bimodal,500,0.0,0,"saturado_superior (param=0.2, val_far1k=0.680)"

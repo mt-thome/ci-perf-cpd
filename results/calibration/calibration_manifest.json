@@ -1,0 +1,5020 @@
+{
+  "_meta": {
+    "provisorio": false,
+    "alvo_principal_far_1k": 0.2,
+    "alvos_far_1k": [
+      0.2,
+      1.0
+    ],
+    "tamanhos_por_n": {
+      "100": {
+        "num_series_calibracao": 2000,
+        "num_series_validacao": 1000,
+        "faixa_sementes_calibracao": [
+          10000,
+          12000
+        ],
+        "faixa_sementes_validacao": [
+          20000,
+          21000
+        ]
+      },
+      "500": {
+        "num_series_calibracao": 200,
+        "num_series_validacao": 100,
+        "faixa_sementes_calibracao": [
+          10000,
+          10200
+        ],
+        "faixa_sementes_validacao": [
+          20000,
+          20100
+        ]
+      },
+      "1000": {
+        "num_series_calibracao": 200,
+        "num_series_validacao": 100,
+        "faixa_sementes_calibracao": [
+          10000,
+          10200
+        ],
+        "faixa_sementes_validacao": [
+          20000,
+          20100
+        ]
+      }
+    },
+    "tamanhos_n": [
+      100,
+      500,
+      1000
+    ],
+    "jump_ruptures": 1,
+    "config_sha256": "2108d7ea56f02bbd0ff301b3ee481385ceb53d56f811ce2e9db6eb0acb0cc2ce",
+    "git_hash": "3b08533043d6c50bdd7be91b1da25d59c90a08f0"
+  },
+  "detalhes_por_alvo": {
+    "gaussian": {
+      "1000": {
+        "0.2": {
+          "CUSUM": {
+            "param": 20.0,
+            "calib": {
+              "total_alarms": 35,
+              "expected_alarms": 40.0,
+              "far_1k": 0.175,
+              "far_series": 0.145,
+              "ci95_far_1k": [
+                0.1218939120125988,
+                0.2433826368454154
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 24,
+              "expected_alarms": 20.0,
+              "far_1k": 0.24000000000000002,
+              "far_series": 0.19,
+              "ci95_far_1k": [
+                0.15377252854686463,
+                0.3571009759375321
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "PELT_L2": {
+            "param": 400.0,
+            "calib": {
+              "total_alarms": 1,
+              "expected_alarms": 40.0,
+              "far_1k": 0.005,
+              "far_series": 0.005,
+              "ci95_far_1k": [
+                0.0001265890399214494,
+                0.027858216954694492
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 0,
+              "expected_alarms": 20.0,
+              "far_1k": 0.0,
+              "far_series": 0.0,
+              "ci95_far_1k": [
+                0.0,
+                0.03688879454113935
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "PELT_L1": {
+            "param": 30.0,
+            "calib": {
+              "total_alarms": 16,
+              "expected_alarms": 40.0,
+              "far_1k": 0.08,
+              "far_series": 0.065,
+              "ci95_far_1k": [
+                0.045726912268207624,
+                0.1299149879878047
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 11,
+              "expected_alarms": 20.0,
+              "far_1k": 0.11,
+              "far_series": 0.09,
+              "ci95_far_1k": [
+                0.0549116036723684,
+                0.19682038513301955
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "BINSEG_L2": {
+            "param": 200.0,
+            "calib": {
+              "total_alarms": 28,
+              "expected_alarms": 40.0,
+              "far_1k": 0.13999999999999999,
+              "far_series": 0.12,
+              "ci95_far_1k": [
+                0.09302898327928766,
+                0.20233897971634096
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 22,
+              "expected_alarms": 20.0,
+              "far_1k": 0.22,
+              "far_series": 0.18,
+              "ci95_far_1k": [
+                0.13787282872229611,
+                0.33308264387125236
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "EDiv_Means": {
+            "param": 0.15,
+            "calib": {
+              "total_alarms": 38,
+              "expected_alarms": 40.0,
+              "far_1k": 0.19,
+              "far_series": 0.165,
+              "ci95_far_1k": [
+                0.13445530822598076,
+                0.26078984459629806
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 28,
+              "expected_alarms": 20.0,
+              "far_1k": 0.27999999999999997,
+              "far_series": 0.2,
+              "ci95_far_1k": [
+                0.18605796655857532,
+                0.4046779594326819
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "EDiv_Medians": {
+            "param": 0.15,
+            "calib": {
+              "total_alarms": 38,
+              "expected_alarms": 40.0,
+              "far_1k": 0.19,
+              "far_series": 0.15,
+              "ci95_far_1k": [
+                0.13445530822598076,
+                0.26078984459629806
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 22,
+              "expected_alarms": 20.0,
+              "far_1k": 0.22,
+              "far_series": 0.16,
+              "ci95_far_1k": [
+                0.13787282872229611,
+                0.33308264387125236
+              ]
+            },
+            "validacao_falhou": false
+          }
+        },
+        "1.0": {
+          "CUSUM": {
+            "param": 10.0,
+            "calib": {
+              "total_alarms": 144,
+              "expected_alarms": 200.0,
+              "far_1k": 0.7200000000000001,
+              "far_series": 0.445,
+              "ci95_far_1k": [
+                0.6072071059893273,
+                0.8476675647377054
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 72,
+              "expected_alarms": 100.0,
+              "far_1k": 0.7200000000000001,
+              "far_series": 0.45,
+              "ci95_far_1k": [
+                0.5633556569018834,
+                0.9067208404465795
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "PELT_L2": {
+            "param": 200.0,
+            "calib": {
+              "total_alarms": 90,
+              "expected_alarms": 200.0,
+              "far_1k": 0.45,
+              "far_series": 0.245,
+              "ci95_far_1k": [
+                0.36185314065552987,
+                0.5531263989495322
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 43,
+              "expected_alarms": 100.0,
+              "far_1k": 0.43,
+              "far_series": 0.27,
+              "ci95_far_1k": [
+                0.31119313211967187,
+                0.5792071781038363
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "PELT_L1": {
+            "param": 20.0,
+            "calib": {
+              "total_alarms": 173,
+              "expected_alarms": 200.0,
+              "far_1k": 0.865,
+              "far_series": 0.36,
+              "ci95_far_1k": [
+                0.7409025801018606,
+                1.0039372000366877
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 77,
+              "expected_alarms": 100.0,
+              "far_1k": 0.7699999999999999,
+              "far_series": 0.39,
+              "ci95_far_1k": [
+                0.6076719585444652,
+                0.962367885001229
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "BINSEG_L2": {
+            "param": 200.0,
+            "calib": {
+              "total_alarms": 28,
+              "expected_alarms": 200.0,
+              "far_1k": 0.13999999999999999,
+              "far_series": 0.12,
+              "ci95_far_1k": [
+                0.09302898327928766,
+                0.20233897971634096
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 22,
+              "expected_alarms": 100.0,
+              "far_1k": 0.22,
+              "far_series": 0.18,
+              "ci95_far_1k": [
+                0.13787282872229611,
+                0.33308264387125236
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "EDiv_Means": {
+            "param": 0.2,
+            "calib": {
+              "total_alarms": 54,
+              "expected_alarms": 200.0,
+              "far_1k": 0.27,
+              "far_series": 0.2,
+              "ci95_far_1k": [
+                0.20283230986272377,
+                0.35229143196855356
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": true,
+            "val": {
+              "total_alarms": 39,
+              "expected_alarms": 100.0,
+              "far_1k": 0.39,
+              "far_series": 0.25,
+              "ci95_far_1k": [
+                0.27732812489436476,
+                0.5331428386583285
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "EDiv_Medians": {
+            "param": 0.2,
+            "calib": {
+              "total_alarms": 54,
+              "expected_alarms": 200.0,
+              "far_1k": 0.27,
+              "far_series": 0.195,
+              "ci95_far_1k": [
+                0.20283230986272377,
+                0.35229143196855356
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": true,
+            "val": {
+              "total_alarms": 35,
+              "expected_alarms": 100.0,
+              "far_1k": 0.35,
+              "far_series": 0.21,
+              "ci95_far_1k": [
+                0.2437878240251976,
+                0.4867652736908308
+              ]
+            },
+            "validacao_falhou": false
+          }
+        }
+      },
+      "500": {
+        "0.2": {
+          "CUSUM": {
+            "param": 25.0,
+            "calib": {
+              "total_alarms": 20,
+              "expected_alarms": 20.0,
+              "far_1k": 0.2,
+              "far_series": 0.085,
+              "ci95_far_1k": [
+                0.12216519585403944,
+                0.30888377902674596
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 10,
+              "expected_alarms": 10.0,
+              "far_1k": 0.2,
+              "far_series": 0.09,
+              "ci95_far_1k": [
+                0.09590777392264867,
+                0.36780712084035555
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "PELT_L2": {
+            "param": 400.0,
+            "calib": {
+              "total_alarms": 1,
+              "expected_alarms": 20.0,
+              "far_1k": 0.01,
+              "far_series": 0.005,
+              "ci95_far_1k": [
+                0.0002531780798428988,
+                0.055716433909388983
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 0,
+              "expected_alarms": 10.0,
+              "far_1k": 0.0,
+              "far_series": 0.0,
+              "ci95_far_1k": [
+                0.0,
+                0.0737775890822787
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "PELT_L1": {
+            "param": 30.0,
+            "calib": {
+              "total_alarms": 12,
+              "expected_alarms": 20.0,
+              "far_1k": 0.12000000000000001,
+              "far_series": 0.055,
+              "ci95_far_1k": [
+                0.06200575108722218,
+                0.20961585048176962
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 2,
+              "expected_alarms": 10.0,
+              "far_1k": 0.04,
+              "far_series": 0.01,
+              "ci95_far_1k": [
+                0.0048441855708792995,
+                0.1444937533544792
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "BINSEG_L2": {
+            "param": 400.0,
+            "calib": {
+              "total_alarms": 1,
+              "expected_alarms": 20.0,
+              "far_1k": 0.01,
+              "far_series": 0.005,
+              "ci95_far_1k": [
+                0.0002531780798428988,
+                0.055716433909388983
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 0,
+              "expected_alarms": 10.0,
+              "far_1k": 0.0,
+              "far_series": 0.0,
+              "ci95_far_1k": [
+                0.0,
+                0.0737775890822787
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "EDiv_Means": {
+            "param": 0.05,
+            "calib": {
+              "total_alarms": 10,
+              "expected_alarms": 20.0,
+              "far_1k": 0.1,
+              "far_series": 0.05,
+              "ci95_far_1k": [
+                0.047953886961324334,
+                0.18390356042017778
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 4,
+              "expected_alarms": 10.0,
+              "far_1k": 0.08,
+              "far_series": 0.04,
+              "ci95_far_1k": [
+                0.0217973074725265,
+                0.20483177350807388
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "EDiv_Medians": {
+            "param": 0.05,
+            "calib": {
+              "total_alarms": 13,
+              "expected_alarms": 20.0,
+              "far_1k": 0.12999999999999998,
+              "far_series": 0.06,
+              "ci95_far_1k": [
+                0.06921952491003801,
+                0.22230395918158874
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 5,
+              "expected_alarms": 10.0,
+              "far_1k": 0.1,
+              "far_series": 0.05,
+              "ci95_far_1k": [
+                0.03246972780236841,
+                0.23336664158645343
+              ]
+            },
+            "validacao_falhou": false
+          }
+        },
+        "1.0": {
+          "CUSUM": {
+            "param": 10.0,
+            "calib": {
+              "total_alarms": 99,
+              "expected_alarms": 100.0,
+              "far_1k": 0.99,
+              "far_series": 0.365,
+              "ci95_far_1k": [
+                0.8046231485419538,
+                1.2052894775315546
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 48,
+              "expected_alarms": 50.0,
+              "far_1k": 0.9600000000000001,
+              "far_series": 0.33,
+              "ci95_far_1k": [
+                0.7078282164696649,
+                1.2728207236425453
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "PELT_L2": {
+            "param": 200.0,
+            "calib": {
+              "total_alarms": 45,
+              "expected_alarms": 100.0,
+              "far_1k": 0.45,
+              "far_series": 0.165,
+              "ci95_far_1k": [
+                0.3282330878823446,
+                0.6021354049695881
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 25,
+              "expected_alarms": 50.0,
+              "far_1k": 0.5,
+              "far_series": 0.17,
+              "ci95_far_1k": [
+                0.3235736369565866,
+                0.7380986339506074
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "PELT_L1": {
+            "param": 25.0,
+            "calib": {
+              "total_alarms": 27,
+              "expected_alarms": 100.0,
+              "far_1k": 0.27,
+              "far_series": 0.11,
+              "ci95_far_1k": [
+                0.17793170131764777,
+                0.39283582445162135
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 14,
+              "expected_alarms": 50.0,
+              "far_1k": 0.27999999999999997,
+              "far_series": 0.11,
+              "ci95_far_1k": [
+                0.1530786055260119,
+                0.46979242243671154
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "BINSEG_L2": {
+            "param": 200.0,
+            "calib": {
+              "total_alarms": 24,
+              "expected_alarms": 100.0,
+              "far_1k": 0.24000000000000002,
+              "far_series": 0.12,
+              "ci95_far_1k": [
+                0.15377252854686463,
+                0.3571009759375321
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 13,
+              "expected_alarms": 50.0,
+              "far_1k": 0.25999999999999995,
+              "far_series": 0.12,
+              "ci95_far_1k": [
+                0.13843904982007602,
+                0.4446079183631775
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "EDiv_Means": {
+            "param": 0.2,
+            "calib": {
+              "total_alarms": 61,
+              "expected_alarms": 100.0,
+              "far_1k": 0.61,
+              "far_series": 0.225,
+              "ci95_far_1k": [
+                0.4666016656098253,
+                0.7835705191483608
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": true,
+            "val": {
+              "total_alarms": 25,
+              "expected_alarms": 50.0,
+              "far_1k": 0.5,
+              "far_series": 0.21,
+              "ci95_far_1k": [
+                0.3235736369565866,
+                0.7380986339506074
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "EDiv_Medians": {
+            "param": 0.2,
+            "calib": {
+              "total_alarms": 69,
+              "expected_alarms": 100.0,
+              "far_1k": 0.69,
+              "far_series": 0.255,
+              "ci95_far_1k": [
+                0.5368611855684483,
+                0.8732391609504528
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": true,
+            "val": {
+              "total_alarms": 26,
+              "expected_alarms": 50.0,
+              "far_1k": 0.5199999999999999,
+              "far_series": 0.18,
+              "ci95_far_1k": [
+                0.3396812643119268,
+                0.7619204816624999
+              ]
+            },
+            "validacao_falhou": false
+          }
+        }
+      },
+      "100": {
+        "0.2": {
+          "CUSUM": {
+            "param": 25.0,
+            "calib": {
+              "total_alarms": 26,
+              "expected_alarms": 40.0,
+              "far_1k": 0.12999999999999998,
+              "far_series": 0.013,
+              "ci95_far_1k": [
+                0.0849203160779817,
+                0.19048012041562498
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 7,
+              "expected_alarms": 20.0,
+              "far_1k": 0.06999999999999999,
+              "far_series": 0.007,
+              "ci95_far_1k": [
+                0.028143630515198654,
+                0.14422675361702378
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "PELT_L2": {
+            "param": 400.0,
+            "calib": {
+              "total_alarms": 3,
+              "expected_alarms": 40.0,
+              "far_1k": 0.015000000000000001,
+              "far_series": 0.0015,
+              "ci95_far_1k": [
+                0.003093360614478007,
+                0.04383636534871162
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 0,
+              "expected_alarms": 20.0,
+              "far_1k": 0.0,
+              "far_series": 0.0,
+              "ci95_far_1k": [
+                0.0,
+                0.03688879454113935
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "PELT_L1": {
+            "param": 30.0,
+            "calib": {
+              "total_alarms": 18,
+              "expected_alarms": 40.0,
+              "far_1k": 0.09000000000000001,
+              "far_series": 0.009,
+              "ci95_far_1k": [
+                0.05333970390199764,
+                0.14223880133763991
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 6,
+              "expected_alarms": 20.0,
+              "far_1k": 0.060000000000000005,
+              "far_series": 0.006,
+              "ci95_far_1k": [
+                0.02201894253490851,
+                0.13059474022518686
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "BINSEG_L2": {
+            "param": 400.0,
+            "calib": {
+              "total_alarms": 3,
+              "expected_alarms": 40.0,
+              "far_1k": 0.015000000000000001,
+              "far_series": 0.0015,
+              "ci95_far_1k": [
+                0.003093360614478007,
+                0.04383636534871162
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 0,
+              "expected_alarms": 20.0,
+              "far_1k": 0.0,
+              "far_series": 0.0,
+              "ci95_far_1k": [
+                0.0,
+                0.03688879454113935
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "EDiv_Means": {
+            "param": 0.01,
+            "calib": {
+              "total_alarms": 22,
+              "expected_alarms": 40.0,
+              "far_1k": 0.11,
+              "far_series": 0.011,
+              "ci95_far_1k": [
+                0.06893641436114806,
+                0.16654132193562618
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 8,
+              "expected_alarms": 20.0,
+              "far_1k": 0.08,
+              "far_series": 0.008,
+              "ci95_far_1k": [
+                0.03453832176748502,
+                0.15763189220193313
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "EDiv_Medians": {
+            "param": 0.02,
+            "calib": {
+              "total_alarms": 38,
+              "expected_alarms": 40.0,
+              "far_1k": 0.19,
+              "far_series": 0.019,
+              "ci95_far_1k": [
+                0.13445530822598076,
+                0.26078984459629806
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 21,
+              "expected_alarms": 20.0,
+              "far_1k": 0.21000000000000002,
+              "far_series": 0.021,
+              "ci95_far_1k": [
+                0.12999330984076188,
+                0.32100730734943406
+              ]
+            },
+            "validacao_falhou": false
+          }
+        },
+        "1.0": {
+          "CUSUM": {
+            "param": 12.0,
+            "calib": {
+              "total_alarms": 149,
+              "expected_alarms": 200.0,
+              "far_1k": 0.745,
+              "far_series": 0.0735,
+              "ci95_far_1k": [
+                0.6301817704337801,
+                0.8746861720747882
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 78,
+              "expected_alarms": 100.0,
+              "far_1k": 0.78,
+              "far_series": 0.077,
+              "ci95_far_1k": [
+                0.6165576320502033,
+                0.9734753005086979
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "PELT_L2": {
+            "param": 200.0,
+            "calib": {
+              "total_alarms": 83,
+              "expected_alarms": 200.0,
+              "far_1k": 0.415,
+              "far_series": 0.0415,
+              "ci95_far_1k": [
+                0.33054518348901546,
+                0.5144549389863304
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 43,
+              "expected_alarms": 100.0,
+              "far_1k": 0.43,
+              "far_series": 0.043,
+              "ci95_far_1k": [
+                0.31119313211967187,
+                0.5792071781038363
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "PELT_L1": {
+            "param": 20.0,
+            "calib": {
+              "total_alarms": 136,
+              "expected_alarms": 200.0,
+              "far_1k": 0.68,
+              "far_series": 0.063,
+              "ci95_far_1k": [
+                0.5705223164578146,
+                0.8043638734536883
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 76,
+              "expected_alarms": 100.0,
+              "far_1k": 0.76,
+              "far_series": 0.071,
+              "ci95_far_1k": [
+                0.598793558764536,
+                0.9512533296333159
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "BINSEG_L2": {
+            "param": 200.0,
+            "calib": {
+              "total_alarms": 83,
+              "expected_alarms": 200.0,
+              "far_1k": 0.415,
+              "far_series": 0.0415,
+              "ci95_far_1k": [
+                0.33054518348901546,
+                0.5144549389863304
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 43,
+              "expected_alarms": 100.0,
+              "far_1k": 0.43,
+              "far_series": 0.043,
+              "ci95_far_1k": [
+                0.31119313211967187,
+                0.5792071781038363
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "EDiv_Means": {
+            "param": 0.1,
+            "calib": {
+              "total_alarms": 200,
+              "expected_alarms": 200.0,
+              "far_1k": 1.0,
+              "far_series": 0.095,
+              "ci95_far_1k": [
+                0.8662044134072866,
+                1.1486099083272494
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 127,
+              "expected_alarms": 100.0,
+              "far_1k": 1.27,
+              "far_series": 0.117,
+              "ci95_far_1k": [
+                1.0587417785092428,
+                1.5110590505110313
+              ]
+            },
+            "validacao_falhou": true
+          },
+          "EDiv_Medians": {
+            "param": 0.05,
+            "calib": {
+              "total_alarms": 105,
+              "expected_alarms": 200.0,
+              "far_1k": 0.525,
+              "far_series": 0.0505,
+              "ci95_far_1k": [
+                0.4293979866013908,
+                0.6355445093441792
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 63,
+              "expected_alarms": 100.0,
+              "far_1k": 0.63,
+              "far_series": 0.061,
+              "ci95_far_1k": [
+                0.48410929795487245,
+                0.806043672868905
+              ]
+            },
+            "validacao_falhou": false
+          }
+        }
+      }
+    },
+    "ar1": {
+      "1000": {
+        "0.2": {
+          "CUSUM": {
+            "param": 150.0,
+            "calib": {
+              "total_alarms": 30,
+              "expected_alarms": 40.0,
+              "far_1k": 0.15,
+              "far_series": 0.145,
+              "ci95_far_1k": [
+                0.10120437010710458,
+                0.2141343269740383
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 27,
+              "expected_alarms": 20.0,
+              "far_1k": 0.27,
+              "far_series": 0.23,
+              "ci95_far_1k": [
+                0.17793170131764777,
+                0.39283582445162135
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "PELT_L2": {
+            "param": 800.0,
+            "calib": {
+              "total_alarms": 30,
+              "expected_alarms": 40.0,
+              "far_1k": 0.15,
+              "far_series": 0.1,
+              "ci95_far_1k": [
+                0.10120437010710458,
+                0.2141343269740383
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 17,
+              "expected_alarms": 20.0,
+              "far_1k": 0.17,
+              "far_series": 0.14,
+              "ci95_far_1k": [
+                0.09903126469607294,
+                0.27218646815906616
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "PELT_L1": {
+            "param": 100.0,
+            "calib": {
+              "total_alarms": 2,
+              "expected_alarms": 40.0,
+              "far_1k": 0.01,
+              "far_series": 0.01,
+              "ci95_far_1k": [
+                0.0012110463927198249,
+                0.0361234383386198
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 0,
+              "expected_alarms": 20.0,
+              "far_1k": 0.0,
+              "far_series": 0.0,
+              "ci95_far_1k": [
+                0.0,
+                0.03688879454113935
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "BINSEG_L2": {
+            "param": 800.0,
+            "calib": {
+              "total_alarms": 16,
+              "expected_alarms": 40.0,
+              "far_1k": 0.08,
+              "far_series": 0.07,
+              "ci95_far_1k": [
+                0.045726912268207624,
+                0.1299149879878047
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 15,
+              "expected_alarms": 20.0,
+              "far_1k": 0.15,
+              "far_series": 0.13,
+              "ci95_far_1k": [
+                0.08395386132783315,
+                0.24740218871485845
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "EDiv_Means": {
+            "param": 0.01,
+            "calib": {
+              "total_alarms": 309,
+              "expected_alarms": 40.0,
+              "far_1k": 1.545,
+              "far_series": 0.595,
+              "ci95_far_1k": [
+                1.377518428905776,
+                1.7272294974165203
+              ]
+            },
+            "saturado_inferior": true,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 155,
+              "expected_alarms": 20.0,
+              "far_1k": 1.55,
+              "far_series": 0.62,
+              "ci95_far_1k": [
+                1.3155915215977876,
+                1.8141290748055545
+              ]
+            },
+            "validacao_falhou": true
+          },
+          "EDiv_Medians": {
+            "param": 0.01,
+            "calib": {
+              "total_alarms": 174,
+              "expected_alarms": 40.0,
+              "far_1k": 0.87,
+              "far_series": 0.455,
+              "ci95_far_1k": [
+                0.7455304075351781,
+                1.0093083261560651
+              ]
+            },
+            "saturado_inferior": true,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 107,
+              "expected_alarms": 20.0,
+              "far_1k": 1.07,
+              "far_series": 0.5,
+              "ci95_far_1k": [
+                0.876890821970358,
+                1.2929854728090435
+              ]
+            },
+            "validacao_falhou": true
+          }
+        },
+        "1.0": {
+          "CUSUM": {
+            "param": 40.0,
+            "calib": {
+              "total_alarms": 129,
+              "expected_alarms": 200.0,
+              "far_1k": 0.6449999999999999,
+              "far_series": 0.41,
+              "ci95_far_1k": [
+                0.5385041436089325,
+                0.7663929830331531
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 86,
+              "expected_alarms": 100.0,
+              "far_1k": 0.86,
+              "far_series": 0.54,
+              "ci95_far_1k": [
+                0.6878889924416999,
+                1.0620930038194718
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "PELT_L2": {
+            "param": 800.0,
+            "calib": {
+              "total_alarms": 30,
+              "expected_alarms": 200.0,
+              "far_1k": 0.15,
+              "far_series": 0.1,
+              "ci95_far_1k": [
+                0.10120437010710458,
+                0.2141343269740383
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 17,
+              "expected_alarms": 100.0,
+              "far_1k": 0.17,
+              "far_series": 0.14,
+              "ci95_far_1k": [
+                0.09903126469607294,
+                0.27218646815906616
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "PELT_L1": {
+            "param": 100.0,
+            "calib": {
+              "total_alarms": 2,
+              "expected_alarms": 200.0,
+              "far_1k": 0.01,
+              "far_series": 0.01,
+              "ci95_far_1k": [
+                0.0012110463927198249,
+                0.0361234383386198
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 0,
+              "expected_alarms": 100.0,
+              "far_1k": 0.0,
+              "far_series": 0.0,
+              "ci95_far_1k": [
+                0.0,
+                0.03688879454113935
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "BINSEG_L2": {
+            "param": 800.0,
+            "calib": {
+              "total_alarms": 16,
+              "expected_alarms": 200.0,
+              "far_1k": 0.08,
+              "far_series": 0.07,
+              "ci95_far_1k": [
+                0.045726912268207624,
+                0.1299149879878047
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 15,
+              "expected_alarms": 100.0,
+              "far_1k": 0.15,
+              "far_series": 0.13,
+              "ci95_far_1k": [
+                0.08395386132783315,
+                0.24740218871485845
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "EDiv_Means": {
+            "param": 0.01,
+            "calib": {
+              "total_alarms": 309,
+              "expected_alarms": 200.0,
+              "far_1k": 1.545,
+              "far_series": 0.595,
+              "ci95_far_1k": [
+                1.377518428905776,
+                1.7272294974165203
+              ]
+            },
+            "saturado_inferior": true,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 155,
+              "expected_alarms": 100.0,
+              "far_1k": 1.55,
+              "far_series": 0.62,
+              "ci95_far_1k": [
+                1.3155915215977876,
+                1.8141290748055545
+              ]
+            },
+            "validacao_falhou": true
+          },
+          "EDiv_Medians": {
+            "param": 0.01,
+            "calib": {
+              "total_alarms": 174,
+              "expected_alarms": 200.0,
+              "far_1k": 0.87,
+              "far_series": 0.455,
+              "ci95_far_1k": [
+                0.7455304075351781,
+                1.0093083261560651
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 107,
+              "expected_alarms": 100.0,
+              "far_1k": 1.07,
+              "far_series": 0.5,
+              "ci95_far_1k": [
+                0.876890821970358,
+                1.2929854728090435
+              ]
+            },
+            "validacao_falhou": false
+          }
+        }
+      },
+      "500": {
+        "0.2": {
+          "CUSUM": {
+            "param": 150.0,
+            "calib": {
+              "total_alarms": 12,
+              "expected_alarms": 20.0,
+              "far_1k": 0.12000000000000001,
+              "far_series": 0.06,
+              "ci95_far_1k": [
+                0.06200575108722218,
+                0.20961585048176962
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 12,
+              "expected_alarms": 10.0,
+              "far_1k": 0.24000000000000002,
+              "far_series": 0.12,
+              "ci95_far_1k": [
+                0.12401150217444436,
+                0.41923170096353923
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "PELT_L2": {
+            "param": 1600.0,
+            "calib": {
+              "total_alarms": 1,
+              "expected_alarms": 20.0,
+              "far_1k": 0.01,
+              "far_series": 0.005,
+              "ci95_far_1k": [
+                0.0002531780798428988,
+                0.055716433909388983
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 0,
+              "expected_alarms": 10.0,
+              "far_1k": 0.0,
+              "far_series": 0.0,
+              "ci95_far_1k": [
+                0.0,
+                0.0737775890822787
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "PELT_L1": {
+            "param": 100.0,
+            "calib": {
+              "total_alarms": 5,
+              "expected_alarms": 20.0,
+              "far_1k": 0.05,
+              "far_series": 0.025,
+              "ci95_far_1k": [
+                0.016234863901184206,
+                0.11668332079322671
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 1,
+              "expected_alarms": 10.0,
+              "far_1k": 0.02,
+              "far_series": 0.01,
+              "ci95_far_1k": [
+                0.0005063561596857976,
+                0.11143286781877797
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "BINSEG_L2": {
+            "param": 800.0,
+            "calib": {
+              "total_alarms": 19,
+              "expected_alarms": 20.0,
+              "far_1k": 0.19,
+              "far_series": 0.095,
+              "ci95_far_1k": [
+                0.11439241164366731,
+                0.29670853571585587
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 7,
+              "expected_alarms": 10.0,
+              "far_1k": 0.13999999999999999,
+              "far_series": 0.07,
+              "ci95_far_1k": [
+                0.05628726103039731,
+                0.28845350723404756
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "EDiv_Means": {
+            "param": 0.01,
+            "calib": {
+              "total_alarms": 264,
+              "expected_alarms": 20.0,
+              "far_1k": 2.64,
+              "far_series": 0.6,
+              "ci95_far_1k": [
+                2.331118247512975,
+                2.9784224215638644
+              ]
+            },
+            "saturado_inferior": true,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 103,
+              "expected_alarms": 10.0,
+              "far_1k": 2.06,
+              "far_series": 0.48,
+              "ci95_far_1k": [
+                1.6814387668963675,
+                2.498349108940623
+              ]
+            },
+            "validacao_falhou": true
+          },
+          "EDiv_Medians": {
+            "param": 0.01,
+            "calib": {
+              "total_alarms": 120,
+              "expected_alarms": 20.0,
+              "far_1k": 1.2,
+              "far_series": 0.405,
+              "ci95_far_1k": [
+                0.994919256259387,
+                1.4349058536935226
+              ]
+            },
+            "saturado_inferior": true,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 54,
+              "expected_alarms": 10.0,
+              "far_1k": 1.08,
+              "far_series": 0.37,
+              "ci95_far_1k": [
+                0.8113292394508951,
+                1.4091657278742142
+              ]
+            },
+            "validacao_falhou": true
+          }
+        },
+        "1.0": {
+          "CUSUM": {
+            "param": 40.0,
+            "calib": {
+              "total_alarms": 97,
+              "expected_alarms": 100.0,
+              "far_1k": 0.9700000000000001,
+              "far_series": 0.365,
+              "ci95_far_1k": [
+                0.7866046557423232,
+                1.1833177393241383
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 53,
+              "expected_alarms": 50.0,
+              "far_1k": 1.06,
+              "far_series": 0.37,
+              "ci95_far_1k": [
+                0.7940127386471494,
+                1.3865060985840851
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "PELT_L2": {
+            "param": 800.0,
+            "calib": {
+              "total_alarms": 28,
+              "expected_alarms": 100.0,
+              "far_1k": 0.27999999999999997,
+              "far_series": 0.115,
+              "ci95_far_1k": [
+                0.18605796655857532,
+                0.4046779594326819
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 9,
+              "expected_alarms": 50.0,
+              "far_1k": 0.18000000000000002,
+              "far_series": 0.08,
+              "ci95_far_1k": [
+                0.08230746194756668,
+                0.34169606902838334
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "PELT_L1": {
+            "param": 100.0,
+            "calib": {
+              "total_alarms": 5,
+              "expected_alarms": 100.0,
+              "far_1k": 0.05,
+              "far_series": 0.025,
+              "ci95_far_1k": [
+                0.016234863901184206,
+                0.11668332079322671
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 1,
+              "expected_alarms": 50.0,
+              "far_1k": 0.02,
+              "far_series": 0.01,
+              "ci95_far_1k": [
+                0.0005063561596857976,
+                0.11143286781877797
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "BINSEG_L2": {
+            "param": 800.0,
+            "calib": {
+              "total_alarms": 19,
+              "expected_alarms": 100.0,
+              "far_1k": 0.19,
+              "far_series": 0.095,
+              "ci95_far_1k": [
+                0.11439241164366731,
+                0.29670853571585587
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 7,
+              "expected_alarms": 50.0,
+              "far_1k": 0.13999999999999999,
+              "far_series": 0.07,
+              "ci95_far_1k": [
+                0.05628726103039731,
+                0.28845350723404756
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "EDiv_Means": {
+            "param": 0.01,
+            "calib": {
+              "total_alarms": 264,
+              "expected_alarms": 100.0,
+              "far_1k": 2.64,
+              "far_series": 0.6,
+              "ci95_far_1k": [
+                2.331118247512975,
+                2.9784224215638644
+              ]
+            },
+            "saturado_inferior": true,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 103,
+              "expected_alarms": 50.0,
+              "far_1k": 2.06,
+              "far_series": 0.48,
+              "ci95_far_1k": [
+                1.6814387668963675,
+                2.498349108940623
+              ]
+            },
+            "validacao_falhou": true
+          },
+          "EDiv_Medians": {
+            "param": 0.01,
+            "calib": {
+              "total_alarms": 120,
+              "expected_alarms": 100.0,
+              "far_1k": 1.2,
+              "far_series": 0.405,
+              "ci95_far_1k": [
+                0.994919256259387,
+                1.4349058536935226
+              ]
+            },
+            "saturado_inferior": true,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 54,
+              "expected_alarms": 50.0,
+              "far_1k": 1.08,
+              "far_series": 0.37,
+              "ci95_far_1k": [
+                0.8113292394508951,
+                1.4091657278742142
+              ]
+            },
+            "validacao_falhou": false
+          }
+        }
+      },
+      "100": {
+        "0.2": {
+          "CUSUM": {
+            "param": 75.0,
+            "calib": {
+              "total_alarms": 20,
+              "expected_alarms": 40.0,
+              "far_1k": 0.1,
+              "far_series": 0.01,
+              "ci95_far_1k": [
+                0.06108259792701972,
+                0.15444188951337298
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 13,
+              "expected_alarms": 20.0,
+              "far_1k": 0.12999999999999998,
+              "far_series": 0.013,
+              "ci95_far_1k": [
+                0.06921952491003801,
+                0.22230395918158874
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "PELT_L2": {
+            "param": 1600.0,
+            "calib": {
+              "total_alarms": 2,
+              "expected_alarms": 40.0,
+              "far_1k": 0.01,
+              "far_series": 0.001,
+              "ci95_far_1k": [
+                0.0012110463927198249,
+                0.0361234383386198
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 0,
+              "expected_alarms": 20.0,
+              "far_1k": 0.0,
+              "far_series": 0.0,
+              "ci95_far_1k": [
+                0.0,
+                0.03688879454113935
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "PELT_L1": {
+            "param": 100.0,
+            "calib": {
+              "total_alarms": 5,
+              "expected_alarms": 40.0,
+              "far_1k": 0.025,
+              "far_series": 0.0025,
+              "ci95_far_1k": [
+                0.008117431950592103,
+                0.05834166039661336
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 2,
+              "expected_alarms": 20.0,
+              "far_1k": 0.02,
+              "far_series": 0.002,
+              "ci95_far_1k": [
+                0.0024220927854396498,
+                0.0722468766772396
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "BINSEG_L2": {
+            "param": 1600.0,
+            "calib": {
+              "total_alarms": 2,
+              "expected_alarms": 40.0,
+              "far_1k": 0.01,
+              "far_series": 0.001,
+              "ci95_far_1k": [
+                0.0012110463927198249,
+                0.0361234383386198
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 0,
+              "expected_alarms": 20.0,
+              "far_1k": 0.0,
+              "far_series": 0.0,
+              "ci95_far_1k": [
+                0.0,
+                0.03688879454113935
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "EDiv_Means": {
+            "param": 0.01,
+            "calib": {
+              "total_alarms": 802,
+              "expected_alarms": 40.0,
+              "far_1k": 4.01,
+              "far_series": 0.335,
+              "ci95_far_1k": [
+                3.7372386687374917,
+                4.2974049985244775
+              ]
+            },
+            "saturado_inferior": true,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 404,
+              "expected_alarms": 20.0,
+              "far_1k": 4.04,
+              "far_series": 0.341,
+              "ci95_far_1k": [
+                3.655607468707698,
+                4.453819583471561
+              ]
+            },
+            "validacao_falhou": true
+          },
+          "EDiv_Medians": {
+            "param": 0.01,
+            "calib": {
+              "total_alarms": 583,
+              "expected_alarms": 40.0,
+              "far_1k": 2.915,
+              "far_series": 0.2535,
+              "ci95_far_1k": [
+                2.6831502749893987,
+                3.1615229636665734
+              ]
+            },
+            "saturado_inferior": true,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 299,
+              "expected_alarms": 20.0,
+              "far_1k": 2.99,
+              "far_series": 0.263,
+              "ci95_far_1k": [
+                2.660659175419723,
+                3.348845761082056
+              ]
+            },
+            "validacao_falhou": true
+          }
+        },
+        "1.0": {
+          "CUSUM": {
+            "param": 40.0,
+            "calib": {
+              "total_alarms": 137,
+              "expected_alarms": 200.0,
+              "far_1k": 0.6849999999999999,
+              "far_series": 0.0685,
+              "ci95_far_1k": [
+                0.5751026721689929,
+                0.8097820234403671
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 77,
+              "expected_alarms": 100.0,
+              "far_1k": 0.7699999999999999,
+              "far_series": 0.077,
+              "ci95_far_1k": [
+                0.6076719585444652,
+                0.962367885001229
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "PELT_L2": {
+            "param": 800.0,
+            "calib": {
+              "total_alarms": 51,
+              "expected_alarms": 200.0,
+              "far_1k": 0.255,
+              "far_series": 0.0255,
+              "ci95_far_1k": [
+                0.1898642491914538,
+                0.3352779068830189
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 20,
+              "expected_alarms": 100.0,
+              "far_1k": 0.2,
+              "far_series": 0.02,
+              "ci95_far_1k": [
+                0.12216519585403944,
+                0.30888377902674596
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "PELT_L1": {
+            "param": 50.0,
+            "calib": {
+              "total_alarms": 200,
+              "expected_alarms": 200.0,
+              "far_1k": 1.0,
+              "far_series": 0.094,
+              "ci95_far_1k": [
+                0.8662044134072866,
+                1.1486099083272494
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 97,
+              "expected_alarms": 100.0,
+              "far_1k": 0.9700000000000001,
+              "far_series": 0.095,
+              "ci95_far_1k": [
+                0.7866046557423232,
+                1.1833177393241383
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "BINSEG_L2": {
+            "param": 800.0,
+            "calib": {
+              "total_alarms": 51,
+              "expected_alarms": 200.0,
+              "far_1k": 0.255,
+              "far_series": 0.0255,
+              "ci95_far_1k": [
+                0.1898642491914538,
+                0.3352779068830189
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 20,
+              "expected_alarms": 100.0,
+              "far_1k": 0.2,
+              "far_series": 0.02,
+              "ci95_far_1k": [
+                0.12216519585403944,
+                0.30888377902674596
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "EDiv_Means": {
+            "param": 0.01,
+            "calib": {
+              "total_alarms": 802,
+              "expected_alarms": 200.0,
+              "far_1k": 4.01,
+              "far_series": 0.335,
+              "ci95_far_1k": [
+                3.7372386687374917,
+                4.2974049985244775
+              ]
+            },
+            "saturado_inferior": true,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 404,
+              "expected_alarms": 100.0,
+              "far_1k": 4.04,
+              "far_series": 0.341,
+              "ci95_far_1k": [
+                3.655607468707698,
+                4.453819583471561
+              ]
+            },
+            "validacao_falhou": true
+          },
+          "EDiv_Medians": {
+            "param": 0.01,
+            "calib": {
+              "total_alarms": 583,
+              "expected_alarms": 200.0,
+              "far_1k": 2.915,
+              "far_series": 0.2535,
+              "ci95_far_1k": [
+                2.6831502749893987,
+                3.1615229636665734
+              ]
+            },
+            "saturado_inferior": true,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 299,
+              "expected_alarms": 100.0,
+              "far_1k": 2.99,
+              "far_series": 0.263,
+              "ci95_far_1k": [
+                2.660659175419723,
+                3.348845761082056
+              ]
+            },
+            "validacao_falhou": true
+          }
+        }
+      }
+    },
+    "student_t": {
+      "1000": {
+        "0.2": {
+          "CUSUM": {
+            "param": 40.0,
+            "calib": {
+              "total_alarms": 35,
+              "expected_alarms": 40.0,
+              "far_1k": 0.175,
+              "far_series": 0.145,
+              "ci95_far_1k": [
+                0.1218939120125988,
+                0.2433826368454154
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 11,
+              "expected_alarms": 20.0,
+              "far_1k": 0.11,
+              "far_series": 0.09,
+              "ci95_far_1k": [
+                0.0549116036723684,
+                0.19682038513301955
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "PELT_L2": {
+            "param": 400.0,
+            "calib": {
+              "total_alarms": 9,
+              "expected_alarms": 40.0,
+              "far_1k": 0.045000000000000005,
+              "far_series": 0.025,
+              "ci95_far_1k": [
+                0.02057686548689167,
+                0.08542401725709584
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 8,
+              "expected_alarms": 20.0,
+              "far_1k": 0.08,
+              "far_series": 0.03,
+              "ci95_far_1k": [
+                0.03453832176748502,
+                0.15763189220193313
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "PELT_L1": {
+            "param": 20.0,
+            "calib": {
+              "total_alarms": 14,
+              "expected_alarms": 40.0,
+              "far_1k": 0.06999999999999999,
+              "far_series": 0.065,
+              "ci95_far_1k": [
+                0.03826965138150298,
+                0.11744810560917789
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 1,
+              "expected_alarms": 20.0,
+              "far_1k": 0.01,
+              "far_series": 0.01,
+              "ci95_far_1k": [
+                0.0002531780798428988,
+                0.055716433909388983
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "BINSEG_L2": {
+            "param": 200.0,
+            "calib": {
+              "total_alarms": 26,
+              "expected_alarms": 40.0,
+              "far_1k": 0.12999999999999998,
+              "far_series": 0.115,
+              "ci95_far_1k": [
+                0.0849203160779817,
+                0.19048012041562498
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 17,
+              "expected_alarms": 20.0,
+              "far_1k": 0.17,
+              "far_series": 0.11,
+              "ci95_far_1k": [
+                0.09903126469607294,
+                0.27218646815906616
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "EDiv_Means": {
+            "param": 0.1,
+            "calib": {
+              "total_alarms": 24,
+              "expected_alarms": 40.0,
+              "far_1k": 0.12000000000000001,
+              "far_series": 0.095,
+              "ci95_far_1k": [
+                0.07688626427343231,
+                0.17855048796876605
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 7,
+              "expected_alarms": 20.0,
+              "far_1k": 0.06999999999999999,
+              "far_series": 0.07,
+              "ci95_far_1k": [
+                0.028143630515198654,
+                0.14422675361702378
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "EDiv_Medians": {
+            "param": 0.05,
+            "calib": {
+              "total_alarms": 18,
+              "expected_alarms": 40.0,
+              "far_1k": 0.09000000000000001,
+              "far_series": 0.085,
+              "ci95_far_1k": [
+                0.05333970390199764,
+                0.14223880133763991
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 2,
+              "expected_alarms": 20.0,
+              "far_1k": 0.02,
+              "far_series": 0.02,
+              "ci95_far_1k": [
+                0.0024220927854396498,
+                0.0722468766772396
+              ]
+            },
+            "validacao_falhou": false
+          }
+        },
+        "1.0": {
+          "CUSUM": {
+            "param": 20.0,
+            "calib": {
+              "total_alarms": 176,
+              "expected_alarms": 200.0,
+              "far_1k": 0.88,
+              "far_series": 0.525,
+              "ci95_far_1k": [
+                0.7547892599556708,
+                1.0200474074191628
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 73,
+              "expected_alarms": 100.0,
+              "far_1k": 0.73,
+              "far_series": 0.5,
+              "ci95_far_1k": [
+                0.5722034692249914,
+                0.9178654018298155
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "PELT_L2": {
+            "param": 200.0,
+            "calib": {
+              "total_alarms": 114,
+              "expected_alarms": 200.0,
+              "far_1k": 0.57,
+              "far_series": 0.28,
+              "ci95_far_1k": [
+                0.47017971080977694,
+                0.684744117930177
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 69,
+              "expected_alarms": 100.0,
+              "far_1k": 0.69,
+              "far_series": 0.32,
+              "ci95_far_1k": [
+                0.5368611855684483,
+                0.8732391609504528
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "PELT_L1": {
+            "param": 15.0,
+            "calib": {
+              "total_alarms": 64,
+              "expected_alarms": 200.0,
+              "far_1k": 0.32,
+              "far_series": 0.2,
+              "ci95_far_1k": [
+                0.24643899273117725,
+                0.40863285604442495
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 22,
+              "expected_alarms": 100.0,
+              "far_1k": 0.22,
+              "far_series": 0.13,
+              "ci95_far_1k": [
+                0.13787282872229611,
+                0.33308264387125236
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "BINSEG_L2": {
+            "param": 200.0,
+            "calib": {
+              "total_alarms": 26,
+              "expected_alarms": 200.0,
+              "far_1k": 0.12999999999999998,
+              "far_series": 0.115,
+              "ci95_far_1k": [
+                0.0849203160779817,
+                0.19048012041562498
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 17,
+              "expected_alarms": 100.0,
+              "far_1k": 0.17,
+              "far_series": 0.11,
+              "ci95_far_1k": [
+                0.09903126469607294,
+                0.27218646815906616
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "EDiv_Means": {
+            "param": 0.2,
+            "calib": {
+              "total_alarms": 73,
+              "expected_alarms": 200.0,
+              "far_1k": 0.365,
+              "far_series": 0.225,
+              "ci95_far_1k": [
+                0.2861017346124957,
+                0.45893270091490773
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": true,
+            "val": {
+              "total_alarms": 24,
+              "expected_alarms": 100.0,
+              "far_1k": 0.24000000000000002,
+              "far_series": 0.17,
+              "ci95_far_1k": [
+                0.15377252854686463,
+                0.3571009759375321
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "EDiv_Medians": {
+            "param": 0.2,
+            "calib": {
+              "total_alarms": 66,
+              "expected_alarms": 200.0,
+              "far_1k": 0.33,
+              "far_series": 0.245,
+              "ci95_far_1k": [
+                0.2552219760932064,
+                0.419840912212534
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": true,
+            "val": {
+              "total_alarms": 23,
+              "expected_alarms": 100.0,
+              "far_1k": 0.23,
+              "far_series": 0.16,
+              "ci95_far_1k": [
+                0.1458002703704468,
+                0.34511292894833034
+              ]
+            },
+            "validacao_falhou": false
+          }
+        }
+      },
+      "500": {
+        "0.2": {
+          "CUSUM": {
+            "param": 40.0,
+            "calib": {
+              "total_alarms": 18,
+              "expected_alarms": 20.0,
+              "far_1k": 0.18000000000000002,
+              "far_series": 0.085,
+              "ci95_far_1k": [
+                0.10667940780399528,
+                0.28447760267527983
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 6,
+              "expected_alarms": 10.0,
+              "far_1k": 0.12000000000000001,
+              "far_series": 0.06,
+              "ci95_far_1k": [
+                0.04403788506981702,
+                0.2611894804503737
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "PELT_L2": {
+            "param": 400.0,
+            "calib": {
+              "total_alarms": 5,
+              "expected_alarms": 20.0,
+              "far_1k": 0.05,
+              "far_series": 0.015,
+              "ci95_far_1k": [
+                0.016234863901184206,
+                0.11668332079322671
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 2,
+              "expected_alarms": 10.0,
+              "far_1k": 0.04,
+              "far_series": 0.01,
+              "ci95_far_1k": [
+                0.0048441855708792995,
+                0.1444937533544792
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "PELT_L1": {
+            "param": 20.0,
+            "calib": {
+              "total_alarms": 8,
+              "expected_alarms": 20.0,
+              "far_1k": 0.08,
+              "far_series": 0.035,
+              "ci95_far_1k": [
+                0.03453832176748502,
+                0.15763189220193313
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 1,
+              "expected_alarms": 10.0,
+              "far_1k": 0.02,
+              "far_series": 0.01,
+              "ci95_far_1k": [
+                0.0005063561596857976,
+                0.11143286781877797
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "BINSEG_L2": {
+            "param": 400.0,
+            "calib": {
+              "total_alarms": 1,
+              "expected_alarms": 20.0,
+              "far_1k": 0.01,
+              "far_series": 0.005,
+              "ci95_far_1k": [
+                0.0002531780798428988,
+                0.055716433909388983
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 0,
+              "expected_alarms": 10.0,
+              "far_1k": 0.0,
+              "far_series": 0.0,
+              "ci95_far_1k": [
+                0.0,
+                0.0737775890822787
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "EDiv_Means": {
+            "param": 0.05,
+            "calib": {
+              "total_alarms": 13,
+              "expected_alarms": 20.0,
+              "far_1k": 0.12999999999999998,
+              "far_series": 0.065,
+              "ci95_far_1k": [
+                0.06921952491003801,
+                0.22230395918158874
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 5,
+              "expected_alarms": 10.0,
+              "far_1k": 0.1,
+              "far_series": 0.04,
+              "ci95_far_1k": [
+                0.03246972780236841,
+                0.23336664158645343
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "EDiv_Medians": {
+            "param": 0.05,
+            "calib": {
+              "total_alarms": 13,
+              "expected_alarms": 20.0,
+              "far_1k": 0.12999999999999998,
+              "far_series": 0.065,
+              "ci95_far_1k": [
+                0.06921952491003801,
+                0.22230395918158874
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 2,
+              "expected_alarms": 10.0,
+              "far_1k": 0.04,
+              "far_series": 0.02,
+              "ci95_far_1k": [
+                0.0048441855708792995,
+                0.1444937533544792
+              ]
+            },
+            "validacao_falhou": false
+          }
+        },
+        "1.0": {
+          "CUSUM": {
+            "param": 25.0,
+            "calib": {
+              "total_alarms": 61,
+              "expected_alarms": 100.0,
+              "far_1k": 0.61,
+              "far_series": 0.245,
+              "ci95_far_1k": [
+                0.4666016656098253,
+                0.7835705191483608
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 22,
+              "expected_alarms": 50.0,
+              "far_1k": 0.44,
+              "far_series": 0.21,
+              "ci95_far_1k": [
+                0.27574565744459223,
+                0.6661652877425047
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "PELT_L2": {
+            "param": 200.0,
+            "calib": {
+              "total_alarms": 63,
+              "expected_alarms": 100.0,
+              "far_1k": 0.63,
+              "far_series": 0.175,
+              "ci95_far_1k": [
+                0.48410929795487245,
+                0.806043672868905
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 36,
+              "expected_alarms": 50.0,
+              "far_1k": 0.7200000000000001,
+              "far_series": 0.21,
+              "ci95_far_1k": [
+                0.5042791483463046,
+                0.9967834897847239
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "PELT_L1": {
+            "param": 15.0,
+            "calib": {
+              "total_alarms": 32,
+              "expected_alarms": 100.0,
+              "far_1k": 0.32,
+              "far_series": 0.115,
+              "ci95_far_1k": [
+                0.21887976311284565,
+                0.4517445207942047
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 12,
+              "expected_alarms": 50.0,
+              "far_1k": 0.24000000000000002,
+              "far_series": 0.1,
+              "ci95_far_1k": [
+                0.12401150217444436,
+                0.41923170096353923
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "BINSEG_L2": {
+            "param": 200.0,
+            "calib": {
+              "total_alarms": 28,
+              "expected_alarms": 100.0,
+              "far_1k": 0.27999999999999997,
+              "far_series": 0.105,
+              "ci95_far_1k": [
+                0.18605796655857532,
+                0.4046779594326819
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 9,
+              "expected_alarms": 50.0,
+              "far_1k": 0.18000000000000002,
+              "far_series": 0.08,
+              "ci95_far_1k": [
+                0.08230746194756668,
+                0.34169606902838334
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "EDiv_Means": {
+            "param": 0.2,
+            "calib": {
+              "total_alarms": 55,
+              "expected_alarms": 100.0,
+              "far_1k": 0.55,
+              "far_series": 0.215,
+              "ci95_far_1k": [
+                0.4143352697143848,
+                0.7159005997595936
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": true,
+            "val": {
+              "total_alarms": 19,
+              "expected_alarms": 50.0,
+              "far_1k": 0.38,
+              "far_series": 0.13,
+              "ci95_far_1k": [
+                0.22878482328733463,
+                0.5934170714317117
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "EDiv_Medians": {
+            "param": 0.2,
+            "calib": {
+              "total_alarms": 66,
+              "expected_alarms": 100.0,
+              "far_1k": 0.66,
+              "far_series": 0.23,
+              "ci95_far_1k": [
+                0.5104439521864128,
+                0.839681824425068
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": true,
+            "val": {
+              "total_alarms": 22,
+              "expected_alarms": 50.0,
+              "far_1k": 0.44,
+              "far_series": 0.2,
+              "ci95_far_1k": [
+                0.27574565744459223,
+                0.6661652877425047
+              ]
+            },
+            "validacao_falhou": false
+          }
+        }
+      },
+      "100": {
+        "0.2": {
+          "CUSUM": {
+            "param": 40.0,
+            "calib": {
+              "total_alarms": 19,
+              "expected_alarms": 40.0,
+              "far_1k": 0.095,
+              "far_series": 0.0095,
+              "ci95_far_1k": [
+                0.05719620582183366,
+                0.14835426785792794
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 8,
+              "expected_alarms": 20.0,
+              "far_1k": 0.08,
+              "far_series": 0.008,
+              "ci95_far_1k": [
+                0.03453832176748502,
+                0.15763189220193313
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "PELT_L2": {
+            "param": 400.0,
+            "calib": {
+              "total_alarms": 18,
+              "expected_alarms": 40.0,
+              "far_1k": 0.09000000000000001,
+              "far_series": 0.008,
+              "ci95_far_1k": [
+                0.05333970390199764,
+                0.14223880133763991
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 4,
+              "expected_alarms": 20.0,
+              "far_1k": 0.04,
+              "far_series": 0.004,
+              "ci95_far_1k": [
+                0.01089865373626325,
+                0.10241588675403694
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "PELT_L1": {
+            "param": 20.0,
+            "calib": {
+              "total_alarms": 9,
+              "expected_alarms": 40.0,
+              "far_1k": 0.045000000000000005,
+              "far_series": 0.0045,
+              "ci95_far_1k": [
+                0.02057686548689167,
+                0.08542401725709584
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 6,
+              "expected_alarms": 20.0,
+              "far_1k": 0.060000000000000005,
+              "far_series": 0.006,
+              "ci95_far_1k": [
+                0.02201894253490851,
+                0.13059474022518686
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "BINSEG_L2": {
+            "param": 400.0,
+            "calib": {
+              "total_alarms": 17,
+              "expected_alarms": 40.0,
+              "far_1k": 0.085,
+              "far_series": 0.008,
+              "ci95_far_1k": [
+                0.04951563234803647,
+                0.13609323407953308
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 4,
+              "expected_alarms": 20.0,
+              "far_1k": 0.04,
+              "far_series": 0.004,
+              "ci95_far_1k": [
+                0.01089865373626325,
+                0.10241588675403694
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "EDiv_Means": {
+            "param": 0.02,
+            "calib": {
+              "total_alarms": 35,
+              "expected_alarms": 40.0,
+              "far_1k": 0.175,
+              "far_series": 0.0175,
+              "ci95_far_1k": [
+                0.1218939120125988,
+                0.2433826368454154
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 19,
+              "expected_alarms": 20.0,
+              "far_1k": 0.19,
+              "far_series": 0.019,
+              "ci95_far_1k": [
+                0.11439241164366731,
+                0.29670853571585587
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "EDiv_Medians": {
+            "param": 0.02,
+            "calib": {
+              "total_alarms": 35,
+              "expected_alarms": 40.0,
+              "far_1k": 0.175,
+              "far_series": 0.0175,
+              "ci95_far_1k": [
+                0.1218939120125988,
+                0.2433826368454154
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 22,
+              "expected_alarms": 20.0,
+              "far_1k": 0.22,
+              "far_series": 0.022,
+              "ci95_far_1k": [
+                0.13787282872229611,
+                0.33308264387125236
+              ]
+            },
+            "validacao_falhou": false
+          }
+        },
+        "1.0": {
+          "CUSUM": {
+            "param": 20.0,
+            "calib": {
+              "total_alarms": 180,
+              "expected_alarms": 200.0,
+              "far_1k": 0.9,
+              "far_series": 0.0865,
+              "ci95_far_1k": [
+                0.7733195031127812,
+                1.0415131345089355
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 88,
+              "expected_alarms": 100.0,
+              "far_1k": 0.88,
+              "far_series": 0.086,
+              "ci95_far_1k": [
+                0.7057857327109681,
+                1.084184612424543
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "PELT_L2": {
+            "param": 200.0,
+            "calib": {
+              "total_alarms": 94,
+              "expected_alarms": 200.0,
+              "far_1k": 0.47,
+              "far_series": 0.041,
+              "ci95_far_1k": [
+                0.3798078419954511,
+                0.5751609686441613
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 40,
+              "expected_alarms": 100.0,
+              "far_1k": 0.4,
+              "far_series": 0.036,
+              "ci95_far_1k": [
+                0.28576586441788965,
+                0.5446864696398407
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "PELT_L1": {
+            "param": 15.0,
+            "calib": {
+              "total_alarms": 75,
+              "expected_alarms": 200.0,
+              "far_1k": 0.375,
+              "far_series": 0.0365,
+              "ci95_far_1k": [
+                0.2949612885072573,
+                0.47006574724416383
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 39,
+              "expected_alarms": 100.0,
+              "far_1k": 0.39,
+              "far_series": 0.038,
+              "ci95_far_1k": [
+                0.27732812489436476,
+                0.5331428386583285
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "BINSEG_L2": {
+            "param": 200.0,
+            "calib": {
+              "total_alarms": 82,
+              "expected_alarms": 200.0,
+              "far_1k": 0.41,
+              "far_series": 0.0385,
+              "ci95_far_1k": [
+                0.3260851673395218,
+                0.5089181056803407
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 40,
+              "expected_alarms": 100.0,
+              "far_1k": 0.4,
+              "far_series": 0.036,
+              "ci95_far_1k": [
+                0.28576586441788965,
+                0.5446864696398407
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "EDiv_Means": {
+            "param": 0.05,
+            "calib": {
+              "total_alarms": 102,
+              "expected_alarms": 200.0,
+              "far_1k": 0.51,
+              "far_series": 0.048,
+              "ci95_far_1k": [
+                0.41584405096893756,
+                0.6191052030476436
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 51,
+              "expected_alarms": 100.0,
+              "far_1k": 0.51,
+              "far_series": 0.048,
+              "ci95_far_1k": [
+                0.3797284983829076,
+                0.6705558137660378
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "EDiv_Medians": {
+            "param": 0.05,
+            "calib": {
+              "total_alarms": 105,
+              "expected_alarms": 200.0,
+              "far_1k": 0.525,
+              "far_series": 0.05,
+              "ci95_far_1k": [
+                0.4293979866013908,
+                0.6355445093441792
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 51,
+              "expected_alarms": 100.0,
+              "far_1k": 0.51,
+              "far_series": 0.047,
+              "ci95_far_1k": [
+                0.3797284983829076,
+                0.6705558137660378
+              ]
+            },
+            "validacao_falhou": false
+          }
+        }
+      }
+    },
+    "outliers": {
+      "1000": {
+        "0.2": {
+          "CUSUM": {
+            "param": 30.0,
+            "calib": {
+              "total_alarms": 29,
+              "expected_alarms": 40.0,
+              "far_1k": 0.145,
+              "far_series": 0.14,
+              "ci95_far_1k": [
+                0.09710877568773968,
+                0.208244187192933
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 15,
+              "expected_alarms": 20.0,
+              "far_1k": 0.15,
+              "far_series": 0.15,
+              "ci95_far_1k": [
+                0.08395386132783315,
+                0.24740218871485845
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "PELT_L2": {
+            "param": 400.0,
+            "calib": {
+              "total_alarms": 17,
+              "expected_alarms": 40.0,
+              "far_1k": 0.085,
+              "far_series": 0.06,
+              "ci95_far_1k": [
+                0.04951563234803647,
+                0.13609323407953308
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 5,
+              "expected_alarms": 20.0,
+              "far_1k": 0.05,
+              "far_series": 0.04,
+              "ci95_far_1k": [
+                0.016234863901184206,
+                0.11668332079322671
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "PELT_L1": {
+            "param": 30.0,
+            "calib": {
+              "total_alarms": 18,
+              "expected_alarms": 40.0,
+              "far_1k": 0.09000000000000001,
+              "far_series": 0.08,
+              "ci95_far_1k": [
+                0.05333970390199764,
+                0.14223880133763991
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 10,
+              "expected_alarms": 20.0,
+              "far_1k": 0.1,
+              "far_series": 0.09,
+              "ci95_far_1k": [
+                0.047953886961324334,
+                0.18390356042017778
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "BINSEG_L2": {
+            "param": 400.0,
+            "calib": {
+              "total_alarms": 8,
+              "expected_alarms": 40.0,
+              "far_1k": 0.04,
+              "far_series": 0.04,
+              "ci95_far_1k": [
+                0.01726916088374251,
+                0.07881594610096657
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 3,
+              "expected_alarms": 20.0,
+              "far_1k": 0.030000000000000002,
+              "far_series": 0.03,
+              "ci95_far_1k": [
+                0.006186721228956014,
+                0.08767273069742323
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "EDiv_Means": {
+            "param": 0.1,
+            "calib": {
+              "total_alarms": 23,
+              "expected_alarms": 40.0,
+              "far_1k": 0.115,
+              "far_series": 0.095,
+              "ci95_far_1k": [
+                0.0729001351852234,
+                0.17255646447416517
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 15,
+              "expected_alarms": 20.0,
+              "far_1k": 0.15,
+              "far_series": 0.13,
+              "ci95_far_1k": [
+                0.08395386132783315,
+                0.24740218871485845
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "EDiv_Medians": {
+            "param": 0.15,
+            "calib": {
+              "total_alarms": 31,
+              "expected_alarms": 40.0,
+              "far_1k": 0.155,
+              "far_series": 0.125,
+              "ci95_far_1k": [
+                0.10531497989570926,
+                0.22001012751624377
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 21,
+              "expected_alarms": 20.0,
+              "far_1k": 0.21000000000000002,
+              "far_series": 0.18,
+              "ci95_far_1k": [
+                0.12999330984076188,
+                0.32100730734943406
+              ]
+            },
+            "validacao_falhou": false
+          }
+        },
+        "1.0": {
+          "CUSUM": {
+            "param": 14.0,
+            "calib": {
+              "total_alarms": 160,
+              "expected_alarms": 200.0,
+              "far_1k": 0.8,
+              "far_series": 0.465,
+              "ci95_far_1k": [
+                0.6808425139334797,
+                0.9340117421308854
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 79,
+              "expected_alarms": 100.0,
+              "far_1k": 0.79,
+              "far_series": 0.44,
+              "ci95_far_1k": [
+                0.6254504395959487,
+                0.9845757116467573
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "PELT_L2": {
+            "param": 400.0,
+            "calib": {
+              "total_alarms": 17,
+              "expected_alarms": 200.0,
+              "far_1k": 0.085,
+              "far_series": 0.06,
+              "ci95_far_1k": [
+                0.04951563234803647,
+                0.13609323407953308
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 5,
+              "expected_alarms": 100.0,
+              "far_1k": 0.05,
+              "far_series": 0.04,
+              "ci95_far_1k": [
+                0.016234863901184206,
+                0.11668332079322671
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "PELT_L1": {
+            "param": 20.0,
+            "calib": {
+              "total_alarms": 198,
+              "expected_alarms": 200.0,
+              "far_1k": 0.99,
+              "far_series": 0.375,
+              "ci95_far_1k": [
+                0.8568993945162038,
+                1.1379166340865932
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 89,
+              "expected_alarms": 100.0,
+              "far_1k": 0.8899999999999999,
+              "far_series": 0.45,
+              "ci95_far_1k": [
+                0.7147430814235075,
+                1.0952215839375643
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "BINSEG_L2": {
+            "param": 200.0,
+            "calib": {
+              "total_alarms": 120,
+              "expected_alarms": 200.0,
+              "far_1k": 0.6,
+              "far_series": 0.36,
+              "ci95_far_1k": [
+                0.4974596281296935,
+                0.7174529268467613
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 60,
+              "expected_alarms": 100.0,
+              "far_1k": 0.6,
+              "far_series": 0.36,
+              "ci95_far_1k": [
+                0.45786320950007264,
+                0.7723189340664333
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "EDiv_Means": {
+            "param": 0.2,
+            "calib": {
+              "total_alarms": 63,
+              "expected_alarms": 200.0,
+              "far_1k": 0.315,
+              "far_series": 0.22,
+              "ci95_far_1k": [
+                0.24205464897743623,
+                0.4030218364344525
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": true,
+            "val": {
+              "total_alarms": 34,
+              "expected_alarms": 100.0,
+              "far_1k": 0.34,
+              "far_series": 0.25,
+              "ci95_far_1k": [
+                0.2354598838457227,
+                0.47511592095203087
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "EDiv_Medians": {
+            "param": 0.2,
+            "calib": {
+              "total_alarms": 54,
+              "expected_alarms": 200.0,
+              "far_1k": 0.27,
+              "far_series": 0.19,
+              "ci95_far_1k": [
+                0.20283230986272377,
+                0.35229143196855356
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": true,
+            "val": {
+              "total_alarms": 33,
+              "expected_alarms": 100.0,
+              "far_1k": 0.33,
+              "far_series": 0.21,
+              "ci95_far_1k": [
+                0.2271568157272984,
+                0.46344269269169297
+              ]
+            },
+            "validacao_falhou": false
+          }
+        }
+      },
+      "500": {
+        "0.2": {
+          "CUSUM": {
+            "param": 40.0,
+            "calib": {
+              "total_alarms": 16,
+              "expected_alarms": 20.0,
+              "far_1k": 0.16,
+              "far_series": 0.07,
+              "ci95_far_1k": [
+                0.09145382453641525,
+                0.2598299759756094
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 8,
+              "expected_alarms": 10.0,
+              "far_1k": 0.16,
+              "far_series": 0.08,
+              "ci95_far_1k": [
+                0.06907664353497003,
+                0.31526378440386627
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "PELT_L2": {
+            "param": 400.0,
+            "calib": {
+              "total_alarms": 13,
+              "expected_alarms": 20.0,
+              "far_1k": 0.12999999999999998,
+              "far_series": 0.05,
+              "ci95_far_1k": [
+                0.06921952491003801,
+                0.22230395918158874
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 7,
+              "expected_alarms": 10.0,
+              "far_1k": 0.13999999999999999,
+              "far_series": 0.05,
+              "ci95_far_1k": [
+                0.05628726103039731,
+                0.28845350723404756
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "PELT_L1": {
+            "param": 30.0,
+            "calib": {
+              "total_alarms": 13,
+              "expected_alarms": 20.0,
+              "far_1k": 0.12999999999999998,
+              "far_series": 0.06,
+              "ci95_far_1k": [
+                0.06921952491003801,
+                0.22230395918158874
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 6,
+              "expected_alarms": 10.0,
+              "far_1k": 0.12000000000000001,
+              "far_series": 0.05,
+              "ci95_far_1k": [
+                0.04403788506981702,
+                0.2611894804503737
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "BINSEG_L2": {
+            "param": 400.0,
+            "calib": {
+              "total_alarms": 7,
+              "expected_alarms": 20.0,
+              "far_1k": 0.06999999999999999,
+              "far_series": 0.035,
+              "ci95_far_1k": [
+                0.028143630515198654,
+                0.14422675361702378
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 3,
+              "expected_alarms": 10.0,
+              "far_1k": 0.060000000000000005,
+              "far_series": 0.03,
+              "ci95_far_1k": [
+                0.012373442457912028,
+                0.17534546139484647
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "EDiv_Means": {
+            "param": 0.05,
+            "calib": {
+              "total_alarms": 9,
+              "expected_alarms": 20.0,
+              "far_1k": 0.09000000000000001,
+              "far_series": 0.045,
+              "ci95_far_1k": [
+                0.04115373097378334,
+                0.17084803451419167
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 6,
+              "expected_alarms": 10.0,
+              "far_1k": 0.12000000000000001,
+              "far_series": 0.06,
+              "ci95_far_1k": [
+                0.04403788506981702,
+                0.2611894804503737
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "EDiv_Medians": {
+            "param": 0.05,
+            "calib": {
+              "total_alarms": 13,
+              "expected_alarms": 20.0,
+              "far_1k": 0.12999999999999998,
+              "far_series": 0.06,
+              "ci95_far_1k": [
+                0.06921952491003801,
+                0.22230395918158874
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 7,
+              "expected_alarms": 10.0,
+              "far_1k": 0.13999999999999999,
+              "far_series": 0.07,
+              "ci95_far_1k": [
+                0.05628726103039731,
+                0.28845350723404756
+              ]
+            },
+            "validacao_falhou": false
+          }
+        },
+        "1.0": {
+          "CUSUM": {
+            "param": 16.0,
+            "calib": {
+              "total_alarms": 78,
+              "expected_alarms": 100.0,
+              "far_1k": 0.78,
+              "far_series": 0.295,
+              "ci95_far_1k": [
+                0.6165576320502033,
+                0.9734753005086979
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 36,
+              "expected_alarms": 50.0,
+              "far_1k": 0.7200000000000001,
+              "far_series": 0.29,
+              "ci95_far_1k": [
+                0.5042791483463046,
+                0.9967834897847239
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "PELT_L2": {
+            "param": 400.0,
+            "calib": {
+              "total_alarms": 13,
+              "expected_alarms": 100.0,
+              "far_1k": 0.12999999999999998,
+              "far_series": 0.05,
+              "ci95_far_1k": [
+                0.06921952491003801,
+                0.22230395918158874
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 7,
+              "expected_alarms": 50.0,
+              "far_1k": 0.13999999999999999,
+              "far_series": 0.05,
+              "ci95_far_1k": [
+                0.05628726103039731,
+                0.28845350723404756
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "PELT_L1": {
+            "param": 20.0,
+            "calib": {
+              "total_alarms": 95,
+              "expected_alarms": 100.0,
+              "far_1k": 0.95,
+              "far_series": 0.305,
+              "ci95_far_1k": [
+                0.7686067306333014,
+                1.1613257362355551
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 40,
+              "expected_alarms": 50.0,
+              "far_1k": 0.8,
+              "far_series": 0.27,
+              "ci95_far_1k": [
+                0.5715317288357793,
+                1.0893729392796814
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "BINSEG_L2": {
+            "param": 200.0,
+            "calib": {
+              "total_alarms": 89,
+              "expected_alarms": 100.0,
+              "far_1k": 0.8899999999999999,
+              "far_series": 0.305,
+              "ci95_far_1k": [
+                0.7147430814235075,
+                1.0952215839375643
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 38,
+              "expected_alarms": 50.0,
+              "far_1k": 0.76,
+              "far_series": 0.28,
+              "ci95_far_1k": [
+                0.537821232903923,
+                1.0431593783851922
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "EDiv_Means": {
+            "param": 0.2,
+            "calib": {
+              "total_alarms": 63,
+              "expected_alarms": 100.0,
+              "far_1k": 0.63,
+              "far_series": 0.24,
+              "ci95_far_1k": [
+                0.48410929795487245,
+                0.806043672868905
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": true,
+            "val": {
+              "total_alarms": 29,
+              "expected_alarms": 50.0,
+              "far_1k": 0.58,
+              "far_series": 0.22,
+              "ci95_far_1k": [
+                0.3884351027509587,
+                0.832976748771732
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "EDiv_Medians": {
+            "param": 0.2,
+            "calib": {
+              "total_alarms": 57,
+              "expected_alarms": 100.0,
+              "far_1k": 0.57,
+              "far_series": 0.23,
+              "ci95_far_1k": [
+                0.43171243362924744,
+                0.7385011140296281
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": true,
+            "val": {
+              "total_alarms": 29,
+              "expected_alarms": 50.0,
+              "far_1k": 0.58,
+              "far_series": 0.19,
+              "ci95_far_1k": [
+                0.3884351027509587,
+                0.832976748771732
+              ]
+            },
+            "validacao_falhou": false
+          }
+        }
+      },
+      "100": {
+        "0.2": {
+          "CUSUM": {
+            "param": 30.0,
+            "calib": {
+              "total_alarms": 31,
+              "expected_alarms": 40.0,
+              "far_1k": 0.155,
+              "far_series": 0.0155,
+              "ci95_far_1k": [
+                0.10531497989570926,
+                0.22001012751624377
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 12,
+              "expected_alarms": 20.0,
+              "far_1k": 0.12000000000000001,
+              "far_series": 0.012,
+              "ci95_far_1k": [
+                0.06200575108722218,
+                0.20961585048176962
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "PELT_L2": {
+            "param": 800.0,
+            "calib": {
+              "total_alarms": 0,
+              "expected_alarms": 40.0,
+              "far_1k": 0.0,
+              "far_series": 0.0,
+              "ci95_far_1k": [
+                0.0,
+                0.018444397270569676
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 0,
+              "expected_alarms": 20.0,
+              "far_1k": 0.0,
+              "far_series": 0.0,
+              "ci95_far_1k": [
+                0.0,
+                0.03688879454113935
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "PELT_L1": {
+            "param": 30.0,
+            "calib": {
+              "total_alarms": 29,
+              "expected_alarms": 40.0,
+              "far_1k": 0.145,
+              "far_series": 0.014,
+              "ci95_far_1k": [
+                0.09710877568773968,
+                0.208244187192933
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 13,
+              "expected_alarms": 20.0,
+              "far_1k": 0.12999999999999998,
+              "far_series": 0.013,
+              "ci95_far_1k": [
+                0.06921952491003801,
+                0.22230395918158874
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "BINSEG_L2": {
+            "param": 400.0,
+            "calib": {
+              "total_alarms": 37,
+              "expected_alarms": 40.0,
+              "far_1k": 0.185,
+              "far_series": 0.0185,
+              "ci95_far_1k": [
+                0.13025707283553015,
+                0.25499813070965416
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 11,
+              "expected_alarms": 20.0,
+              "far_1k": 0.11,
+              "far_series": 0.011,
+              "ci95_far_1k": [
+                0.0549116036723684,
+                0.19682038513301955
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "EDiv_Means": {
+            "param": 0.01,
+            "calib": {
+              "total_alarms": 24,
+              "expected_alarms": 40.0,
+              "far_1k": 0.12000000000000001,
+              "far_series": 0.0115,
+              "ci95_far_1k": [
+                0.07688626427343231,
+                0.17855048796876605
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 8,
+              "expected_alarms": 20.0,
+              "far_1k": 0.08,
+              "far_series": 0.008,
+              "ci95_far_1k": [
+                0.03453832176748502,
+                0.15763189220193313
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "EDiv_Medians": {
+            "param": 0.02,
+            "calib": {
+              "total_alarms": 40,
+              "expected_alarms": 40.0,
+              "far_1k": 0.2,
+              "far_series": 0.0195,
+              "ci95_far_1k": [
+                0.14288293220894482,
+                0.27234323481992034
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 20,
+              "expected_alarms": 20.0,
+              "far_1k": 0.2,
+              "far_series": 0.02,
+              "ci95_far_1k": [
+                0.12216519585403944,
+                0.30888377902674596
+              ]
+            },
+            "validacao_falhou": false
+          }
+        },
+        "1.0": {
+          "CUSUM": {
+            "param": 16.0,
+            "calib": {
+              "total_alarms": 162,
+              "expected_alarms": 200.0,
+              "far_1k": 0.8099999999999999,
+              "far_series": 0.0805,
+              "ci95_far_1k": [
+                0.6900697832758661,
+                0.9447821338818875
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 66,
+              "expected_alarms": 100.0,
+              "far_1k": 0.66,
+              "far_series": 0.065,
+              "ci95_far_1k": [
+                0.5104439521864128,
+                0.839681824425068
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "PELT_L2": {
+            "param": 400.0,
+            "calib": {
+              "total_alarms": 41,
+              "expected_alarms": 200.0,
+              "far_1k": 0.205,
+              "far_series": 0.0195,
+              "ci95_far_1k": [
+                0.14711153934227642,
+                0.2781056478286746
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 11,
+              "expected_alarms": 100.0,
+              "far_1k": 0.11,
+              "far_series": 0.011,
+              "ci95_far_1k": [
+                0.0549116036723684,
+                0.19682038513301955
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "PELT_L1": {
+            "param": 20.0,
+            "calib": {
+              "total_alarms": 140,
+              "expected_alarms": 200.0,
+              "far_1k": 0.7,
+              "far_series": 0.065,
+              "ci95_far_1k": [
+                0.5888528561662515,
+                0.8260274520038552
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 71,
+              "expected_alarms": 100.0,
+              "far_1k": 0.71,
+              "far_series": 0.065,
+              "ci95_far_1k": [
+                0.5545158905449903,
+                0.8955683910710062
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "BINSEG_L2": {
+            "param": 400.0,
+            "calib": {
+              "total_alarms": 37,
+              "expected_alarms": 200.0,
+              "far_1k": 0.185,
+              "far_series": 0.0185,
+              "ci95_far_1k": [
+                0.13025707283553015,
+                0.25499813070965416
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 11,
+              "expected_alarms": 100.0,
+              "far_1k": 0.11,
+              "far_series": 0.011,
+              "ci95_far_1k": [
+                0.0549116036723684,
+                0.19682038513301955
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "EDiv_Means": {
+            "param": 0.05,
+            "calib": {
+              "total_alarms": 117,
+              "expected_alarms": 200.0,
+              "far_1k": 0.585,
+              "far_series": 0.056,
+              "ci95_far_1k": [
+                0.4838109386958984,
+                0.7011071460132826
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 58,
+              "expected_alarms": 100.0,
+              "far_1k": 0.58,
+              "far_series": 0.055,
+              "ci95_far_1k": [
+                0.4404183168024975,
+                0.7497844974469458
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "EDiv_Medians": {
+            "param": 0.05,
+            "calib": {
+              "total_alarms": 105,
+              "expected_alarms": 200.0,
+              "far_1k": 0.525,
+              "far_series": 0.0505,
+              "ci95_far_1k": [
+                0.4293979866013908,
+                0.6355445093441792
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 58,
+              "expected_alarms": 100.0,
+              "far_1k": 0.58,
+              "far_series": 0.053,
+              "ci95_far_1k": [
+                0.4404183168024975,
+                0.7497844974469458
+              ]
+            },
+            "validacao_falhou": false
+          }
+        }
+      }
+    },
+    "bimodal": {
+      "1000": {
+        "0.2": {
+          "CUSUM": {
+            "param": 40.0,
+            "calib": {
+              "total_alarms": 40,
+              "expected_alarms": 40.0,
+              "far_1k": 0.2,
+              "far_series": 0.185,
+              "ci95_far_1k": [
+                0.14288293220894482,
+                0.27234323481992034
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 25,
+              "expected_alarms": 20.0,
+              "far_1k": 0.25,
+              "far_series": 0.21,
+              "ci95_far_1k": [
+                0.1617868184782933,
+                0.3690493169753037
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "PELT_L2": {
+            "param": 800.0,
+            "calib": {
+              "total_alarms": 7,
+              "expected_alarms": 40.0,
+              "far_1k": 0.034999999999999996,
+              "far_series": 0.02,
+              "ci95_far_1k": [
+                0.014071815257599327,
+                0.07211337680851189
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 4,
+              "expected_alarms": 20.0,
+              "far_1k": 0.04,
+              "far_series": 0.03,
+              "ci95_far_1k": [
+                0.01089865373626325,
+                0.10241588675403694
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "PELT_L1": {
+            "param": 50.0,
+            "calib": {
+              "total_alarms": 23,
+              "expected_alarms": 40.0,
+              "far_1k": 0.115,
+              "far_series": 0.075,
+              "ci95_far_1k": [
+                0.0729001351852234,
+                0.17255646447416517
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 6,
+              "expected_alarms": 20.0,
+              "far_1k": 0.060000000000000005,
+              "far_series": 0.04,
+              "ci95_far_1k": [
+                0.02201894253490851,
+                0.13059474022518686
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "BINSEG_L2": {
+            "param": 800.0,
+            "calib": {
+              "total_alarms": 1,
+              "expected_alarms": 40.0,
+              "far_1k": 0.005,
+              "far_series": 0.005,
+              "ci95_far_1k": [
+                0.0001265890399214494,
+                0.027858216954694492
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 2,
+              "expected_alarms": 20.0,
+              "far_1k": 0.02,
+              "far_series": 0.02,
+              "ci95_far_1k": [
+                0.0024220927854396498,
+                0.0722468766772396
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "EDiv_Means": {
+            "param": 0.15,
+            "calib": {
+              "total_alarms": 35,
+              "expected_alarms": 40.0,
+              "far_1k": 0.175,
+              "far_series": 0.14,
+              "ci95_far_1k": [
+                0.1218939120125988,
+                0.2433826368454154
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 21,
+              "expected_alarms": 20.0,
+              "far_1k": 0.21000000000000002,
+              "far_series": 0.13,
+              "ci95_far_1k": [
+                0.12999330984076188,
+                0.32100730734943406
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "EDiv_Medians": {
+            "param": 0.15,
+            "calib": {
+              "total_alarms": 37,
+              "expected_alarms": 40.0,
+              "far_1k": 0.185,
+              "far_series": 0.145,
+              "ci95_far_1k": [
+                0.13025707283553015,
+                0.25499813070965416
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 20,
+              "expected_alarms": 20.0,
+              "far_1k": 0.2,
+              "far_series": 0.13,
+              "ci95_far_1k": [
+                0.12216519585403944,
+                0.30888377902674596
+              ]
+            },
+            "validacao_falhou": false
+          }
+        },
+        "1.0": {
+          "CUSUM": {
+            "param": 10.0,
+            "calib": {
+              "total_alarms": 198,
+              "expected_alarms": 200.0,
+              "far_1k": 0.99,
+              "far_series": 0.53,
+              "ci95_far_1k": [
+                0.8568993945162038,
+                1.1379166340865932
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 101,
+              "expected_alarms": 100.0,
+              "far_1k": 1.01,
+              "far_series": 0.51,
+              "ci95_far_1k": [
+                0.8226615879303895,
+                1.227241557058305
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "PELT_L2": {
+            "param": 800.0,
+            "calib": {
+              "total_alarms": 7,
+              "expected_alarms": 200.0,
+              "far_1k": 0.034999999999999996,
+              "far_series": 0.02,
+              "ci95_far_1k": [
+                0.014071815257599327,
+                0.07211337680851189
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 4,
+              "expected_alarms": 100.0,
+              "far_1k": 0.04,
+              "far_series": 0.03,
+              "ci95_far_1k": [
+                0.01089865373626325,
+                0.10241588675403694
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "PELT_L1": {
+            "param": 50.0,
+            "calib": {
+              "total_alarms": 23,
+              "expected_alarms": 200.0,
+              "far_1k": 0.115,
+              "far_series": 0.075,
+              "ci95_far_1k": [
+                0.0729001351852234,
+                0.17255646447416517
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 6,
+              "expected_alarms": 100.0,
+              "far_1k": 0.060000000000000005,
+              "far_series": 0.04,
+              "ci95_far_1k": [
+                0.02201894253490851,
+                0.13059474022518686
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "BINSEG_L2": {
+            "param": 400.0,
+            "calib": {
+              "total_alarms": 98,
+              "expected_alarms": 200.0,
+              "far_1k": 0.49,
+              "far_series": 0.3,
+              "ci95_far_1k": [
+                0.3978056853717382,
+                0.5971530514656764
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 77,
+              "expected_alarms": 100.0,
+              "far_1k": 0.7699999999999999,
+              "far_series": 0.36,
+              "ci95_far_1k": [
+                0.6076719585444652,
+                0.962367885001229
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "EDiv_Means": {
+            "param": 0.2,
+            "calib": {
+              "total_alarms": 51,
+              "expected_alarms": 200.0,
+              "far_1k": 0.255,
+              "far_series": 0.19,
+              "ci95_far_1k": [
+                0.1898642491914538,
+                0.3352779068830189
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": true,
+            "val": {
+              "total_alarms": 38,
+              "expected_alarms": 100.0,
+              "far_1k": 0.38,
+              "far_series": 0.2,
+              "ci95_far_1k": [
+                0.2689106164519615,
+                0.5215796891925961
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "EDiv_Medians": {
+            "param": 0.2,
+            "calib": {
+              "total_alarms": 51,
+              "expected_alarms": 200.0,
+              "far_1k": 0.255,
+              "far_series": 0.19,
+              "ci95_far_1k": [
+                0.1898642491914538,
+                0.3352779068830189
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": true,
+            "val": {
+              "total_alarms": 30,
+              "expected_alarms": 100.0,
+              "far_1k": 0.3,
+              "far_series": 0.18,
+              "ci95_far_1k": [
+                0.20240874021420915,
+                0.4282686539480766
+              ]
+            },
+            "validacao_falhou": false
+          }
+        }
+      },
+      "500": {
+        "0.2": {
+          "CUSUM": {
+            "param": 100.0,
+            "calib": {
+              "total_alarms": 19,
+              "expected_alarms": 20.0,
+              "far_1k": 0.19,
+              "far_series": 0.095,
+              "ci95_far_1k": [
+                0.11439241164366731,
+                0.29670853571585587
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 3,
+              "expected_alarms": 10.0,
+              "far_1k": 0.060000000000000005,
+              "far_series": 0.03,
+              "ci95_far_1k": [
+                0.012373442457912028,
+                0.17534546139484647
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "PELT_L2": {
+            "param": 800.0,
+            "calib": {
+              "total_alarms": 9,
+              "expected_alarms": 20.0,
+              "far_1k": 0.09000000000000001,
+              "far_series": 0.045,
+              "ci95_far_1k": [
+                0.04115373097378334,
+                0.17084803451419167
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 4,
+              "expected_alarms": 10.0,
+              "far_1k": 0.08,
+              "far_series": 0.03,
+              "ci95_far_1k": [
+                0.0217973074725265,
+                0.20483177350807388
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "PELT_L1": {
+            "param": 50.0,
+            "calib": {
+              "total_alarms": 17,
+              "expected_alarms": 20.0,
+              "far_1k": 0.17,
+              "far_series": 0.06,
+              "ci95_far_1k": [
+                0.09903126469607294,
+                0.27218646815906616
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 13,
+              "expected_alarms": 10.0,
+              "far_1k": 0.25999999999999995,
+              "far_series": 0.09,
+              "ci95_far_1k": [
+                0.13843904982007602,
+                0.4446079183631775
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "BINSEG_L2": {
+            "param": 800.0,
+            "calib": {
+              "total_alarms": 9,
+              "expected_alarms": 20.0,
+              "far_1k": 0.09000000000000001,
+              "far_series": 0.045,
+              "ci95_far_1k": [
+                0.04115373097378334,
+                0.17084803451419167
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 4,
+              "expected_alarms": 10.0,
+              "far_1k": 0.08,
+              "far_series": 0.03,
+              "ci95_far_1k": [
+                0.0217973074725265,
+                0.20483177350807388
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "EDiv_Means": {
+            "param": 0.05,
+            "calib": {
+              "total_alarms": 14,
+              "expected_alarms": 20.0,
+              "far_1k": 0.13999999999999999,
+              "far_series": 0.065,
+              "ci95_far_1k": [
+                0.07653930276300595,
+                0.23489621121835577
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 4,
+              "expected_alarms": 10.0,
+              "far_1k": 0.08,
+              "far_series": 0.04,
+              "ci95_far_1k": [
+                0.0217973074725265,
+                0.20483177350807388
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "EDiv_Medians": {
+            "param": 0.1,
+            "calib": {
+              "total_alarms": 20,
+              "expected_alarms": 20.0,
+              "far_1k": 0.2,
+              "far_series": 0.09,
+              "ci95_far_1k": [
+                0.12216519585403944,
+                0.30888377902674596
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 15,
+              "expected_alarms": 10.0,
+              "far_1k": 0.3,
+              "far_series": 0.11,
+              "ci95_far_1k": [
+                0.1679077226556663,
+                0.4948043774297169
+              ]
+            },
+            "validacao_falhou": false
+          }
+        },
+        "1.0": {
+          "CUSUM": {
+            "param": 16.0,
+            "calib": {
+              "total_alarms": 85,
+              "expected_alarms": 100.0,
+              "far_1k": 0.85,
+              "far_series": 0.33,
+              "ci95_far_1k": [
+                0.6789498100479449,
+                1.0510381631889896
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 27,
+              "expected_alarms": 50.0,
+              "far_1k": 0.54,
+              "far_series": 0.21,
+              "ci95_far_1k": [
+                0.35586340263529553,
+                0.7856716489032427
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "PELT_L2": {
+            "param": 800.0,
+            "calib": {
+              "total_alarms": 9,
+              "expected_alarms": 100.0,
+              "far_1k": 0.09000000000000001,
+              "far_series": 0.045,
+              "ci95_far_1k": [
+                0.04115373097378334,
+                0.17084803451419167
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 4,
+              "expected_alarms": 50.0,
+              "far_1k": 0.08,
+              "far_series": 0.03,
+              "ci95_far_1k": [
+                0.0217973074725265,
+                0.20483177350807388
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "PELT_L1": {
+            "param": 50.0,
+            "calib": {
+              "total_alarms": 17,
+              "expected_alarms": 100.0,
+              "far_1k": 0.17,
+              "far_series": 0.06,
+              "ci95_far_1k": [
+                0.09903126469607294,
+                0.27218646815906616
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 13,
+              "expected_alarms": 50.0,
+              "far_1k": 0.25999999999999995,
+              "far_series": 0.09,
+              "ci95_far_1k": [
+                0.13843904982007602,
+                0.4446079183631775
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "BINSEG_L2": {
+            "param": 400.0,
+            "calib": {
+              "total_alarms": 95,
+              "expected_alarms": 100.0,
+              "far_1k": 0.95,
+              "far_series": 0.29,
+              "ci95_far_1k": [
+                0.7686067306333014,
+                1.1613257362355551
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 35,
+              "expected_alarms": 50.0,
+              "far_1k": 0.7,
+              "far_series": 0.26,
+              "ci95_far_1k": [
+                0.4875756480503952,
+                0.9735305473816616
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "EDiv_Means": {
+            "param": 0.2,
+            "calib": {
+              "total_alarms": 58,
+              "expected_alarms": 100.0,
+              "far_1k": 0.58,
+              "far_series": 0.205,
+              "ci95_far_1k": [
+                0.4404183168024975,
+                0.7497844974469458
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": true,
+            "val": {
+              "total_alarms": 34,
+              "expected_alarms": 50.0,
+              "far_1k": 0.68,
+              "far_series": 0.21,
+              "ci95_far_1k": [
+                0.4709197676914454,
+                0.9502318419040617
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "EDiv_Medians": {
+            "param": 0.2,
+            "calib": {
+              "total_alarms": 48,
+              "expected_alarms": 100.0,
+              "far_1k": 0.48000000000000004,
+              "far_series": 0.175,
+              "ci95_far_1k": [
+                0.35391410823483244,
+                0.6364103618212726
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": true,
+            "val": {
+              "total_alarms": 34,
+              "expected_alarms": 50.0,
+              "far_1k": 0.68,
+              "far_series": 0.23,
+              "ci95_far_1k": [
+                0.4709197676914454,
+                0.9502318419040617
+              ]
+            },
+            "validacao_falhou": false
+          }
+        }
+      },
+      "100": {
+        "0.2": {
+          "CUSUM": {
+            "param": 50.0,
+            "calib": {
+              "total_alarms": 20,
+              "expected_alarms": 40.0,
+              "far_1k": 0.1,
+              "far_series": 0.01,
+              "ci95_far_1k": [
+                0.06108259792701972,
+                0.15444188951337298
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 8,
+              "expected_alarms": 20.0,
+              "far_1k": 0.08,
+              "far_series": 0.008,
+              "ci95_far_1k": [
+                0.03453832176748502,
+                0.15763189220193313
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "PELT_L2": {
+            "param": 800.0,
+            "calib": {
+              "total_alarms": 17,
+              "expected_alarms": 40.0,
+              "far_1k": 0.085,
+              "far_series": 0.0085,
+              "ci95_far_1k": [
+                0.04951563234803647,
+                0.13609323407953308
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 8,
+              "expected_alarms": 20.0,
+              "far_1k": 0.08,
+              "far_series": 0.008,
+              "ci95_far_1k": [
+                0.03453832176748502,
+                0.15763189220193313
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "PELT_L1": {
+            "param": 50.0,
+            "calib": {
+              "total_alarms": 29,
+              "expected_alarms": 40.0,
+              "far_1k": 0.145,
+              "far_series": 0.014,
+              "ci95_far_1k": [
+                0.09710877568773968,
+                0.208244187192933
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 17,
+              "expected_alarms": 20.0,
+              "far_1k": 0.17,
+              "far_series": 0.017,
+              "ci95_far_1k": [
+                0.09903126469607294,
+                0.27218646815906616
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "BINSEG_L2": {
+            "param": 800.0,
+            "calib": {
+              "total_alarms": 17,
+              "expected_alarms": 40.0,
+              "far_1k": 0.085,
+              "far_series": 0.0085,
+              "ci95_far_1k": [
+                0.04951563234803647,
+                0.13609323407953308
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 8,
+              "expected_alarms": 20.0,
+              "far_1k": 0.08,
+              "far_series": 0.008,
+              "ci95_far_1k": [
+                0.03453832176748502,
+                0.15763189220193313
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "EDiv_Means": {
+            "param": 0.02,
+            "calib": {
+              "total_alarms": 31,
+              "expected_alarms": 40.0,
+              "far_1k": 0.155,
+              "far_series": 0.0155,
+              "ci95_far_1k": [
+                0.10531497989570926,
+                0.22001012751624377
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 22,
+              "expected_alarms": 20.0,
+              "far_1k": 0.22,
+              "far_series": 0.02,
+              "ci95_far_1k": [
+                0.13787282872229611,
+                0.33308264387125236
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "EDiv_Medians": {
+            "param": 0.02,
+            "calib": {
+              "total_alarms": 26,
+              "expected_alarms": 40.0,
+              "far_1k": 0.12999999999999998,
+              "far_series": 0.0125,
+              "ci95_far_1k": [
+                0.0849203160779817,
+                0.19048012041562498
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 19,
+              "expected_alarms": 20.0,
+              "far_1k": 0.19,
+              "far_series": 0.019,
+              "ci95_far_1k": [
+                0.11439241164366731,
+                0.29670853571585587
+              ]
+            },
+            "validacao_falhou": false
+          }
+        },
+        "1.0": {
+          "CUSUM": {
+            "param": 20.0,
+            "calib": {
+              "total_alarms": 189,
+              "expected_alarms": 200.0,
+              "far_1k": 0.945,
+              "far_series": 0.0935,
+              "ci95_far_1k": [
+                0.8150711854248887,
+                1.0897528535854955
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 87,
+              "expected_alarms": 100.0,
+              "far_1k": 0.87,
+              "far_series": 0.086,
+              "ci95_far_1k": [
+                0.696834335358197,
+                1.0731417858252383
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "PELT_L2": {
+            "param": 800.0,
+            "calib": {
+              "total_alarms": 17,
+              "expected_alarms": 200.0,
+              "far_1k": 0.085,
+              "far_series": 0.0085,
+              "ci95_far_1k": [
+                0.04951563234803647,
+                0.13609323407953308
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 8,
+              "expected_alarms": 100.0,
+              "far_1k": 0.08,
+              "far_series": 0.008,
+              "ci95_far_1k": [
+                0.03453832176748502,
+                0.15763189220193313
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "PELT_L1": {
+            "param": 50.0,
+            "calib": {
+              "total_alarms": 29,
+              "expected_alarms": 200.0,
+              "far_1k": 0.145,
+              "far_series": 0.014,
+              "ci95_far_1k": [
+                0.09710877568773968,
+                0.208244187192933
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 17,
+              "expected_alarms": 100.0,
+              "far_1k": 0.17,
+              "far_series": 0.017,
+              "ci95_far_1k": [
+                0.09903126469607294,
+                0.27218646815906616
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "BINSEG_L2": {
+            "param": 800.0,
+            "calib": {
+              "total_alarms": 17,
+              "expected_alarms": 200.0,
+              "far_1k": 0.085,
+              "far_series": 0.0085,
+              "ci95_far_1k": [
+                0.04951563234803647,
+                0.13609323407953308
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 8,
+              "expected_alarms": 100.0,
+              "far_1k": 0.08,
+              "far_series": 0.008,
+              "ci95_far_1k": [
+                0.03453832176748502,
+                0.15763189220193313
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "EDiv_Means": {
+            "param": 0.05,
+            "calib": {
+              "total_alarms": 99,
+              "expected_alarms": 200.0,
+              "far_1k": 0.495,
+              "far_series": 0.0485,
+              "ci95_far_1k": [
+                0.4023115742709769,
+                0.6026447387657773
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 51,
+              "expected_alarms": 100.0,
+              "far_1k": 0.51,
+              "far_series": 0.049,
+              "ci95_far_1k": [
+                0.3797284983829076,
+                0.6705558137660378
+              ]
+            },
+            "validacao_falhou": false
+          },
+          "EDiv_Medians": {
+            "param": 0.05,
+            "calib": {
+              "total_alarms": 85,
+              "expected_alarms": 200.0,
+              "far_1k": 0.425,
+              "far_series": 0.0415,
+              "ci95_far_1k": [
+                0.33947490502397243,
+                0.5255190815944948
+              ]
+            },
+            "saturado_inferior": false,
+            "saturado_superior": false,
+            "val": {
+              "total_alarms": 58,
+              "expected_alarms": 100.0,
+              "far_1k": 0.58,
+              "far_series": 0.056,
+              "ci95_far_1k": [
+                0.4404183168024975,
+                0.7497844974469458
+              ]
+            },
+            "validacao_falhou": false
+          }
+        }
+      }
+    }
+  },
+  "CUSUM_perfil": {
+    "gaussian": {
+      "1000": 20.0,
+      "500": 25.0,
+      "100": 25.0
+    },
+    "ar1": {
+      "1000": 150.0,
+      "500": 150.0,
+      "100": 75.0
+    },
+    "student_t": {
+      "1000": 40.0,
+      "500": 40.0,
+      "100": 40.0
+    },
+    "outliers": {
+      "1000": 30.0,
+      "500": 40.0,
+      "100": 30.0
+    },
+    "bimodal": {
+      "1000": 40.0,
+      "500": 100.0,
+      "100": 50.0
+    }
+  },
+  "CUSUM_gauss": {
+    "1000": 20.0,
+    "500": 25.0,
+    "100": 25.0
+  },
+  "PELT_L2_perfil": {
+    "gaussian": {
+      "1000": 400.0,
+      "500": 400.0,
+      "100": 400.0
+    },
+    "ar1": {
+      "1000": 800.0,
+      "500": 1600.0,
+      "100": 1600.0
+    },
+    "student_t": {
+      "1000": 400.0,
+      "500": 400.0,
+      "100": 400.0
+    },
+    "outliers": {
+      "1000": 400.0,
+      "500": 400.0,
+      "100": 800.0
+    },
+    "bimodal": {
+      "1000": 800.0,
+      "500": 800.0,
+      "100": 800.0
+    }
+  },
+  "PELT_L2_gauss": {
+    "1000": 400.0,
+    "500": 400.0,
+    "100": 400.0
+  },
+  "PELT_L1_perfil": {
+    "gaussian": {
+      "1000": 30.0,
+      "500": 30.0,
+      "100": 30.0
+    },
+    "ar1": {
+      "1000": 100.0,
+      "500": 100.0,
+      "100": 100.0
+    },
+    "student_t": {
+      "1000": 20.0,
+      "500": 20.0,
+      "100": 20.0
+    },
+    "outliers": {
+      "1000": 30.0,
+      "500": 30.0,
+      "100": 30.0
+    },
+    "bimodal": {
+      "1000": 50.0,
+      "500": 50.0,
+      "100": 50.0
+    }
+  },
+  "PELT_L1_gauss": {
+    "1000": 30.0,
+    "500": 30.0,
+    "100": 30.0
+  },
+  "BINSEG_L2_perfil": {
+    "gaussian": {
+      "1000": 200.0,
+      "500": 400.0,
+      "100": 400.0
+    },
+    "ar1": {
+      "1000": 800.0,
+      "500": 800.0,
+      "100": 1600.0
+    },
+    "student_t": {
+      "1000": 200.0,
+      "500": 400.0,
+      "100": 400.0
+    },
+    "outliers": {
+      "1000": 400.0,
+      "500": 400.0,
+      "100": 400.0
+    },
+    "bimodal": {
+      "1000": 800.0,
+      "500": 800.0,
+      "100": 800.0
+    }
+  },
+  "BINSEG_L2_gauss": {
+    "1000": 200.0,
+    "500": 400.0,
+    "100": 400.0
+  },
+  "EDiv_Means": {
+    "gaussian": {
+      "1000": 0.15,
+      "500": 0.05,
+      "100": 0.01
+    },
+    "ar1": {
+      "1000": 0.01,
+      "500": 0.01,
+      "100": 0.01
+    },
+    "student_t": {
+      "1000": 0.1,
+      "500": 0.05,
+      "100": 0.02
+    },
+    "outliers": {
+      "1000": 0.1,
+      "500": 0.05,
+      "100": 0.01
+    },
+    "bimodal": {
+      "1000": 0.15,
+      "500": 0.05,
+      "100": 0.02
+    }
+  },
+  "EDiv_Medians": {
+    "gaussian": {
+      "1000": 0.15,
+      "500": 0.05,
+      "100": 0.02
+    },
+    "ar1": {
+      "1000": 0.01,
+      "500": 0.01,
+      "100": 0.01
+    },
+    "student_t": {
+      "1000": 0.05,
+      "500": 0.05,
+      "100": 0.02
+    },
+    "outliers": {
+      "1000": 0.15,
+      "500": 0.05,
+      "100": 0.02
+    },
+    "bimodal": {
+      "1000": 0.15,
+      "500": 0.1,
+      "100": 0.02
+    }
+  }
+}
