@@ -199,3 +199,24 @@ Este documento registra formalmente as decisões de projeto, metodologia de pesq
   - **PELT_L1** apresentou `saturado_superior` em 9/15 células (`gaussian`, `outliers`, `student_t`) porque o limite inferior da grade `pen_cand_l1` era `30.0`.
   - **EDiv_Means / EDiv_Medians** apresentaram `saturado_inferior` apenas em `ar1` (6/30 células), achado esperado pela quebra de permutabilidade sob autocorrelação.
 - **Decisão**: Expandir `h_cand` até `150.0` (`[4, 6, 8, 10, 12, 14, 16, 20, 25, 30, 40, 50, 75, 100, 150]`) e `pen_cand_l1` para baixo até `5.0` (`[5, 10, 15, 20, 25, 30, 50, 100, 200, 400, 800]`), mantendo intactas as sementes e as calibrações já executadas de `EDiv_Means`, `EDiv_Medians`, `PELT_L2` e `BINSEG_L2` (`--mode recalibrate-fast`).
+- **Influência da validação e auditoria pós-recalibração**: Embora a saturação de grade de `CUSUM` (`h_max=20`) e `PELT_L1` (`pen_min=30`) já estivesse presente diretamente no conjunto de calibração, o relatório da Etapa 1 exibia `validacao_falhou` em 12/15 células de `CUSUM`. Para eliminar qualquer risco de vazamento/viés de seleção pós-validação, foi executado um novo conjunto independente de validação (`sementes 30000+`, mesmos tamanhos `1000` em `n=100` e `100` em `n ∈ {500, 1000}`) sobre os parâmetros recalibrados de `CUSUM` e `PELT_L1`, sem nenhum ajuste adicional (`results/tables/recalibration_validation_30k.csv`).
+
+---
+
+## ADR-017: Derivação de Regimes do E-Divisive a partir de `division_history` (Opção 1)
+
+- **Data**: 2026-11-14
+- **Status**: Aprovado
+- **Contexto**: Na auditoria de equivalência do Item B da Fase 4b (30 séries sorteadas do grid, 60 execuções entre `EDiv_Means` e `EDiv_Medians` com `alpha=0.05` direto vs. `filter_edivisive_by_alpha(division_history, 0.05)` do Parquet base `alpha=0.20`), obtiveram-se **58/60** correspondências exatas e **2/60** divergências pontuais em `EDiv_Medians` (`SC_0016_n1000_ar1_k2_m1.0 s=37` e `SC_0011_n1000_ar1_k1_m0.5 s=2`, ambas com divisão de fronteira `p ≈ 0.0297`).
+- **Causa**: Os detectores `EDivisive*` compartilham um único gerador `self._rng = np.random.default_rng(self.seed)` entre ramos recursivos da árvore. Na execução base (`alpha=0.20`), ramos intermediários com `0.05 < p <= 0.20` consomem chamadas extras do RNG antes de ramos irmãos posteriores, alterando o estado do RNG de Monte Carlo (`B=100`).
+- **Decisão**: Adota-se a **Opção 1**: preservar `src/` e `configs/` intactos (mantendo único `versao_codigo` no `raw_detections.parquet`) e aceitar a derivação via `filter_edivisive_by_alpha` como realizações válidas do mesmo teste randomizado de Monte Carlo, complementada por estudo de equivalência ampliado em 200 séries estratificadas (`results/tables/edivisive_equivalence.csv`). A derivação determinística de RNG por segmento `(start, end)` fica registrada como melhoria futura, não aplicada nesta fase.
+
+---
+
+## ADR-018: Registro de Dispensas de Protocolo na Fase 4
+
+- **Data**: 2026-11-14
+- **Status**: Aprovado pelo usuário
+- **Dispensas registradas**:
+  1. **Parada da Etapa 1 (`32,2% > 30%`)**: A primeira calibração oficial disparou o critério de parada automática por saturação nos limites da grade de `CUSUM` e `PELT_L1`. Com autorização explícita do usuário, aplicou-se `ADR-016` (`--mode recalibrate-fast`), reduzindo as flags no alvo primário `FAR_1k <= 0.2` de `29/90 (32,2%)` para `6/90 (6,7%)`.
+  2. **Critério `F1(k=5) >= 0.90` no Piloto (`R=3`)**: No cenário `gaussian 5σ, n >= 500`, `PELT_L2_*`, `PELT_L1_*` e `Binseg_L2_*` obtiveram `F1(k=5) = 1.000`, e `EDiv_Means`/`EDiv_Medians` filtrados em `alpha=0.05` obtiveram `0.923` e `0.900`. `CUSUM_gauss`/`CUSUM_perfil` obtiveram `F1(k=5) = 0.865` (`0.973` em `k=10`). A inspeção no grid completo (`gaussian 5σ, n >= 500`, `600` mudanças casadas) confirma efeito de **atraso sequencial intrínseco do alarme** e não bug: `min = -2`, `Q25 = 3`, `mediana = 4`, `média = 4,22`, `Q75 = 5`, `P95 = 7`, `máx = 9` commits (`16,0% > 5`, `0,0% > 10`). Com ciência do usuário, o grid final prosseguiu no commit `3b08533`.
