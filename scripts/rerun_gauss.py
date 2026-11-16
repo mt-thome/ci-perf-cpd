@@ -45,7 +45,7 @@ TARGET_DETECTORS = {"Binseg_L2_gauss", "PELT_L2_gauss"}
 
 
 def _build_scenarios(config: dict[str, Any]) -> list[dict[str, Any]]:
-    sizes = config["grid"]["tamanhos_n"]
+    sizes = sorted([int(s) for s in config["grid"]["tamanhos_n"]], reverse=True)
     mags = config["grid"]["magnitudes_sigma"]
     scenarios: list[dict[str, Any]] = []
     counter = 0
@@ -125,6 +125,9 @@ def main() -> None:
     assert len(detectors_cfg) == 2, f"Esperados 2 detectores, obtidos {[d['nome'] for d in detectors_cfg]}"
 
     scenarios = _build_scenarios(config)
+    ref_df = pd.read_parquet(RAW_PARQUET, columns=["detector", "cenario_id"])
+    ref_cids = set(ref_df[ref_df["detector"] == "CUSUM_perfil"]["cenario_id"].unique().tolist())
+    assert {sc["cenario_id"] for sc in scenarios} == ref_cids, "cenario_id mismatch contra CUSUM_perfil!"
     logger.info("Iniciando reexecução idempotente | git_hash=%s | R=%d | cenários=%d | workers=10", git_hash, r_reps, len(scenarios))
 
     done_ids: set[str] = set()
