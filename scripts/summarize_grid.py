@@ -134,7 +134,11 @@ def _wilcoxon_pair(x: np.ndarray, y: np.ndarray) -> dict[str, float]:
 
 
 def _build_derived_dataframe(df: pd.DataFrame, manifest: dict[str, Any]) -> pd.DataFrame:
-    """Exclui EDiv_*_base e deriva padrao (0.05) e calibrado (0.2 e 1.0) via division_history."""
+    """Exclui linhas inválidas (PELT_L1_gauss), exclui EDiv_*_base e deriva padrao/calibrado."""
+    if "valido" in df.columns:
+        df = df[df["valido"].fillna(True)].copy()
+    df = df[df["detector"] != "PELT_L1_gauss"].copy()
+
     non_ediv = df[~df["detector"].isin(["EDiv_Means_base", "EDiv_Medians_base"])].copy()
     non_ediv["derivado"] = False
 
@@ -217,8 +221,11 @@ def _audit_anomalies(df: pd.DataFrame, far_df: pd.DataFrame, cell_df: pd.DataFra
     })
 
     # 4. Diferenças grandes entre FAR do grid e FAR da validação (ICs 95% disjuntos ou |diff| > 0.5)
+    # Para regimes _gauss em perfil != gaussian, o grid avalia o perfil X enquanto a validação é no gaussiano (esperado, não anomalia).
     for _, r in far_df.iterrows():
         if pd.isna(r["val_far_1k"]):
+            continue
+        if str(r["detector"]).endswith("_gauss") and r["perfil_ruido"] != "gaussian":
             continue
         diff = abs(float(r["far_1k"]) - float(r["val_far_1k"]))
         disjoint = (float(r["far_1k_ci95_low"]) > float(r["val_far_1k_ci95_high"])) or (float(r["val_far_1k_ci95_low"]) > float(r["far_1k_ci95_high"]))
@@ -464,10 +471,10 @@ def main() -> None:
             st = _wilcoxon_pair(sub[d1].to_numpy(), sub[d2].to_numpy())
             wil_rows.append({"familia": "means_vs_medians", "perfil_ruido": perf, "detector_a": d1, "detector_b": d2, **st})
 
-    # Família 2: calibrado-por-perfil vs calibrado-em-gaussiano
+    # Família 2: calibrado-por-perfil vs calibrado-em-gaussiano (sem PELT_L1_gauss, descartada por ADR-019)
     for perf in profiles:
         sub = piv.loc[perf]
-        for base in ("CUSUM", "PELT_L2", "PELT_L1", "Binseg_L2"):
+        for base in ("CUSUM", "PELT_L2", "Binseg_L2"):
             d1, d2 = f"{base}_perfil", f"{base}_gauss"
             st = _wilcoxon_pair(sub[d1].to_numpy(), sub[d2].to_numpy())
             wil_rows.append({"familia": "perfil_vs_gauss", "perfil_ruido": perf, "detector_a": d1, "detector_b": d2, **st})

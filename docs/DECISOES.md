@@ -236,6 +236,7 @@ Este documento registra formalmente as decisões de projeto, metodologia de pesq
   2. Removidos todos os fallbacks silenciosos `.get(..., default)` nos lookups de calibração (`CUSUM_*`, `RupturesDetector`, `EDivisiveMeansDetector` e `EDivisiveMediansDetector`), lançando `KeyError` se qualquer chave estiver ausente.
   3. Adicionado teste em `tests/test_runner.py` cobrindo todo `detector × regime × perfil × n` contra o manifesto e validando falha explícita na ausência de chave.
 - **Política de Reexecução e Rastreabilidade**:
-  - Apenas `Binseg_L2_gauss` e `PELT_L2_gauss` serão reexecutados no grid completo (`R=50`), substituindo suas linhas em `results/raw_detections.parquet` e gravando o novo `versao_codigo` do commit pós-correção nessas linhas reexecutadas.
-  - `PELT_L1_gauss` é descartada/marcada como inválida por erro de calibração e não é reexecutada devido ao custo computacional (`~785 min` em 1 core), sendo excluída das tabelas e figuras finais.
+  - Apenas `Binseg_L2_gauss` e `PELT_L2_gauss` são reexecutados no grid completo (`R=50`), substituindo suas linhas em `results/raw_detections.parquet` e gravando o novo `versao_codigo` do commit pós-correção nessas linhas reexecutadas.
+  - `PELT_L1_gauss` é **formalmente descartada**: suas 5.750 linhas em `results/raw_detections.parquet` permanecem marcadas como inválidas (`valido = False`) devido ao erro prévio de lookup/calibração (`pen=200.0` em todos os perfis e `n`) e à inviabilidade de reexecução por custo computacional (`~785,4 min` em 1 core), sendo excluída de todas as tabelas (`results/tables/`) e figuras finais.
+
 
