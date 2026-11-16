@@ -33,7 +33,7 @@ noise_types = [
     (NoiseType.GAUSSIAN, 'Ruído Gaussiano N(0, σ²)', 'steelblue'),
     (NoiseType.AR1, 'Ruído Autocorrelacionado AR(1) (φ=0.7)', 'darkorange'),
     (NoiseType.STUDENT_T, 'Ruído com Cauda Pesada (t-Student, ν=3)', 'forestgreen'),
-    (NoiseType.OUTLIERS, 'Ruído com Outliers Esporádicos (GC Pauses, p=0.03)', 'crimson'),
+    (NoiseType.OUTLIERS, 'Ruído com Outliers Esporádicos (GC Pauses, p=0.02, 5σ)', 'crimson'),
     (NoiseType.BIMODAL, 'Ruído Bimodal (Runners Heterogêneos de CI, w=0.3)', 'purple'),
 ]
 

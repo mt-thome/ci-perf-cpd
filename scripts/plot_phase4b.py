@@ -28,10 +28,10 @@ REPORTS_DIR = REPO_DIR / "reports"
 
 PERFIL_LABELS = {
     "gaussian": "Gaussiano",
-    "ar1": "AR(1) (φ=0,5)",
+    "ar1": "AR(1) (φ=0,7)",
     "student_t": "Student-t (ν=3)",
-    "outliers": "Outliers (5%)",
-    "bimodal": "Bimodal",
+    "outliers": "Outliers (p=2%, 5σ)",
+    "bimodal": "Bimodal (w=0,3, 3σ)",
 }
 
 DET_ORDER = [
@@ -263,6 +263,9 @@ def main() -> None:
     dpnk_df = pd.read_csv(TABLES_DIR / "metrics_by_detector_profile_n_k.csv")
     far_df = pd.read_csv(TABLES_DIR / "far_by_detector_profile_n.csv")
     raw_df = pd.read_parquet(RAW_PARQUET)
+    if "valido" in raw_df.columns:
+        raw_df = raw_df[raw_df["valido"].fillna(True)].copy()
+    raw_df = raw_df[raw_df["detector"] != "PELT_L1_gauss"].copy()
     manifest = json.loads(MANIFEST_PATH.read_text())
 
     fig1_f1_vs_magnitude(cell_df)
