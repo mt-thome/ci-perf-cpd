@@ -201,14 +201,14 @@ def instantiate_detector(
     regime = detector_cfg["regime_calibracao"]
     base_params = dict(detector_cfg.get("params", {}))
 
-    # Resolução de limiares calibrados
+    # Resolução de limiares calibrados (sem fallback silencioso: falha se chave ausente)
     if cls_name == "RobustCUSUMDetector":
         if regime == "calibrado_gaussiano":
-            h_val = calibration_dict.get("CUSUM_gauss", {}).get(str(n), 10.0)
+            h_val = float(calibration_dict["CUSUM_gauss"][str(n)])
         elif regime == "calibrado_perfil":
-            h_val = calibration_dict.get("CUSUM_perfil", {}).get(perfil_ruido, {}).get(str(n), 10.0)
+            h_val = float(calibration_dict["CUSUM_perfil"][perfil_ruido][str(n)])
         else:
-            h_val = base_params.get("h", 10.0)
+            h_val = float(base_params["h"])
         return RobustCUSUMDetector(
             h=h_val,
             k_slack=base_params.get("k_slack", 0.5),
@@ -220,13 +220,14 @@ def instantiate_detector(
     elif cls_name == "RupturesDetector":
         alg = detector_cfg["algoritmo"]
         cost = detector_cfg["cost_model"]
-        key = f"{alg.upper()}_{cost.upper()}_{regime.split('_')[1]}"
         if regime == "calibrado_gaussiano":
-            pen_val = calibration_dict.get(key, {}).get(str(n), 200.0)
+            key = f"{alg.upper()}_{cost.upper()}_gauss"
+            pen_val = float(calibration_dict[key][str(n)])
         elif regime == "calibrado_perfil":
-            pen_val = calibration_dict.get(key, {}).get(perfil_ruido, {}).get(str(n), 200.0)
+            key = f"{alg.upper()}_{cost.upper()}_perfil"
+            pen_val = float(calibration_dict[key][perfil_ruido][str(n)])
         else:
-            pen_val = base_params.get("pen", 100.0)
+            pen_val = float(base_params["pen"])
         return RupturesDetector(
             algorithm=alg,
             cost_model=cost,
@@ -235,9 +236,10 @@ def instantiate_detector(
         )
 
     elif cls_name == "EDivisiveMeansDetector":
-        alpha = float(base_params.get("alpha", 0.05))
         if regime == "calibrado_perfil":
-            alpha = calibration_dict.get("EDiv_Means", {}).get(perfil_ruido, {}).get(str(n), alpha)
+            alpha = float(calibration_dict["EDiv_Means"][perfil_ruido][str(n)])
+        else:
+            alpha = float(base_params["alpha"])
         return EDivisiveMeansDetector(
             alpha=alpha,
             permutations=base_params.get("permutations", 100),
@@ -246,9 +248,10 @@ def instantiate_detector(
         )
 
     elif cls_name == "EDivisiveMediansDetector":
-        alpha = float(base_params.get("alpha", 0.05))
         if regime == "calibrado_perfil":
-            alpha = calibration_dict.get("EDiv_Medians", {}).get(perfil_ruido, {}).get(str(n), alpha)
+            alpha = float(calibration_dict["EDiv_Medians"][perfil_ruido][str(n)])
+        else:
+            alpha = float(base_params["alpha"])
         return EDivisiveMediansDetector(
             alpha=alpha,
             permutations=base_params.get("permutations", 100),

@@ -220,3 +220,22 @@ Este documento registra formalmente as decisões de projeto, metodologia de pesq
 - **Dispensas registradas**:
   1. **Parada da Etapa 1 (`32,2% > 30%`)**: A primeira calibração oficial disparou o critério de parada automática por saturação nos limites da grade de `CUSUM` e `PELT_L1`. Com autorização explícita do usuário, aplicou-se `ADR-016` (`--mode recalibrate-fast`), reduzindo as flags no alvo primário `FAR_1k <= 0.2` de `29/90 (32,2%)` para `6/90 (6,7%)`.
   2. **Critério `F1(k=5) >= 0.90` no Piloto (`R=3`)**: No cenário `gaussian 5σ, n >= 500`, `PELT_L2_*`, `PELT_L1_*` e `Binseg_L2_*` obtiveram `F1(k=5) = 1.000`, e `EDiv_Means`/`EDiv_Medians` filtrados em `alpha=0.05` obtiveram `0.923` e `0.900`. `CUSUM_gauss`/`CUSUM_perfil` obtiveram `F1(k=5) = 0.865` (`0.973` em `k=10`). A inspeção no grid completo (`gaussian 5σ, n >= 500`, `600` mudanças casadas) confirma efeito de **atraso sequencial intrínseco do alarme** e não bug: `min = -2`, `Q25 = 3`, `mediana = 4`, `média = 4,22`, `Q75 = 5`, `P95 = 7`, `máx = 9` commits (`16,0% > 5`, `0,0% > 10`). Com ciência do usuário, o grid final prosseguiu no commit `3b08533`.
+
+---
+
+## ADR-019: Correção do Lookup de Calibração Gaussiana no Runner e Remoção de Fallbacks Silenciosos
+
+- **Data**: 2026-11-16
+- **Status**: Aprovado
+- **Causa**: Em `src/cpd/experiments/runner.py` (`instantiate_detector`, linha 223), a chave do manifesto para `RupturesDetector` era construída via `f"{alg.upper()}_{cost.upper()}_{regime.split('_')[1]}"`. Para `regime == "calibrado_gaussiano"`, isso gerava `*_gaussiano` em vez de `*_gauss`, falhando na busca em `calibration_manifest.json` e acionando o fallback silencioso `.get(..., 200.0)`.
+- **Impacto**:
+  - `PELT_L2_gauss`, `PELT_L1_gauss` e `Binseg_L2_gauss` executaram com `pen = 200.0` em todos os perfis de ruído e todos os tamanhos `n` no `raw_detections.parquet` original (`versao_codigo = 3b08533...`).
+  - `CUSUM_gauss` (lookup explícito `"CUSUM_gauss"`), todos os detectores `_perfil` e `EDiv_Means_base`/`EDiv_Medians_base` não foram afetados.
+- **Correção**:
+  1. Corrigida a chave para `f"{alg.upper()}_{cost.upper()}_gauss"` quando `regime == "calibrado_gaussiano"`.
+  2. Removidos todos os fallbacks silenciosos `.get(..., default)` nos lookups de calibração (`CUSUM_*`, `RupturesDetector`, `EDivisiveMeansDetector` e `EDivisiveMediansDetector`), lançando `KeyError` se qualquer chave estiver ausente.
+  3. Adicionado teste em `tests/test_runner.py` cobrindo todo `detector × regime × perfil × n` contra o manifesto e validando falha explícita na ausência de chave.
+- **Política de Reexecução e Rastreabilidade**:
+  - Apenas `Binseg_L2_gauss` e `PELT_L2_gauss` serão reexecutados no grid completo (`R=50`), substituindo suas linhas em `results/raw_detections.parquet` e gravando o novo `versao_codigo` do commit pós-correção nessas linhas reexecutadas.
+  - `PELT_L1_gauss` é descartada/marcada como inválida por erro de calibração e não é reexecutada devido ao custo computacional (`~785 min` em 1 core), sendo excluída das tabelas e figuras finais.
+

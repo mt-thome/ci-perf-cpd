@@ -123,3 +123,79 @@ def test_calibration_parallel_equals_sequential_and_poisson_ci() -> None:
 
     assert seq["per_target"] == par["per_target"]
 
+
+def test_all_detectors_regimes_match_manifest_and_fail_on_missing_key() -> None:
+    """Para TODO detector x regime x perfil x n, garante parâmetro igual ao manifesto e falha sem chave."""
+    import json
+    import yaml
+    from cpd.experiments.runner import execute_single_cell, instantiate_detector
+
+    repo_root = Path(__file__).resolve().parent.parent
+    cfg = yaml.safe_load((repo_root / "configs/experiments.yaml").read_text(encoding="utf-8"))
+    manifest = json.loads((repo_root / "results/calibration/calibration_manifest.json").read_text(encoding="utf-8"))
+
+    perfis = [p["tipo"] for p in cfg["grid"]["perfis_ruido"]]
+    tamanhos_n = [int(n) for n in cfg["grid"]["tamanhos_n"]]
+
+    for det_cfg in cfg["detectores"]:
+        cls_name = det_cfg["classe"]
+        regime = det_cfg["regime_calibracao"]
+        for perfil in perfis:
+            for n in tamanhos_n:
+                det_fast = dict(det_cfg)
+                if "EDiv" in cls_name:
+                    det_fast["params"] = {**det_cfg.get("params", {}), "permutations": 1}
+
+                # 1. Verifica instantiate_detector e execute_single_cell (parâmetro gravado no formato Parquet)
+                sc_cfg = {
+                    "cenario_id": f"test_{perfil}_{n}",
+                    "n": 100 if "EDiv" in cls_name else n,
+                    "perfil_ruido": perfil,
+                    "noise_params": {},
+                    "k_true": 0,
+                    "magnitude_sigma": 0.0,
+                }
+                # instantiate_detector usa n real do grid para lookup do manifesto
+                det_obj = instantiate_detector(det_fast, manifest, perfil, n, stable_seed=42)
+                if cls_name == "RobustCUSUMDetector":
+                    expected_h = (
+                        manifest["CUSUM_gauss"][str(n)]
+                        if regime == "calibrado_gaussiano"
+                        else manifest["CUSUM_perfil"][perfil][str(n)]
+                    )
+                    assert det_obj.h == pytest.approx(float(expected_h))
+                elif cls_name == "RupturesDetector":
+                    alg = det_cfg["algoritmo"].upper()
+                    cost = det_cfg["cost_model"].upper()
+                    if regime == "calibrado_gaussiano":
+                        expected_pen = manifest[f"{alg}_{cost}_gauss"][str(n)]
+                    else:
+                        expected_pen = manifest[f"{alg}_{cost}_perfil"][perfil][str(n)]
+                    assert det_obj.pen == pytest.approx(float(expected_pen))
+                elif cls_name in ("EDivisiveMeansDetector", "EDivisiveMediansDetector"):
+                    # Regime base (0.20) e regime calibrado_perfil (alpha' do manifesto)
+                    assert det_obj.alpha == pytest.approx(float(det_cfg["params"]["alpha"]))
+                    ediv_key = "EDiv_Means" if cls_name == "EDivisiveMeansDetector" else "EDiv_Medians"
+                    cal_cfg = {**det_fast, "regime_calibracao": "calibrado_perfil"}
+                    det_cal = instantiate_detector(cal_cfg, manifest, perfil, n, stable_seed=42)
+                    assert det_cal.alpha == pytest.approx(float(manifest[ediv_key][perfil][str(n)]))
+
+                # Executa uma célula com n do grid (apenas para EDiv usa n=100 acima se já testado; para demais usa n real)
+                if "EDiv" not in cls_name:
+                    row = execute_single_cell(sc_cfg, det_fast, seed_idx=1, calibration_dict=manifest, git_hash="test")
+                    recorded = json.loads(row["parametros"])
+                    if cls_name == "RobustCUSUMDetector":
+                        assert recorded["h"] == pytest.approx(float(expected_h))
+                    elif cls_name == "RupturesDetector":
+                        assert recorded["pen"] == pytest.approx(float(expected_pen))
+
+                # 2. Garante que falta de chave no manifesto lança KeyError (sem fallback silencioso)
+                if regime in ("calibrado_gaussiano", "calibrado_perfil"):
+                    with pytest.raises(KeyError):
+                        instantiate_detector(det_fast, {}, perfil, n, stable_seed=42)
+                else:
+                    cal_cfg = {**det_fast, "regime_calibracao": "calibrado_perfil"}
+                    with pytest.raises(KeyError):
+                        instantiate_detector(cal_cfg, {}, perfil, n, stable_seed=42)
+
+
