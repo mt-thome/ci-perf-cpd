@@ -1,29 +1,10 @@
 # Auditoria de Anomalias (Fase 4b — Sem Interpretação)
 
-## sempre_vazio (26)
+## sempre_vazio (7)
 
 - `Binseg_L2_perfil` | `ar1` | n=100 | m=0.5 | k_true=1: 0 detecções em todas as 50 séries da célula
 - `Binseg_L2_perfil` | `bimodal` | n=100 | m=0.5 | k_true=1: 0 detecções em todas as 50 séries da célula
 - `CUSUM_perfil` | `ar1` | n=100 | m=0.5 | k_true=1: 0 detecções em todas as 50 séries da célula
-- `PELT_L1_gauss` | `ar1` | n=100 | m=0.5 | k_true=1: 0 detecções em todas as 50 séries da célula
-- `PELT_L1_gauss` | `bimodal` | n=100 | m=0.5 | k_true=1: 0 detecções em todas as 50 séries da célula
-- `PELT_L1_gauss` | `bimodal` | n=100 | m=1.0 | k_true=1: 0 detecções em todas as 50 séries da célula
-- `PELT_L1_gauss` | `bimodal` | n=100 | m=2.0 | k_true=1: 0 detecções em todas as 50 séries da célula
-- `PELT_L1_gauss` | `bimodal` | n=500 | m=0.5 | k_true=1: 0 detecções em todas as 50 séries da célula
-- `PELT_L1_gauss` | `bimodal` | n=500 | m=0.5 | k_true=2: 0 detecções em todas as 50 séries da célula
-- `PELT_L1_gauss` | `bimodal` | n=1000 | m=0.5 | k_true=1: 0 detecções em todas as 50 séries da célula
-- `PELT_L1_gauss` | `gaussian` | n=100 | m=0.5 | k_true=1: 0 detecções em todas as 50 séries da célula
-- `PELT_L1_gauss` | `gaussian` | n=100 | m=1.0 | k_true=1: 0 detecções em todas as 50 séries da célula
-- `PELT_L1_gauss` | `gaussian` | n=500 | m=0.5 | k_true=1: 0 detecções em todas as 50 séries da célula
-- `PELT_L1_gauss` | `gaussian` | n=500 | m=0.5 | k_true=2: 0 detecções em todas as 50 séries da célula
-- `PELT_L1_gauss` | `gaussian` | n=1000 | m=0.5 | k_true=1: 0 detecções em todas as 50 séries da célula
-- `PELT_L1_gauss` | `outliers` | n=100 | m=0.5 | k_true=1: 0 detecções em todas as 50 séries da célula
-- `PELT_L1_gauss` | `outliers` | n=100 | m=1.0 | k_true=1: 0 detecções em todas as 50 séries da célula
-- `PELT_L1_gauss` | `outliers` | n=500 | m=0.5 | k_true=1: 0 detecções em todas as 50 séries da célula
-- `PELT_L1_gauss` | `outliers` | n=1000 | m=0.5 | k_true=1: 0 detecções em todas as 50 séries da célula
-- `PELT_L1_gauss` | `student_t` | n=100 | m=0.5 | k_true=1: 0 detecções em todas as 50 séries da célula
-- `PELT_L1_gauss` | `student_t` | n=100 | m=1.0 | k_true=1: 0 detecções em todas as 50 séries da célula
-- `PELT_L1_gauss` | `student_t` | n=500 | m=0.5 | k_true=1: 0 detecções em todas as 50 séries da célula
 - `PELT_L1_perfil` | `ar1` | n=100 | m=0.5 | k_true=1: 0 detecções em todas as 50 séries da célula
 - `PELT_L2_perfil` | `ar1` | n=100 | m=0.5 | k_true=1: 0 detecções em todas as 50 séries da célula
 - `PELT_L2_perfil` | `bimodal` | n=100 | m=0.5 | k_true=1: 0 detecções em todas as 50 séries da célula
@@ -33,24 +14,11 @@
 
 - `TODOS` | `TODOS` | n=0 | m=nan | k_true=-1: fora_de_intervalo=0, duplicados_na_serie=0
 
-## divergencia_far_grid_vs_validacao (38)
+## divergencia_far_grid_vs_validacao (16)
 
-- `Binseg_L2_gauss` | `ar1` | n=100 | m=0.0 | k_true=0: grid_far1k=3.800 vs val_far1k=0.000 (disjoint_ci=True)
-- `Binseg_L2_gauss` | `ar1` | n=500 | m=0.0 | k_true=0: grid_far1k=4.560 vs val_far1k=0.000 (disjoint_ci=True)
-- `Binseg_L2_gauss` | `ar1` | n=1000 | m=0.0 | k_true=0: grid_far1k=4.300 vs val_far1k=0.220 (disjoint_ci=True)
-- `Binseg_L2_gauss` | `bimodal` | n=100 | m=0.0 | k_true=0: grid_far1k=2.400 vs val_far1k=0.000 (disjoint_ci=True)
-- `Binseg_L2_gauss` | `bimodal` | n=500 | m=0.0 | k_true=0: grid_far1k=2.520 vs val_far1k=0.000 (disjoint_ci=True)
-- `Binseg_L2_gauss` | `bimodal` | n=1000 | m=0.0 | k_true=0: grid_far1k=1.560 vs val_far1k=0.220 (disjoint_ci=True)
 - `Binseg_L2_gauss` | `gaussian` | n=1000 | m=0.0 | k_true=0: grid_far1k=0.000 vs val_far1k=0.220 (disjoint_ci=True)
 - `Binseg_L2_perfil` | `gaussian` | n=1000 | m=0.0 | k_true=0: grid_far1k=0.000 vs val_far1k=0.220 (disjoint_ci=True)
-- `CUSUM_gauss` | `ar1` | n=100 | m=0.0 | k_true=0: grid_far1k=3.000 vs val_far1k=0.070 (disjoint_ci=True)
-- `CUSUM_gauss` | `ar1` | n=500 | m=0.0 | k_true=0: grid_far1k=3.120 vs val_far1k=0.200 (disjoint_ci=True)
-- `CUSUM_gauss` | `ar1` | n=1000 | m=0.0 | k_true=0: grid_far1k=3.920 vs val_far1k=0.240 (disjoint_ci=True)
-- `CUSUM_gauss` | `bimodal` | n=100 | m=0.0 | k_true=0: grid_far1k=0.600 vs val_far1k=0.070 (disjoint_ci=False)
-- `CUSUM_gauss` | `bimodal` | n=500 | m=0.0 | k_true=0: grid_far1k=0.680 vs val_far1k=0.200 (disjoint_ci=True)
 - `CUSUM_gauss` | `gaussian` | n=100 | m=0.0 | k_true=0: grid_far1k=0.600 vs val_far1k=0.070 (disjoint_ci=False)
-- `CUSUM_gauss` | `student_t` | n=100 | m=0.0 | k_true=0: grid_far1k=1.200 vs val_far1k=0.070 (disjoint_ci=True)
-- `CUSUM_gauss` | `student_t` | n=1000 | m=0.0 | k_true=0: grid_far1k=1.020 vs val_far1k=0.240 (disjoint_ci=True)
 - `CUSUM_perfil` | `gaussian` | n=100 | m=0.0 | k_true=0: grid_far1k=0.600 vs val_far1k=0.070 (disjoint_ci=False)
 - `EDiv_Means_calibrado` | `ar1` | n=100 | m=0.0 | k_true=0: grid_far1k=5.200 vs val_far1k=4.040 (disjoint_ci=False)
 - `EDiv_Means_calibrado` | `ar1` | n=500 | m=0.0 | k_true=0: grid_far1k=5.240 vs val_far1k=2.060 (disjoint_ci=True)
@@ -64,15 +32,6 @@
 - `EDiv_Medians_calibrado_far1` | `ar1` | n=100 | m=0.0 | k_true=0: grid_far1k=4.000 vs val_far1k=2.990 (disjoint_ci=False)
 - `EDiv_Medians_calibrado_far1` | `ar1` | n=500 | m=0.0 | k_true=0: grid_far1k=2.520 vs val_far1k=1.080 (disjoint_ci=True)
 - `EDiv_Medians_calibrado_far1` | `ar1` | n=1000 | m=0.0 | k_true=0: grid_far1k=2.200 vs val_far1k=1.070 (disjoint_ci=True)
-- `PELT_L2_gauss` | `ar1` | n=100 | m=0.0 | k_true=0: grid_far1k=5.000 vs val_far1k=0.000 (disjoint_ci=True)
-- `PELT_L2_gauss` | `ar1` | n=500 | m=0.0 | k_true=0: grid_far1k=7.920 vs val_far1k=0.000 (disjoint_ci=True)
-- `PELT_L2_gauss` | `ar1` | n=1000 | m=0.0 | k_true=0: grid_far1k=9.200 vs val_far1k=0.000 (disjoint_ci=True)
-- `PELT_L2_gauss` | `bimodal` | n=100 | m=0.0 | k_true=0: grid_far1k=2.800 vs val_far1k=0.000 (disjoint_ci=True)
-- `PELT_L2_gauss` | `bimodal` | n=500 | m=0.0 | k_true=0: grid_far1k=4.840 vs val_far1k=0.000 (disjoint_ci=True)
-- `PELT_L2_gauss` | `bimodal` | n=1000 | m=0.0 | k_true=0: grid_far1k=5.700 vs val_far1k=0.000 (disjoint_ci=True)
-- `PELT_L2_gauss` | `outliers` | n=500 | m=0.0 | k_true=0: grid_far1k=0.320 vs val_far1k=0.000 (disjoint_ci=True)
-- `PELT_L2_gauss` | `outliers` | n=1000 | m=0.0 | k_true=0: grid_far1k=0.460 vs val_far1k=0.000 (disjoint_ci=True)
-- `PELT_L2_gauss` | `student_t` | n=1000 | m=0.0 | k_true=0: grid_far1k=0.200 vs val_far1k=0.000 (disjoint_ci=True)
 
 ## flag_calibracao_alvo_0.2 (6)
 
